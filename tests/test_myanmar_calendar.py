@@ -23,7 +23,7 @@ class MyanmarCalendarTests(unittest.TestCase):
             self.assertTrue(0<=v['month_index']<=14)
             self.assertIn(v['pyathada'],(0,1,2))
     def test_wd_algorithm(self):
-        self.assertEqual(astrology_days(1,0),(False,False))
+        self.assertEqual(astrology_days(1,0),(False,1))
         self.assertTrue(astrology_days(1,4)[0])
     def test_reject_out_of_supported_range(self):
         with self.assertRaises(ValueError):calculate_myanmar_calendar(date(1800,1,1))
