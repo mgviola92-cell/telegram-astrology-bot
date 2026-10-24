@@ -12,7 +12,7 @@ from pathlib import Path
 from astro_core import SIGNS, annual_profection
 from birth_time import normalize_birth_wall_time
 from western_houses import calculate_whole_sign_chart, _finite
-from western_chart import geocentric_chart
+from western_chart import geocentric_chart, tropical_sign
 
 
 def assemble_natal(
@@ -58,6 +58,11 @@ def assemble_natal(
     for key, entry in positions["points"].items():
         if not isinstance(entry, dict) or entry.get("sign") not in SIGNS:
             raise ValueError("Position provider returned invalid zodiac sign")
+        if "longitude" not in entry:
+            raise ValueError("A verified ecliptic longitude is required for every chart point")
+        computed = tropical_sign(entry["longitude"])
+        if computed["sign"] != entry["sign"]:
+            raise ValueError("Position provider has inconsistent zodiac sign and longitude")
         sign_index = SIGNS.index(entry["sign"])
         house = (sign_index - rising_index) % 12 + 1
         enriched[key] = dict(entry, whole_sign_house=house)
