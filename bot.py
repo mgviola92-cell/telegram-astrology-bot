@@ -19,8 +19,10 @@ from tarot_sessions import TarotSessions
 from myanmar_core import myanmar_birth_day
 from myanmar_calendar import calculate_myanmar_calendar
 from evidence_ui import evidence_button, get_rule
+from profile_commands import router as profile_router
 
 dp=Dispatcher()
+dp.include_router(profile_router)
 tarot_sessions = TarotSessions()
 
 def menu():
@@ -42,6 +44,8 @@ WELCOME=(
     '• /myday 2005-12-23 08:37 — မြန်မာ့မွေးနေ့နံ\n'
     '• /mmcal 2024-01-01 — မြန်မာပြက္ခဒိန်\n'
     '• /tarot — တားရော့ကတ်တစ်ချပ်\n\n'
+    '📜 ကိုယ်ပိုင်မွေးနေ့ သိမ်းလိုပါက /savebirth ၊ ဖျက်ရန် /forgetbirth ကို သုံးနိုင်ပါတယ်။\n'
+    'သိမ်းဆည်းမှုကို Server မှာ ဖွင့်ထားမှသာ အသုံးပြုနိုင်ပါတယ်။\n\n'
     'မွေးနေ့၊ မွေးချိန်တွေကို <b>သီးသန့်စကားဝိုင်းမှာသာ</b> ပို့ပါ။ '
     'လက်ရှိအဆင့်မှာ အချက်အလက်တွေကို Database ထဲမသိမ်းထားပါ။'
 )
