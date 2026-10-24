@@ -1,6 +1,7 @@
-"""Telegram astrology bot development shell. No deployment or database yet.
+"""Telegram astrology bot development shell; not deployed.
 
-Secrets are read from environment only. Birth data is not persisted.
+Secrets are read from environment only. Opt-in encrypted profile storage is
+available only when configured; ordinary reading commands do not persist data.
 """
 import asyncio
 import html
@@ -47,7 +48,7 @@ WELCOME=(
     '📜 ကိုယ်ပိုင်မွေးနေ့ သိမ်းလိုပါက /savebirth ၊ ဖျက်ရန် /forgetbirth ကို သုံးနိုင်ပါတယ်။\n'
     'သိမ်းဆည်းမှုကို Server မှာ ဖွင့်ထားမှသာ အသုံးပြုနိုင်ပါတယ်။\n\n'
     'မွေးနေ့၊ မွေးချိန်တွေကို <b>သီးသန့်စကားဝိုင်းမှာသာ</b> ပို့ပါ။ '
-    'လက်ရှိအဆင့်မှာ အချက်အလက်တွေကို Database ထဲမသိမ်းထားပါ။'
+    '/savebirth နဲ့ အတည်ပြုမှသာ မွေးနေ့မှတ်တမ်းကို လုံခြုံစွာ သိမ်းဆည်းပါမယ်။'
 )
 
 def private_only(message: Message) -> bool:
