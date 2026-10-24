@@ -24,6 +24,19 @@ class BaziTests(unittest.TestCase):
     def test_reject_timezone_aware(self):
         from datetime import timezone
         with self.assertRaises(ValueError): calculate_bazi(datetime(2000,1,1,tzinfo=timezone.utc))
+    def test_primary_element_tally_on_upstream_vector(self):
+        try: import lunar_python
+        except ImportError: self.skipTest('lunar-python not installed')
+        result=calculate_bazi(datetime(2005,12,23,8,37))
+        visible=result['visible_wuxing']
+        self.assertEqual(visible['visible_counts'],{'Wood':1,'Fire':1,'Earth':2,'Metal':2,'Water':2})
+        self.assertEqual(visible['day_master_element'],'Metal')
+        self.assertEqual(result['pillars']['day'],'辛巳')
+    def test_declared_timezone_passes_to_provenance(self):
+        try: import lunar_python
+        except ImportError: self.skipTest('lunar-python not installed')
+        result=calculate_bazi(datetime(2005,12,23,8,37),timezone_verified='Asia/Yangon')
+        self.assertEqual(result['evidence']['input_assumptions']['timezone_verified'],'Asia/Yangon')
     def test_invalid_sect(self):
         with self.assertRaises(ValueError): calculate_bazi(datetime(2000,1,1),sect=3)
 
