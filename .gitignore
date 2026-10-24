@@ -10,3 +10,11 @@ venv/
 *.db
 *.log
 .DS_Store
+
+# Birth-profile database and SQLite journals
+*.sqlite3-wal
+*.sqlite3-shm
+*.db-wal
+*.db-shm
+*.key
+secrets/
