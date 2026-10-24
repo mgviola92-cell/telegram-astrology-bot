@@ -8,7 +8,8 @@ import json
 import sqlite3
 import time
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import date, datetime
+from math import isfinite
 from pathlib import Path
 from typing import Mapping
 from cryptography.fernet import Fernet, InvalidToken
@@ -41,8 +42,13 @@ class ProfileStore:
         try:
             conn.execute("PRAGMA busy_timeout=10000")
             conn.execute("PRAGMA journal_mode=WAL")
-            yield conn
-            conn.commit()
+            try:
+                yield conn
+            except BaseException:
+                conn.rollback()
+                raise
+            else:
+                conn.commit()
         finally:
             conn.close()
 
@@ -64,10 +70,29 @@ class ProfileStore:
         if not all(isinstance(k,str) and isinstance(v,(str,int,float)) and not isinstance(v,bool)
                    for k,v in profile.items()):
             raise ValueError("Invalid profile types")
+        if not isinstance(profile["birth_date"], str):
+            raise ValueError("birth_date must be YYYY-MM-DD")
         try:
-            datetime.strptime(str(profile["birth_date"]),"%Y-%m-%d")
+            birth_date=date.fromisoformat(profile["birth_date"])
+            if birth_date.isoformat()!=profile["birth_date"]:
+                raise ValueError("Noncanonical birth date")
+            if birth_date > date.today():
+                raise ValueError("Birth date cannot be in the future")
         except ValueError as exc:
-            raise ValueError("Expected birth_date YYYY-MM-DD") from exc
+            raise ValueError("Expected valid birth_date YYYY-MM-DD") from exc
+        for field in ("latitude","longitude_east"):
+            if field in profile:
+                number=profile[field]
+                if not isinstance(number,(float,int)) or isinstance(number,bool) or not isfinite(number):
+                    raise ValueError(f"Invalid {field}")
+                low,high=(-90,90) if field=="latitude" else (-180,180)
+                if not low<=number<=high:
+                    raise ValueError(f"Invalid {field} range")
+        if "birth_time" in profile:
+            try:
+                datetime.strptime(profile["birth_time"],"%H:%M")
+            except (ValueError,TypeError) as exc:
+                raise ValueError("birth_time requires HH:MM") from exc
         encoded=json.dumps(dict(profile),ensure_ascii=False,separators=(",",":")).encode("utf-8")
         if len(encoded)>MAX_PAYLOAD_BYTES:
             raise ValueError("Profile too large")
