@@ -317,6 +317,8 @@ async def tarot_pick(cb: CallbackQuery):
         return
     await cb.answer('✨ သင့်ကတ်ကို ဖွင့်လိုက်ပါပြီ။')
     meaning = interpret_tarot_card(card)
+    tarot_markup=evidence_button('TAROT-DRAW-001')
+    tarot_markup.inline_keyboard.extend(evidence_button('TAROT-INTERPRETATION-001').inline_keyboard)
     result_text = (
         '🃏 <b>သင့်ထံ ရောက်လာသောကတ်</b>\n━━━━━━━━━━━━━━\n'
         f'<b>{html.escape(card)}</b>\n\n'
@@ -332,19 +334,19 @@ async def tarot_pick(cb: CallbackQuery):
             from aiogram.types import InputMediaAnimation
             await cb.message.edit_media(
                 media=InputMediaAnimation(media=reveal_id, caption=result_text, parse_mode='HTML'),
-                reply_markup=evidence_button('TAROT-DRAW-001')
+                reply_markup=tarot_markup
             )
         elif cb.message.animation:
             # edit_caption reuses the same Telegram-hosted shuffle animation without reuploading
             await cb.message.edit_caption(caption=result_text, parse_mode='HTML',
-                reply_markup=evidence_button('TAROT-DRAW-001'))
+                reply_markup=tarot_markup)
         else:
             await cb.message.edit_text(result_text, parse_mode='HTML',
-                reply_markup=evidence_button('TAROT-DRAW-001'))
+                reply_markup=tarot_markup)
     except Exception:
         logging.exception('Cannot edit Tarot card message; sending text fallback')
         await cb.message.answer(result_text, parse_mode='HTML',
-            reply_markup=evidence_button('TAROT-DRAW-001'))
+            reply_markup=tarot_markup)
 
 
 async def main():
