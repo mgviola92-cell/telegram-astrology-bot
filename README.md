@@ -89,3 +89,6 @@ The new `myanmar_calendar.py` port follows [Yan Naing Aye's mmcal MIT implementa
 - `ProfileStore(db, new_key, old_keys=[prior_key])` can read old ciphertext and `rotate_encrypted_profiles()` re-encrypts all records with the new primary key in one SQL transaction. Rotate with secure backups and a carefully managed old-key overlap. It does NOT retroactively re-encrypt previously stored backups or guarantee physical erasure of deleted SQLite pages.
 - Review the new tests for rollback, key rotation and validation. **Not production-certified:** end-to-end tests, CI result, crash/recovery, disk permissions, concurrency and backup retention still pending.
 - Research: https://cryptography.io/en/stable/fernet/ (MultiFernet).
+
+## BaZi hidden stems
+`bazi_hidden_stems.py` adapts the documented `lunar-python` `ZHI_HIDE_GAN` table and validates every sexagenary pillar. Four branch hidden-stem sets appear in `/bazi` with their own source button. Direct comparison tests use the upstream `getYearHideGan`, `getMonthHideGan`, `getDayHideGan` and `getTimeHideGan` methods. The lookup does not infer favorable elements or Day Master strength; independent solar-time, sector boundaries and interpretation work remain. Development stage; not deployed.
