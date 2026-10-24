@@ -1,5 +1,5 @@
 import unittest
-from datetime import date
+from datetime import date, timedelta
 from profile_commands import parse_consent_command
 
 class ConsentParsingTests(unittest.TestCase):
@@ -10,7 +10,7 @@ class ConsentParsingTests(unittest.TestCase):
  def test_wrong_consent(self):
     with self.assertRaises(ValueError):parse_consent_command("/savebirth 2005-12-23 yes")
  def test_reject_future_birth(self):
-    future=date.today().replace(year=date.today().year+1)
+    future=date.today()+timedelta(days=367)
     with self.assertRaises(ValueError):parse_consent_command("/savebirth "+future.isoformat()+" အတည်ပြု")
  def test_reject_bad_date(self):
     with self.assertRaises(ValueError):parse_consent_command("/savebirth 2005-02-30 အတည်ပြု")
