@@ -16,6 +16,7 @@ from astro_core import life_path
 from bazi_core import calculate_bazi
 from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
+from tarot_meanings import interpret_tarot_card
 from tarot_sessions import TarotSessions
 from myanmar_core import myanmar_birth_day
 from myanmar_calendar import calculate_myanmar_calendar
@@ -315,11 +316,13 @@ async def tarot_pick(cb: CallbackQuery):
         await cb.answer(notices.get(status, '🌫️ နောက်တစ်ကြိမ် ပြန်စမ်းပါ။'), show_alert=True)
         return
     await cb.answer('✨ သင့်ကတ်ကို ဖွင့်လိုက်ပါပြီ။')
+    meaning = interpret_tarot_card(card)
     result_text = (
         '🃏 <b>သင့်ထံ ရောက်လာသောကတ်</b>\n━━━━━━━━━━━━━━\n'
         f'<b>{html.escape(card)}</b>\n\n'
-        'ဤကတ်ကို ရိုးရာ Tarot ကတ် ၇၈ ချပ်မှ ကျပန်းရွေးထားသည်။ '
-        'ကျမ်းကိုးအခြေခံ Card Meanings ကို ဆက်လက်စိစစ်နေသည်။'
+        f'🌙 <b>{html.escape(meaning["theme"])}</b>\\n'
+        f'{html.escape(meaning["reflection"])}\\n\\n'
+        'ဤသည် ရိုးရာ Tarot သင်္ကေတအခြေခံ စဉ်းစားစရာအနက်ဖြစ်ပြီး အနာဂတ်ကို အာမခံမဟုတ်ပါ။'
     )
     # Reuse one Telegram-hosted asset for every reveal; result name always comes
     # from the previously assigned session, not from media filenames.
