@@ -92,3 +92,11 @@ This document tracks actual completed versus pending work. No features added bey
 - Audited source: `6tail/lunar-python` `lunar_python/util/LunarUtil.py` `SHI_SHEN` 100-pair mapping; comparison test checks **all ten-by-ten stem combinations**, plus Four Pillars and hidden-stem integration tests.
 - `/bazi` native reply includes a concise Ten Gods list and a provenance button. These labels are **not forecasts, diagnoses, seasonal strength, or life-event guarantees**.
 - No live dependency-backed integration test result confirmed in the current session; independent interpretation references and CI remain pending. Source: https://github.com/6tail/lunar-python/blob/master/lunar_python/util/LunarUtil.py
+
+## 2026-10-25 dependency/preflight checkpoint
+- Exact dependencies declared: aiogram >=3.13,<4; lunar-python >=1.4,<2; skyfield >=1.50,<2; cryptography >=43,<48 (see requirements.txt).
+- A real check of the current local Python 3.13 runtime found cryptography installed but no aiogram, lunar_python or skyfield. An attempted pip install failed because external package repositories were unreachable. Do not treat this as evidence of package incompatibility; it is an environment/network limitation.
+- New `preflight.py --mode ci` detects missing imports and SQLite capability, printing no secrets; GitHub workflow invokes it after requirements installation.
+- New `preflight.py --mode deploy` checks Telegram token presence, paired Fernet profile secrets, writable DB parent, configured local JPL .bsp file, and optional Telegram animation file IDs. This is a readiness diagnostic, **not a substitute** for secrets-provider, file coverage, or real-lunar/real-kernel functional tests.
+- `.env.example` lists names only and contains no secret values. The actual environment variables and production storage still need to be provisioned when a release is authorized.
+- IMPORTANT: no successful full CI workflow or deployed service verified yet. The project remains blocked for release.
