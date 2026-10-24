@@ -52,6 +52,12 @@ RULES = {
         'source': 'Myanmar eight-day planetary weekday convention; Myanmar lunar calendar is calculated separately',
         'limits': 'မဟာဘုတ်အိမ်၊ နက္ခတ်၊ ရက်ရာဇာ၊ ပြဿဒါး တွက်ချက်ပြီးသော ဇာတာ မဟုတ်သေးပါ။'
     },
+    'TAROT-INTERPRETATION-001': {
+        'heading': 'Tarot ၇၈ ချပ် သင်္ကေတအနက်',
+        'method': 'Major Arcana ၂၂ ချပ်အတွက် သီးခြားမြန်မာလို စဉ်းစားစရာစာသားများ၊ Minor Arcana ၅၆ ချပ်အတွက် Suit နဲ့ Rank သင်္ကေတများပေါင်းစပ်ပြီး မူရင်းရေးသားထားသော Reflection စာသားကို ရွေးထုတ်သည်။',
+        'source': 'Traditional 78-card tarot deck structure; original Burmese writing in tarot_meanings.py, not copied from a proprietary tarot guide.',
+        'limits': 'လတ်တလော 78-card reflective guide ဖြစ်ပြီး Upright/Reversed အမျိုးအစားခွဲခြားမှု မပါသေးပါ။ အနာဂတ်သေချာပေါက်ဖြစ်မည်ဟု မဆိုလိုပါ။'
+    },
     'TAROT-DRAW-001': {
         'heading': 'တားရော့ကတ်ဆွဲခြင်း',
         'method': 'Major Arcana 22 + Minor Arcana 56 = 78 ကတ်ထဲမှ တစ်ချပ်စီ ကျပန်းရွေးသည်။ တစ်ကြိမ်တည်းတွင် ကတ်မထပ်စေပါ။',
