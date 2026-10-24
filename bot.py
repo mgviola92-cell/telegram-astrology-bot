@@ -13,6 +13,7 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from astro_core import life_path
 from bazi_core import calculate_bazi
+from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
 from tarot_sessions import TarotSessions
 from myanmar_core import myanmar_birth_day
@@ -36,7 +37,7 @@ WELCOME=(
     'တားရော့ကတ်တို့ကို လေ့လာနိုင်မည့် ဇာတာခန်းမှ ကြိုဆိုပါတယ်။\n\n'
     '📜 <b>လက်ရှိ စမ်းသပ်နိုင်သောတွက်ချက်မှုများ</b>\n'
     '• /number 1999-12-31 — မွေးနေ့ကိန်းဂဏန်း\n'
-    '• /bazi 2005-12-23 08:37 — တရုတ်ဇာတာလေးတိုင်\n'
+    '• /bazi 2005-12-23 08:37 Asia/Yangon — တရုတ်ဇာတာလေးတိုင်\n'
     '• /myday 2005-12-23 08:37 — မြန်မာ့မွေးနေ့နံ\n'
     '• /tarot — တားရော့ကတ်တစ်ချပ်\n\n'
     'မွေးနေ့၊ မွေးချိန်တွေကို <b>သီးသန့်စကားဝိုင်းမှာသာ</b> ပို့ပါ။ '
@@ -57,7 +58,7 @@ async def help_message(message: Message):
 @dp.callback_query(F.data == 'section:charts')
 async def charts(cb: CallbackQuery):
     await cb.answer()
-    await cb.message.answer('🌙 <b>ဇာတာတွက်ကြည့်မယ်</b>\n\n/number YYYY-MM-DD\n/bazi YYYY-MM-DD HH:MM\n/myday YYYY-MM-DD HH:MM\n\nမွေးနေ့နှင့် မွေးချိန်ကို သီးသန့်စကားဝိုင်းတွင်သာ ဖြည့်ပါ။',parse_mode='HTML')
+    await cb.message.answer('🌙 <b>ဇာတာတွက်ကြည့်မယ်</b>\n\n/number YYYY-MM-DD\n/bazi YYYY-MM-DD HH:MM Asia/Yangon\n/myday YYYY-MM-DD HH:MM\n\nမွေးနေ့နှင့် မွေးချိန်ကို သီးသန့်စကားဝိုင်းတွင်သာ ဖြည့်ပါ။',parse_mode='HTML')
 
 @dp.callback_query(F.data == 'section:library')
 async def library(cb: CallbackQuery):
@@ -154,15 +155,16 @@ async def bazi(message: Message):
         await message.answer('🔐 မွေးချိန်ကို လူအများရှေ့ မဖော်ပြပါနဲ့။ သီးသန့်စကားဝိုင်းမှာပဲ ဖြည့်ပေးပါ။')
         return
     parts=(message.text or '').split()
-    if len(parts)!=3:
-        await message.answer('🐉 မွေးရပ်ဒေသ၏ ဒေသစံတော်ချိန်ဖြင့် ဖြည့်ပါ။\n<code>/bazi 2005-12-23 08:37</code>',parse_mode='HTML')
+    if len(parts)!=4:
+        await message.answer('🐉 မွေးရပ်ဒေသ၏ ဒေသစံတော်ချိန်ဖြင့် ဖြည့်ပါ။\n<code>/bazi 2005-12-23 08:37 Asia/Yangon</code>',parse_mode='HTML')
         return
     try:
         born=datetime.strptime(parts[1]+' '+parts[2],'%Y-%m-%d %H:%M')
         if born.date()>date.today(): raise ValueError('future date')
-        result=calculate_bazi(born)
+        normalized=normalize_birth_wall_time(born,parts[3])
+        result=calculate_bazi(normalized['wall_time'])
     except (ValueError,RuntimeError):
-        await message.answer('🌫️ မွေးချိန်ကို မတွက်နိုင်သေးပါ။ YYYY-MM-DD HH:MM ပုံစံနှင့် မွေးရပ်ဒေသအချိန်ကို စစ်ဆေးပါ။')
+        await message.answer('🌫️ မွေးချိန်ကို မတွက်နိုင်သေးပါ။ YYYY-MM-DD HH:MM Asia/Yangon ပုံစံနဲ့ မွေးရပ်ဒေသရဲ့ Timezone ကို စစ်ဆေးပါ။ DST နာရီနှစ်ခါဖြစ်တဲ့ ရက်တွေမှာ မွေးချိန်အတည်ပြုဖို့ လိုပါတယ်။')
         return
     p=result['pillars']
     await message.answer(
@@ -172,7 +174,8 @@ async def bazi(message: Message):
         f'ရက်တိုင် — <b>{html.escape(p["day"])}</b>\n'
         f'နာရီတိုင် — <b>{html.escape(p["hour"])}</b>\n\n'
         f'📖 <code>{result["evidence"]["rule_id"]}</code>\n'
-        'မွေးရပ်ဒေသ Timezone နှင့် True Solar Time ကို မစစ်နိုင်သေးသည့် စမ်းသပ်ဇာတာဖြစ်သည်။',
+        f'လက်ခံထားသော Timezone — <code>{html.escape(normalized["timezone"])}</code>\n'
+        'True Solar Time မပြင်ရသေးသော စမ်းသပ်ဇာတာဖြစ်သည်။',
         parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id'])
     )
 
