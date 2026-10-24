@@ -6,7 +6,7 @@ Scope frozen: Myanmar astrology, Western natal/timing, Chinese BaZi, numerology,
 - Myanmar: Yan Naing Aye's `mmcal` MIT JS/C++ reference (https://github.com/yan9a/mmcal). Do not fake Myanmar dates by subtracting a constant from Gregorian years. Python formula port integrated with limited regression fixtures; independent, broader cross-language verification remains outstanding.
 - Independent Myanmar comparator: `chanmratekoko/mmcalendar` is a **Java** library with astrology markers and Myanmar Standard Time convention, not a Python package (https://github.com/chanmratekoko/mmcalendar). Compare only dates with equivalent calendar conventions.
 - BaZi: `6tail/lunar-python`, upstream fixture 2005-12-23 08:37 -> 乙酉 戊子 辛巳 壬辰 (https://github.com/6tail/lunar-python/blob/master/test/EightCharTest.py). Need sect, location, true solar time and Li Chun boundary review.
-- Western: Skyfield supports astronomy/ecliptic positions and local sidereal time (https://rhodesmill.org/skyfield/toc.html). True natal positions, house calculations and cross-validated ascendant are not implemented yet.
+- Western: Skyfield supports astronomy/ecliptic positions and local sidereal time (https://rhodesmill.org/skyfield/toc.html). Skyfield local-kernel geocentric planet position adapter now coded; live kernel fixtures, house calculations and ascendant not yet validated.
 - Swiss Ephemeris requires AGPL compliance or paid professional license (https://www.astro.com/swisseph/). No unlicensed incorporation.
 - Numerology: master number and transliteration choices require explicit school conventions.
 - Tarot: random card **draw**, not random fabricated prediction. Reviewed card meanings, matched art and animated assets are pending.
@@ -19,7 +19,7 @@ Scope frozen: Myanmar astrology, Western natal/timing, Chinese BaZi, numerology,
 
 ## Release criteria: ALL required before user's first end-to-end trial
 - [ ] Myanmar calendar and Mahabote/Yatyaza/Pyathada: Python adaptation written; historical edge-year, New Year, Waso and independent cross-language reference coverage still needed
-- [ ] Western natal calculations (ephemeris, correct geographical ascendant, houses, aspects) validated and licensing resolved
+- [ ] Western natal: Skyfield local-kernel tropical longitudes and aspect geometry implemented; must verify JPL-kernel fixtures, geographic ascendant, houses and supported date ranges
 - [ ] BaZi time convention and historical timezone/longitude/solar correction decisions with benchmark tests
 - [ ] Traditional rule corpus with reviewer-approved citations/conditions and no invented interpretation
 - [ ] Tarot 78 correctly associated artworks + full documented interpretations + real native Telegram media assets
