@@ -37,6 +37,22 @@ class BaziTests(unittest.TestCase):
         except ImportError: self.skipTest('lunar-python not installed')
         result=calculate_bazi(datetime(2005,12,23,8,37),timezone_verified='Asia/Yangon')
         self.assertEqual(result['evidence']['input_assumptions']['timezone_verified'],'Asia/Yangon')
+    def test_hidden_stems_match_upstream_getters(self):
+        try:
+            from lunar_python import Solar
+        except ImportError:
+            self.skipTest("lunar-python missing")
+        solar=Solar.fromYmdHms(2005,12,23,8,37)
+        upstream=solar.getLunar().getEightChar()
+        local=calculate_bazi(datetime(2005,12,23,8,37))
+        got=local["hidden_stems"]["pillars"]
+        for name,getter in (("year",upstream.getYearHideGan),
+                            ("month",upstream.getMonthHideGan),
+                            ("day",upstream.getDayHideGan),
+                            ("hour",upstream.getTimeHideGan)):
+            with self.subTest(pillar=name):
+                self.assertEqual([entry["stem"] for entry in got[name]["hidden"]],list(getter()))
+
     def test_invalid_sect(self):
         with self.assertRaises(ValueError): calculate_bazi(datetime(2000,1,1),sect=3)
 
