@@ -79,3 +79,10 @@ This document tracks actual completed versus pending work. No features added bey
 - Calculation is integrated into `bazi_core.py`; native `/bazi` now displays year/month/day/hour hidden stems with a provenance button.
 - This is a deterministic branch lookup, **not** a weighted elemental strength calculation or a future prediction. Seasonal qi, month command, true solar time, sect transitions and Luck Pillars still require reviewed convention and reference tests.
 - Reference: https://github.com/6tail/lunar-python/blob/master/lunar_python/EightChar.py
+
+## 2026-10-25 Da Yun research checkpoint
+- Source verified: `6tail/lunar-python` EightChar.getYun(gender, sect), Yun.getDaYun(), DaYun period start/end and GanZhi progression. Sources: https://github.com/6tail/lunar-python/blob/master/lunar_python/EightChar.py ; https://github.com/6tail/lunar-python/blob/master/lunar_python/eightchar/Yun.py ; https://github.com/6tail/lunar-python/blob/master/lunar_python/eightchar/DaYun.py
+- `bazi_luck.py` implements eight decades by default (1–12 accepted) with explicit, library-specific 0/1 gender convention and user-selected Yun sect 1/2; exposes start offset, direction, traditional nominal ages and ten-year GanZhi periods.
+- `tests/test_bazi_luck.py` includes input guards, source-method comparison for both sect variants, direction reversal and decade continuity. **Live lunar-python integration tests have not passed in this environment because the dependency could not be installed over network.**
+- No optional gender is guessed or automatically inferred from Telegram. No public command is enabled for this module. Before exposing the traditional gender-dependent convention, review an explicit choice/skip path and document the limitations. The calendar interpretation is not empirical predictive validation.
+- True Solar Time, locality, jie boundary handling, professional interpretation and end-to-end tests remain outstanding; no user trial or deployment yet.
