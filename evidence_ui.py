@@ -28,6 +28,12 @@ RULES = {
         'source': 'Traditional Five Phases correspondences: https://www.ibiblio.org/chinesehistory/contents/08fea/c06s02.htm ; https://uaya.org/iching/correspondences/',
         'limits': 'Hidden Stems, Seasonal Strength နှင့် Day Master အားကောင်းမှု မတွက်ရသေးပါ။ အရေအတွက်တစ်ခုတည်းဖြင့် အနာဂတ်ဖြစ်ရပ် မဆုံးဖြတ်နိုင်ပါ။'
     },
+    'CHN-BAZI-HIDDEN-STEMS-001': {
+        'heading': 'BaZi ဌာနချုပ်အတွင်း ဝှက်ထားသော ဂန္ဓာရုံ (Hidden Stems)',
+        'method': 'Earthly Branch ၁၂ မျိုးအလိုက် ထုံးတမ်း Hidden Stems (藏干) ကို အဓိကဓာတ်မှစ၍ မူရင်းအစဉ်အတိုင်း ဖော်ပြသည်။',
+        'source': '6tail/lunar-python: lunar_python/util/LunarUtil.py ZHI_HIDE_GAN; https://github.com/6tail/lunar-python',
+        'limits': 'ဤဇယားမှာ အလေးချိန် သတ်မှတ်ခြင်း၊ ရာသီအင်အားအချိုးတွက်ခြင်း၊ Day Master Strength သတ်မှတ်ခြင်း မပါသေးပါ။'
+    },
     'CHN-BAZI-PILLARS-001': {
         'heading': 'တရုတ်ဇာတာလေးတိုင်',
         'method': 'မွေးရပ်ဒေသ ဒေသစံတော်ချိန်ကို lunar-python ၏ Solar -> Lunar -> EightChar စနစ်ထဲ ဖြတ်သန်းတွက်ချက်သည်။',
