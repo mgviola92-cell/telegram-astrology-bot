@@ -95,3 +95,6 @@ The new `myanmar_calendar.py` port follows [Yan Naing Aye's mmcal MIT implementa
 
 ## BaZi Da Yun (development only)
 The new `bazi_luck.py` uses the documented `lunar-python` EightChar -> Yun -> DaYun chain for start dates, forward/reverse direction and conventional ten-year Ganzhi cycles. The 0/1 gender mapping is the upstream library's traditional rule, is supplied explicitly, and can be skipped; it is never inferred from name/profile. The Yun calculation sect (1 or 2) is supplied explicitly and the output carries source assumptions. Ages are **traditional nominal ages** as returned by the library. This is not yet presented by the Telegram bot or validated with the live installed library in this environment; no automatic public predictions are derived from the periods.
+
+## BaZi Ten Gods progress
+`bazi_ten_gods.py` computes traditional Ten Gods labels for every visible Heavenly Stem and each hidden branch stem, relative to the day's stem. It uses an explicit Five-Phase/Yin-Yang relationship rule and includes a test against the 100-entry `6tail/lunar-python` `LunarUtil.SHI_SHEN` lookup. The native `/bazi` response shows only the four visible labels to stay concise, but records all hidden labels in the backend with separate evidence. This is structural correspondence, not a personalized predictive reading; CI is not yet verified.
