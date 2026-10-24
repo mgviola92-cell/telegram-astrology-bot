@@ -53,3 +53,9 @@ Research: [Telegram Bot API: sending by file_id and editing messages](https://co
 
 ## Myanmar calendar research milestone
 The new `myanmar_calendar.py` port follows [Yan Naing Aye's mmcal MIT implementation](https://github.com/yan9a/mmcal) (copyright 2018 Yan Naing Aye); no unrelated unverified year offset is used. A January 1, 2024 reference and full-leap-year iteration were checked locally. Cross-language exhaustive verification and more original sample dates remain release blockers; **do not claim complete validation**. `/mmcal YYYY-MM-DD` displays computed Myanmar year, month, day, Mahabote, Yatyaza and Pyathada, with rule-provenance button. Full professional predictions remain pending.
+
+## Latest calculation progress (2026-10-25)
+- `western_aspects.py`: classical five major aspects computed from **externally verified** tropical longitudes, with explicit 0/60/90/120/180° angle targets and documented configurable orb tolerances. Geometric engine is unit-tested locally; this is not a birth-position engine and must not receive guessed planetary degrees. Source: https://www.astro.com/astrology/in_aspect_e.htm
+- `myanmar_calendar.py`: moon phase, lunar fortnight day and month-length logic adapted from the original MIT mmcal `cal_mp`, `cal_mf`, `cal_mml` formulas. Bot `/mmcal` now displays Burmese waxing/waning information.
+- Research limitations remain: actual Western ephemeris/ascendant, Myanmar historical cross-validation, Chinese BaZi solar-time validation, full traditional interpretation corpus, complete Telegram UX, images and production DB.
+- CI checks still require verification on GitHub Actions. Deployment remains deferred.
