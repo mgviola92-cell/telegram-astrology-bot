@@ -44,3 +44,10 @@ This document tracks actual completed versus pending work. No features added bey
 - Current geographic latitude guard is -65° to +65°: high-latitude horizons are not claimed supported; the whole-sign procedure is not Placidus and applies no refraction/nutation correction.
 - Cross-check against known Western chart datasets and integrate JPL ephemeris/natal aspects only after verifiable reference vectors.
 - Formula research: https://en.wikipedia.org/wiki/Ascendant ; mean obliquity: https://www2.mps.mpg.de/homes/fraenz/systems/systems3art/node3.html
+
+## 2026-10-25 Natal pipeline integration checkpoint
+- `natal_pipeline.py` now combines IANA birth-time/DST validation, the existing mean-sidereal ascendant and Whole Sign Houses engine, existing Skyfield ecliptic planets/aspects, and annual profections in one provisional record.
+- Development test seam injects deterministic planetary fixtures without acquiring a JPL kernel or sending any Telegram birth data. Tests cover valid Myanmar timezone, UTC-vs-local birth-day rollover, DST fall-back, DST gaps, invalid coordinates/kernel path, twelve houses and rejected provider results.
+- `Skyfield ecliptic_frame` is explicitly the **true** ecliptic/equinox of date, while current `western_houses.py` uses a **mean** GMST/obliquity approximation. Research confirmed that distinction: https://rhodesmill.org/skyfield/api-framelib.html. Align conventions and independently benchmark chart outputs before any forecast is exposed.
+- No JPL SPK kernel is bundled, and no real-kernel astronomy integration test has passed yet.
+- No user-facing `/natal` command until reference-data comparison, provenance, group/privacy review and final release criteria are done.
