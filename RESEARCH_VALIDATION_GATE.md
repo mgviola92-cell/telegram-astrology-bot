@@ -51,3 +51,12 @@ This document tracks actual completed versus pending work. No features added bey
 - `Skyfield ecliptic_frame` is explicitly the **true** ecliptic/equinox of date, while current `western_houses.py` uses a **mean** GMST/obliquity approximation. Research confirmed that distinction: https://rhodesmill.org/skyfield/api-framelib.html. Align conventions and independently benchmark chart outputs before any forecast is exposed.
 - No JPL SPK kernel is bundled, and no real-kernel astronomy integration test has passed yet.
 - No user-facing `/natal` command until reference-data comparison, provenance, group/privacy review and final release criteria are done.
+
+## 2026-10-25 Privacy and chart-integrity work
+- `profile_store.py` added: explicit opt-in only, application-layer Fernet encryption, SQLite persistence of Telegram numeric user ID, ciphertext and timestamps; update, personal deletion and retention cutoff supported.
+- `profile_commands.py` adds private-only `/savebirth YYYY-MM-DD အတည်ပြု`, `/mybirth`, and `/forgetbirth`. Feature stays disabled unless both `PROFILE_DB_PATH` and `PROFILE_ENCRYPTION_KEY` are set. Existing reading commands do not silently save personal birth data.
+- `tests/test_profile_store.py` and `tests/test_profile_commands.py` cover consent, encrypted bytes, wrong key, rejection of unexpected fields, user deletion and date validation. These are authored test cases; the full CI suite has not been verified as passing.
+- `natal_pipeline.py` now rejects inconsistent longitude/zodiac sign combinations and nonfinite or missing longitudes; new test fixtures cover them.
+- Encryption at rest is **not** a substitute for filesystem access controls, secure backup/rotation, limited logging, user data expiry, and safe production deployment. SQLite deletion does not by itself guarantee erasure from existing backups.
+- No photo/animation binaries saved in profile database. Media uses Telegram-hosted `file_id` references.
+- The expected release remains **blocked** by independent astronomy fixtures, rule interpretations, fully reviewed Telegram group/privacy flows, operational security and CI.
