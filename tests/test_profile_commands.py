@@ -7,6 +7,8 @@ class ConsentParsingTests(unittest.TestCase):
     self.assertEqual(parse_consent_command("/savebirth 2005-12-23 အတည်ပြု"),"2005-12-23")
  def test_no_silent_consent(self):
     with self.assertRaises(ValueError):parse_consent_command("/savebirth 2005-12-23")
+ def test_unrelated_command_rejected(self):
+    with self.assertRaises(ValueError):parse_consent_command('/other 2005-12-23 confirmed')
  def test_wrong_consent(self):
     with self.assertRaises(ValueError):parse_consent_command("/savebirth 2005-12-23 yes")
  def test_reject_future_birth(self):
