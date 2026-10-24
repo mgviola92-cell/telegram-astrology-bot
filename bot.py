@@ -14,10 +14,12 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKe
 from astro_core import life_path
 from bazi_core import calculate_bazi
 from tarot_core import draw_tarot
+from tarot_sessions import TarotSessions
 from myanmar_core import myanmar_birth_day
 from evidence_ui import evidence_button, get_rule
 
 dp=Dispatcher()
+tarot_sessions = TarotSessions()
 
 def menu():
     return InlineKeyboardMarkup(inline_keyboard=[
@@ -174,24 +176,104 @@ async def bazi(message: Message):
         parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id'])
     )
 
+def tarot_choice_keyboard(token: str) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text='🌙 ပထမကတ်', callback_data=f'tarotpick:{token}:0'),
+        InlineKeyboardButton(text='✨ ဒုတိယကတ်', callback_data=f'tarotpick:{token}:1'),
+        InlineKeyboardButton(text='🔮 တတိယကတ်', callback_data=f'tarotpick:{token}:2'),
+    ]])
+
+
+async def open_tarot(message: Message, *, user_id: int):
+    if message.chat.type != 'private':
+        await message.answer('🌙 ကံကြမ္မာကတ်ရွေးဖို့ သီးသန့်ဇာတာခန်းကို ဝင်ခဲ့ပါ။')
+        return
+    token = tarot_sessions.start(owner_id=user_id, chat_id=message.chat.id)
+    text = ('🃏 <b>ကတ်သုံးချပ်ထဲက တစ်ချပ်ရွေးပါ</b>\\n'
+            '━━━━━━━━━━━━━━\\n'
+            'ကြယ်စင်တို့၏ နိမိတ်ကို ဘယ်ကတ်က ဖော်ပြမလဲ…')
+    media_id = os.getenv('TAROT_SHUFFLE_FILE_ID', '').strip()
+    if media_id:
+        try:
+            sent = await message.answer_animation(
+                animation=media_id, caption=text, parse_mode='HTML',
+                reply_markup=tarot_choice_keyboard(token)
+            )
+        except Exception:
+            logging.exception('Configured Tarot animation unavailable; using text fallback')
+            sent = await message.answer(text, parse_mode='HTML', reply_markup=tarot_choice_keyboard(token))
+    else:
+        sent = await message.answer(text, parse_mode='HTML', reply_markup=tarot_choice_keyboard(token))
+    tarot_sessions.bind_message(token, owner_id=user_id, chat_id=message.chat.id, message_id=sent.message_id)
+
+
 @dp.message(Command('tarot'))
 async def tarot_cmd(message: Message):
-    await send_tarot(message)
+    if not message.from_user:
+        return
+    await open_tarot(message, user_id=message.from_user.id)
+
 
 @dp.callback_query(F.data == 'tarot:single')
 async def tarot_cb(cb: CallbackQuery):
     await cb.answer()
-    await send_tarot(cb.message)
+    if cb.message:
+        await open_tarot(cb.message, user_id=cb.from_user.id)
 
-async def send_tarot(message: Message):
-    reading=draw_tarot('single')
-    card=reading['cards'][0]['card']
-    await message.answer(
-        f'🃏 <b>ယနေ့ သင့်လက်ထဲကျလာသောကတ်</b>\n━━━━━━━━━━━━━━\n'
-        f'<b>{html.escape(card)}</b>\n\n'
-        'ကတ်ဆွဲခြင်းမှာ ကျပန်းဖြစ်ပြီး ရိုးရာအနက်ဖွင့်ဆိုချက်ကို စိစစ်ပြုစုနေဆဲဖြစ်သည်။',
-        parse_mode='HTML', reply_markup=evidence_button(reading['evidence']['rule_id'])
+
+@dp.callback_query(F.data.startswith('tarotpick:'))
+async def tarot_pick(cb: CallbackQuery):
+    try:
+        _, token, raw_choice = (cb.data or '').split(':', 2)
+        choice = int(raw_choice)
+    except (ValueError, TypeError):
+        await cb.answer('🌫️ ကတ်ရွေးချယ်မှု မမှန်ပါ။', show_alert=True)
+        return
+    if not cb.message:
+        await cb.answer('🌫️ ဤကတ်ကို ဖွင့်မရတော့ပါ။', show_alert=True)
+        return
+    status, card = tarot_sessions.reveal(
+        token, owner_id=cb.from_user.id, chat_id=cb.message.chat.id,
+        message_id=cb.message.message_id, choice=choice
     )
+    if status != 'ok':
+        notices = {
+            'unauthorized': '🌙 ဒီကတ်က သင့်အတွက် ရွေးထားတာ မဟုတ်ပါ။',
+            'expired': '🌫️ ကတ်ရွေးချိန်ကုန်သွားပါပြီ။ အသစ်ပြန်ဆွဲပါ။',
+            'already_used': '✨ ဒီကတ်ကို ဖွင့်ပြီးပါပြီ။',
+            'invalid': '🌫️ ကတ်ရွေးချယ်မှု မမှန်ပါ။',
+        }
+        await cb.answer(notices.get(status, '🌫️ နောက်တစ်ကြိမ် ပြန်စမ်းပါ။'), show_alert=True)
+        return
+    await cb.answer('✨ သင့်ကတ်ကို ဖွင့်လိုက်ပါပြီ။')
+    result_text = (
+        '🃏 <b>သင့်ထံ ရောက်လာသောကတ်</b>\\n━━━━━━━━━━━━━━\\n'
+        f'<b>{html.escape(card)}</b>\\n\\n'
+        'ဤကတ်ကို ရိုးရာ Tarot ကတ် ၇၈ ချပ်မှ ကျပန်းရွေးထားသည်။ '
+        'ကျမ်းကိုးအခြေခံ Card Meanings ကို ဆက်လက်စိစစ်နေသည်။'
+    )
+    # Reuse one Telegram-hosted asset for every reveal; result name always comes
+    # from the previously assigned session, not from media filenames.
+    reveal_id = os.getenv('TAROT_REVEAL_FILE_ID', '').strip()
+    try:
+        if reveal_id:
+            from aiogram.types import InputMediaAnimation
+            await cb.message.edit_media(
+                media=InputMediaAnimation(media=reveal_id, caption=result_text, parse_mode='HTML'),
+                reply_markup=evidence_button('TAROT-DRAW-001')
+            )
+        elif cb.message.animation:
+            # edit_caption reuses the same Telegram-hosted shuffle animation without reuploading
+            await cb.message.edit_caption(caption=result_text, parse_mode='HTML',
+                reply_markup=evidence_button('TAROT-DRAW-001'))
+        else:
+            await cb.message.edit_text(result_text, parse_mode='HTML',
+                reply_markup=evidence_button('TAROT-DRAW-001'))
+    except Exception:
+        logging.exception('Cannot edit Tarot card message; sending text fallback')
+        await cb.message.answer(result_text, parse_mode='HTML',
+            reply_markup=evidence_button('TAROT-DRAW-001'))
+
 
 async def main():
     token=os.environ.get('TELEGRAM_BOT_TOKEN')
