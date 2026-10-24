@@ -100,3 +100,10 @@ This document tracks actual completed versus pending work. No features added bey
 - New `preflight.py --mode deploy` checks Telegram token presence, paired Fernet profile secrets, writable DB parent, configured local JPL .bsp file, and optional Telegram animation file IDs. This is a readiness diagnostic, **not a substitute** for secrets-provider, file coverage, or real-lunar/real-kernel functional tests.
 - `.env.example` lists names only and contains no secret values. The actual environment variables and production storage still need to be provisioned when a release is authorized.
 - IMPORTANT: no successful full CI workflow or deployed service verified yet. The project remains blocked for release.
+
+## 2026-10-25 preflight correction and source integrity checkpoint
+- The Telegram bot already has text-only Tarot fallback, so missing Tarot animation file IDs are optional. Deploy preflight no longer fails on missing optional animation assets.
+- JPL kernel only becomes a mandatory readiness check when `ENABLE_WESTERN_NATAL=1` is explicitly provided, because there is no public `/natal` feature yet. That variable alone does not activate a Telegram command. An explicitly configured but absent kernel file remains a failed configuration.
+- User-facing welcome statement corrected to reflect strictly opt-in encrypted birth storage, rather than claiming that no database can ever be used.
+- Added `tests/test_static_integrity.py` checks for syntactic validity, code-referenced evidence IDs, Bot constructor secrets, private birth handlers, and use of a local Skyfield kernel loader. New deploy preflight unit cases cover optional assets and enabled vs disabled kernel.
+- Direct Python execution of the entire repository was not available due to blocked GitHub network access from the local container and missing aiogram/lunar-python/skyfield. Passing GitHub Actions status is therefore **not verified**. No deploy occurred.
