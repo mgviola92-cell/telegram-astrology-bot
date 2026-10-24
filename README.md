@@ -92,3 +92,6 @@ The new `myanmar_calendar.py` port follows [Yan Naing Aye's mmcal MIT implementa
 
 ## BaZi hidden stems
 `bazi_hidden_stems.py` adapts the documented `lunar-python` `ZHI_HIDE_GAN` table and validates every sexagenary pillar. Four branch hidden-stem sets appear in `/bazi` with their own source button. Direct comparison tests use the upstream `getYearHideGan`, `getMonthHideGan`, `getDayHideGan` and `getTimeHideGan` methods. The lookup does not infer favorable elements or Day Master strength; independent solar-time, sector boundaries and interpretation work remain. Development stage; not deployed.
+
+## BaZi Da Yun (development only)
+The new `bazi_luck.py` uses the documented `lunar-python` EightChar -> Yun -> DaYun chain for start dates, forward/reverse direction and conventional ten-year Ganzhi cycles. The 0/1 gender mapping is the upstream library's traditional rule, is supplied explicitly, and can be skipped; it is never inferred from name/profile. The Yun calculation sect (1 or 2) is supplied explicitly and the output carries source assumptions. Ages are **traditional nominal ages** as returned by the library. This is not yet presented by the Telegram bot or validated with the live installed library in this environment; no automatic public predictions are derived from the periods.
