@@ -86,3 +86,9 @@ This document tracks actual completed versus pending work. No features added bey
 - `tests/test_bazi_luck.py` includes input guards, source-method comparison for both sect variants, direction reversal and decade continuity. **Live lunar-python integration tests have not passed in this environment because the dependency could not be installed over network.**
 - No optional gender is guessed or automatically inferred from Telegram. No public command is enabled for this module. Before exposing the traditional gender-dependent convention, review an explicit choice/skip path and document the limitations. The calendar interpretation is not empirical predictive validation.
 - True Solar Time, locality, jie boundary handling, professional interpretation and end-to-end tests remain outstanding; no user trial or deployment yet.
+
+## 2026-10-25 BaZi Ten Gods calculation checkpoint
+- `bazi_ten_gods.py` now computes each of the ten traditional stem relationships relative to the Day Master using the Five Phases generating/controlling cycles and Yin/Yang parity. Both four visible stems and all branch hidden stems are labelled.
+- Audited source: `6tail/lunar-python` `lunar_python/util/LunarUtil.py` `SHI_SHEN` 100-pair mapping; comparison test checks **all ten-by-ten stem combinations**, plus Four Pillars and hidden-stem integration tests.
+- `/bazi` native reply includes a concise Ten Gods list and a provenance button. These labels are **not forecasts, diagnoses, seasonal strength, or life-event guarantees**.
+- No live dependency-backed integration test result confirmed in the current session; independent interpretation references and CI remain pending. Source: https://github.com/6tail/lunar-python/blob/master/lunar_python/util/LunarUtil.py
