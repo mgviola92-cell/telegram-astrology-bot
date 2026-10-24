@@ -217,6 +217,8 @@ async def bazi(message: Message):
         return
     p=result['pillars']
     visible=result['visible_wuxing']
+    bazi_markup=evidence_button(result['evidence']['rule_id'])
+    bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-VISIBLE-WUXING-001').inline_keyboard)
     balance=' · '.join(f'{name}: {count}' for name,count in visible['visible_counts'].items())
     await message.answer(
         '🐉 <b>တရုတ်ဇာတာလေးတိုင်</b>\n━━━━━━━━━━━━━━\n'
@@ -229,7 +231,7 @@ async def bazi(message: Message):
         f'📖 <code>{result["evidence"]["rule_id"]}</code>\n'
         f'လက်ခံထားသော Timezone — <code>{html.escape(normalized["timezone"])}</code>\n'
         'True Solar Time မပြင်ရသေးသော စမ်းသပ်ဇာတာဖြစ်သည်။',
-        parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id'])
+        parse_mode='HTML', reply_markup=bazi_markup
     )
 
 def tarot_choice_keyboard(token: str) -> InlineKeyboardMarkup:
