@@ -40,6 +40,24 @@ class ProfileStoreTests(unittest.TestCase):
     with self.assertRaises(ValueError):self.store.save(123,{"birth_date":"2005-12-23","password":"secret"},explicit_consent=True)
  def test_reject_invalid_user(self):
     with self.assertRaises(ValueError):self.store.delete(-1)
+ def test_transaction_rollback_on_exception(self):
+    self.store.save(123,self.birth,explicit_consent=True)
+    with self.assertRaises(RuntimeError):
+        with self.store._connection() as conn:
+            conn.execute("DELETE FROM birth_profiles WHERE user_id=?",(123,))
+            raise RuntimeError("Abort transaction")
+    self.assertEqual(self.store.read(123),self.birth)
+ def test_reject_future_date(self):
+    with self.assertRaises(ValueError):
+        self.store.save(123,{"birth_date":"2099-01-01"},explicit_consent=True)
+ def test_reject_invalid_latitude(self):
+    with self.assertRaises(ValueError):
+        self.store.save(123,{"birth_date":"2005-12-23","latitude":float("nan")},explicit_consent=True)
+    with self.assertRaises(ValueError):
+        self.store.save(123,{"birth_date":"2005-12-23","latitude":100},explicit_consent=True)
+ def test_reject_noncanonical_date(self):
+    with self.assertRaises(ValueError):
+        self.store.save(123,{"birth_date":"2005-2-3"},explicit_consent=True)
  def test_cleanup(self):
     self.store.save(1,self.birth,explicit_consent=True)
     self.assertEqual(self.store.delete_older_than(1700000001),1)
