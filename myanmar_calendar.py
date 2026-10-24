@@ -71,6 +71,16 @@ def jdn_to_myanmar(jdn):
     mm+=f*3-e*4+12*mmt
     return my,myt,mm,md
 
+def moon_phase_and_fortnight(mm,md,myt):
+    """Faithful adaptation of mmcal cal_mml, cal_mp and cal_mf."""
+    month_length=30-(mm%2)
+    if mm==3:
+        month_length+=myt//2
+    if md<1 or md>month_length:
+        raise ValueError('Invalid Myanmar lunar day')
+    phase=(md+1)//16+md//16+md//month_length
+    return ('waxing','full moon','waning','new moon')[phase],md-15*(md//16)
+
 def astrology_days(mm,wd):
     m=mm%4
     wd1=m//2+4
@@ -86,13 +96,14 @@ def calculate_myanmar_calendar(local_day:date)->dict:
     jdn=local_day.toordinal()+1721425
     my,myt,mm,md=jdn_to_myanmar(jdn)
     if mm not in MONTHS or not 1<=md<=30:raise ValueError('Invalid result; check reference data')
+    phase,fortnight_day=moon_phase_and_fortnight(mm,md,myt)
     wd=(local_day.weekday()+2)%7
     yatyaza,pyathada=astrology_days(mm,wd)
     mahabote=HOUSES[(my-wd)%7]
-    facts={'myanmar_year':my,'month_id':mm,'month_day':md,'year_type':myt,'mahabote_house':mahabote,'yatyaza':yatyaza,'pyathada_type':pyathada}
+    facts={'myanmar_year':my,'month_id':mm,'month_day':md,'moon_phase':phase,'fortnight_day':fortnight_day,'year_type':myt,'mahabote_house':mahabote,'yatyaza':yatyaza,'pyathada_type':pyathada}
     ev=Evidence(rule_id='MM-CALENDAR-MMCAL-001',tradition='Myanmar calendrical astrology',
         method='Proleptic Gregorian JDN -> Myanmar date, watat, yatyaza, pyathada, mahabote using mmcal',
         input_assumptions={'local_gregorian_date':local_day.isoformat(),'calendar_type':'proleptic Gregorian'},
         derived_facts=facts,reference='Yan Naing Aye, mmcal javascript/ceMmDateTime.js, MIT copyright 2018')
     return {'myanmar_year':my,'month':MONTHS[mm],'month_index':mm,'day':md,'year_type':myt,
-            'yatyaza':yatyaza,'pyathada':pyathada,'mahabote':mahabote,'evidence':asdict(ev)}
+            'moon_phase':phase,'fortnight_day':fortnight_day,'yatyaza':yatyaza,'pyathada':pyathada,'mahabote':mahabote,'evidence':asdict(ev)}
