@@ -73,3 +73,9 @@ This document tracks actual completed versus pending work. No features added bey
 - The primary elements for all eight visible Heavenly Stem / Earthly Branch characters are counted by `bazi_elements.py`, with a separate evidence button.
 - The reference pillars 乙酉 戊子 辛巳 壬辰 give Wood 1, Fire 1, Earth 2, Metal 2, Water 2. Reference links: https://www.ibiblio.org/chinesehistory/contents/08fea/c06s02.htm and https://uaya.org/iching/correspondences/.
 - This is not hidden-stem weighting or seasonal Day Master strength. More rule research and CI verification are required before release.
+
+## BaZi hidden-stems checkpoint
+- Implemented source-ordered 12-branch hidden stem lookup in `bazi_hidden_stems.py`, using upstream `6tail/lunar-python` `LunarUtil.ZHI_HIDE_GAN` values; standalone tests and direct comparison to each `EightChar.get*HideGan()` are committed.
+- Calculation is integrated into `bazi_core.py`; native `/bazi` now displays year/month/day/hour hidden stems with a provenance button.
+- This is a deterministic branch lookup, **not** a weighted elemental strength calculation or a future prediction. Seasonal qi, month command, true solar time, sect transitions and Luck Pillars still require reviewed convention and reference tests.
+- Reference: https://github.com/6tail/lunar-python/blob/master/lunar_python/EightChar.py
