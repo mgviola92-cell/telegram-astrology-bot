@@ -115,6 +115,8 @@ async def myanmar_calendar_command(message: Message):
     except (ValueError,TypeError):
         await message.answer('🌫️ 1900–2100 အတွင်း YYYY-MM-DD ပုံစံနဲ့ ရက်စွဲပြန်ဖြည့်ပါ။')
         return
+    phases={'waxing':'လဆန်း','full moon':'လပြည့်','waning':'လဆုတ်','new moon':'လကွယ်'}
+    phase=phases[result['moon_phase']]
     yatyaza='ရက်ရာဇာ' if result['yatyaza'] else 'မဟုတ်ပါ'
     pyathada={0:'မဟုတ်ပါ',1:'ပြဿဒါး',2:'မွန်းလွဲပြဿဒါး'}[result['pyathada']]
     await message.answer(
@@ -122,6 +124,7 @@ async def myanmar_calendar_command(message: Message):
         f'မြန်မာသက္ကရာဇ် — <b>{result["myanmar_year"]}</b>\n'
         f'မြန်မာလ — <b>{html.escape(result["month"])}</b>\n'
         f'လရက် — <b>{result["day"]}</b>\n'
+        f'လအခြေအနေ — <b>{phase} {result["fortnight_day"]} ရက်</b>\n'
         f'မဟာဘုတ် — <b>{html.escape(result["mahabote"])}</b>\n'
         f'ရက်ရာဇာ — <b>{yatyaza}</b>\n'
         f'ပြဿဒါး — <b>{pyathada}</b>\n\n'
