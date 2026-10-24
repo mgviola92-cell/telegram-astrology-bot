@@ -28,6 +28,12 @@ RULES = {
         'source': 'Traditional Five Phases correspondences: https://www.ibiblio.org/chinesehistory/contents/08fea/c06s02.htm ; https://uaya.org/iching/correspondences/',
         'limits': 'Hidden Stems, Seasonal Strength နှင့် Day Master အားကောင်းမှု မတွက်ရသေးပါ။ အရေအတွက်တစ်ခုတည်းဖြင့် အနာဂတ်ဖြစ်ရပ် မဆုံးဖြတ်နိုင်ပါ။'
     },
+    'CHN-BAZI-TENGODS-001': {
+        'heading': 'BaZi Ten Gods (ဆယ်မျိုးဆက်စပ်မှု)',
+        'method': 'Day Master နဲ့ Heavenly Stem တစ်ခုချင်းစီ၏ ဓာတ်မွေးပေးခြင်း၊ ဓာတ်ထိန်းချုပ်ခြင်း၊ Yin/Yang တူကွာခြင်းကို ရိုးရာစည်းမျဉ်းအတိုင်း တွက်ချက်သည်။',
+        'source': '6tail/lunar-python: LunarUtil.SHI_SHEN; https://github.com/6tail/lunar-python',
+        'limits': 'ဤရလဒ်သည် Stems အကြား ရိုးရာအမျိုးအစားခွဲခြားမှုသာဖြစ်ပြီး ကံကြမ္မာအာမခံချက်၊ Day Master အားကောင်းမှု၊ ဆေးဘက်/ငွေကြေးအကြံပြုချက် မဟုတ်ပါ။'
+    },
     'CHN-BAZI-HIDDEN-STEMS-001': {
         'heading': 'BaZi ဌာနချုပ်အတွင်း ဝှက်ထားသော ဂန္ဓာရုံ (Hidden Stems)',
         'method': 'Earthly Branch ၁၂ မျိုးအလိုက် ထုံးတမ်း Hidden Stems (藏干) ကို အဓိကဓာတ်မှစ၍ မူရင်းအစဉ်အတိုင်း ဖော်ပြသည်။',
