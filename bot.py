@@ -189,8 +189,8 @@ async def open_tarot(message: Message, *, user_id: int):
         await message.answer('🌙 ကံကြမ္မာကတ်ရွေးဖို့ သီးသန့်ဇာတာခန်းကို ဝင်ခဲ့ပါ။')
         return
     token = tarot_sessions.start(owner_id=user_id, chat_id=message.chat.id)
-    text = ('🃏 <b>ကတ်သုံးချပ်ထဲက တစ်ချပ်ရွေးပါ</b>\\n'
-            '━━━━━━━━━━━━━━\\n'
+    text = ('🃏 <b>ကတ်သုံးချပ်ထဲက တစ်ချပ်ရွေးပါ</b>\n'
+            '━━━━━━━━━━━━━━\n'
             'ကြယ်စင်တို့၏ နိမိတ်ကို ဘယ်ကတ်က ဖော်ပြမလဲ…')
     media_id = os.getenv('TAROT_SHUFFLE_FILE_ID', '').strip()
     if media_id:
@@ -247,8 +247,8 @@ async def tarot_pick(cb: CallbackQuery):
         return
     await cb.answer('✨ သင့်ကတ်ကို ဖွင့်လိုက်ပါပြီ။')
     result_text = (
-        '🃏 <b>သင့်ထံ ရောက်လာသောကတ်</b>\\n━━━━━━━━━━━━━━\\n'
-        f'<b>{html.escape(card)}</b>\\n\\n'
+        '🃏 <b>သင့်ထံ ရောက်လာသောကတ်</b>\n━━━━━━━━━━━━━━\n'
+        f'<b>{html.escape(card)}</b>\n\n'
         'ဤကတ်ကို ရိုးရာ Tarot ကတ် ၇၈ ချပ်မှ ကျပန်းရွေးထားသည်။ '
         'ကျမ်းကိုးအခြေခံ Card Meanings ကို ဆက်လက်စိစစ်နေသည်။'
     )
