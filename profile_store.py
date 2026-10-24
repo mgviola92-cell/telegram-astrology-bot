@@ -12,18 +12,24 @@ from datetime import date, datetime
 from math import isfinite
 from pathlib import Path
 from typing import Mapping
-from cryptography.fernet import Fernet, InvalidToken
+from cryptography.fernet import Fernet, InvalidToken, MultiFernet
 
 MAX_PAYLOAD_BYTES=4096
 FIELDS=frozenset({"birth_date", "birth_time", "birth_timezone", "latitude", "longitude_east", "label"})
 
 class ProfileStore:
-    def __init__(self, db_path: str, encryption_key: str | bytes, *, now=None):
+    def __init__(self, db_path: str, encryption_key: str | bytes, *, now=None, old_keys=()):
         if not encryption_key:
             raise ValueError("PROFILE_ENCRYPTION_KEY is required")
         if not db_path or db_path==":memory:":
             raise ValueError("Use a persistent SQLite path; memory databases are not supported here")
-        self._crypto=Fernet(encryption_key.encode("ascii") if isinstance(encryption_key,str) else encryption_key)
+        if isinstance(old_keys, (bytes, str)):
+            raise ValueError("old_keys must be a sequence of key values, not one string")
+        keys=[encryption_key,*old_keys]
+        self._crypto=MultiFernet([
+            Fernet(key.encode("ascii") if isinstance(key,str) else key)
+            for key in keys
+        ])
         self._db_path=str(Path(db_path))
         self._now=now or (lambda:int(time.time()))
         with self._connection() as conn:
@@ -114,6 +120,20 @@ class ProfileStore:
             return json.loads(self._crypto.decrypt(row[0]).decode("utf-8"))
         except (InvalidToken,UnicodeDecodeError,ValueError) as exc:
             raise ValueError("Profile unreadable: wrong encryption key or corrupted data") from exc
+
+    def rotate_encrypted_profiles(self)->int:
+        """Re-encrypt existing ciphertext under the primary key, atomically.
+
+        Deploy with new key first and all prior keys in old_keys. Verify all
+        records are readable before removing old keys from secure configuration.
+        Backups made before rotation may still require older keys.
+        """
+        with self._connection() as conn:
+            entries=conn.execute("SELECT user_id, encrypted_payload FROM birth_profiles").fetchall()
+            rotations=[(self._crypto.rotate(row[1]),row[0]) for row in entries]
+            for encrypted, user_id in rotations:
+                conn.execute("UPDATE birth_profiles SET encrypted_payload=? WHERE user_id=?",(encrypted,user_id))
+        return len(rotations)
 
     def delete(self,user_id:int)->bool:
         self._validate_user(user_id)
