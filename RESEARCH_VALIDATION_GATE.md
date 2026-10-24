@@ -32,3 +32,8 @@ Scope frozen: Myanmar astrology, Western natal/timing, Chinese BaZi, numerology,
 No photos, MP4s, GIFs, full birth records in file blobs. Cache Telegram file IDs and store only minimal consented records. Requests and recipient data still have nonzero bandwidth. One in-memory Tarot session is not multi-worker safe. No claim of zero cost.
 
 This document tracks actual completed versus pending work. No features added beyond agreed scope.
+
+## Calculation milestone 2026-10-25
+- Myanmar moon phase / fortnight display ported from mmcal and regression cases authored. Historical cross-validation remains release-blocking.
+- Western aspect angle geometry and configurable orb policy completed, with unit tests and provenance. Actual natal ephemeris, ascendant, tropical longitudes and school-specific timing need further work.
+- No new agreed feature scope, no Render, no Mini App, no Vedic.
