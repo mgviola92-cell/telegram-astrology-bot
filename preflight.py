@@ -10,7 +10,6 @@ import os
 import sqlite3
 import sys
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 DEPENDENCIES = {
     "aiogram": "Telegram native bot",
@@ -55,16 +54,24 @@ def inspect_environment(*, mode="ci", environ=None):
             parent=Path(path).expanduser().parent
             add("database_directory",parent.is_dir() and os.access(parent,os.W_OK),
                 "Persistent SQLite destination parent must already exist and be writable")
+        # Western natal is not exposed by the bot yet. Its kernel is optional
+        # unless an operator explicitly enables that calculation feature.
         kernel=env.get("JPL_EPHEMERIS_PATH","").strip()
-        add("jpl_kernel_present",bool(kernel and Path(kernel).is_file()),
-            "Existing local JPL BSP file required for Western natal computations")
-        if kernel and Path(kernel).is_file():
-            add("jpl_kernel_extension",Path(kernel).suffix.lower()==".bsp",
-                "Configured JPL ephemeris path should be a .bsp file")
-        add("tarot_reveal_asset",bool(env.get("TAROT_REVEAL_FILE_ID","").strip()),
-            "Telegram file_id required for reveal animation")
-        add("tarot_shuffle_asset",bool(env.get("TAROT_SHUFFLE_FILE_ID","").strip()),
-            "Telegram file_id required for shuffle animation")
+        if env.get("ENABLE_WESTERN_NATAL","").strip()=="1":
+            add("jpl_kernel_present",bool(kernel and Path(kernel).is_file()),
+                "Existing local JPL BSP file required when Western natal is enabled")
+            if kernel and Path(kernel).is_file():
+                add("jpl_kernel_extension",Path(kernel).suffix.lower()==".bsp",
+                    "Configured JPL ephemeris path should be a .bsp file")
+        elif kernel:
+            add("jpl_kernel_optional_path",Path(kernel).is_file(),
+                "Configured optional JPL path must exist if provided")
+        # Animation IDs are optional: bot.py implements a text-only fallback.
+        # Recording them as warnings avoids blocking a valid text-only bot.
+        for var in ("TAROT_REVEAL_FILE_ID","TAROT_SHUFFLE_FILE_ID"):
+            if not env.get(var,"").strip():
+                checks.append({"name":"optional:"+var,"passed":True,
+                               "detail":"Not configured; native text fallback remains available"})
     return {"mode":mode,"passed":all(x["passed"] for x in checks),
             "checks":checks}
 
