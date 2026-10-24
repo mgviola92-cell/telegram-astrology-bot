@@ -32,6 +32,21 @@ class DaYunTests(unittest.TestCase):
         self.assertEqual(got["forward"],upstream.isForward())
         self.assertEqual(got["start_offset"]["years"],upstream.getStartYear())
         self.assertEqual(got["evidence"]["input_assumptions"]["birth_place_timezone"],"Asia/Yangon")
+    def test_opposite_gender_codes_reverse_direction(self):
+        try:import lunar_python
+        except ImportError:self.skipTest("lunar-python dependency not present")
+        a=calculate_bazi_luck(self.birth,gender=0,cycles=2)
+        b=calculate_bazi_luck(self.birth,gender=1,cycles=2)
+        self.assertNotEqual(a["forward"],b["forward"])
+        self.assertNotEqual([x["gan_zhi"] for x in a["periods"]],
+                            [x["gan_zhi"] for x in b["periods"]])
+    def test_decade_year_ranges(self):
+        try:import lunar_python
+        except ImportError:self.skipTest("lunar-python dependency not present")
+        result=calculate_bazi_luck(self.birth,gender=1,cycles=8)
+        self.assertEqual(len(result["periods"]),8)
+        for previous,current in zip(result["periods"],result["periods"][1:]):
+            self.assertEqual(current["start_year"],previous["end_year"]+1)
     def test_sect_2_matches_upstream(self):
         try:import lunar_python
         except ImportError:self.skipTest("lunar-python dependency not present")
