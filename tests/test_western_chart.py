@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timezone
-from western_chart import tropical_sign, chart_from_longitudes, geocentric_chart
+from western_chart import tropical_sign, chart_from_longitudes, geocentric_chart, TARGETS
 
 class WesternChartTests(unittest.TestCase):
     def test_all_sign_boundaries(self):
@@ -24,6 +24,12 @@ class WesternChartTests(unittest.TestCase):
     def test_missing_ephemeris(self):
         with self.assertRaises(FileNotFoundError):
             geocentric_chart(datetime(2000,1,1,tzinfo=timezone.utc),'/does/not/exist.bsp')
+    def test_ephemeris_targets_are_named_honestly(self):
+        self.assertEqual(TARGETS['Jupiter'],'jupiter barycenter')
+        self.assertEqual(TARGETS['Pluto barycenter'],'pluto barycenter')
+        self.assertEqual(len(TARGETS),10)
+    def test_nonfinite_longitude_rejected(self):
+        with self.assertRaises(ValueError):chart_from_longitudes({'Sun':float('inf')},verified_source='test fixture')
     def test_naive_time_rejected(self):
         with self.assertRaises(ValueError):geocentric_chart(datetime(2000,1,1),'/does/not/exist.bsp')
 
