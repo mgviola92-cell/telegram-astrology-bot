@@ -4,9 +4,9 @@ Myanmar-first Telegram bot, with traditional-source-aware calculations and natur
 
 ## Currently implemented
 - `astro_core.py`: Hellenistic whole-sign Annual Profections (requires a separately calculated rising sign), Pythagorean-style Life Path number with method evidence.
-- `myanmar_core.py`: eight-day weekday from birth-location civil time, Wednesday morning vs afternoon (not a full Myanmar lunar calendar or Mahabote).\n- `evidence_ui.py`: stateless, button-driven method explanations; no user's birth data is embedded in callback payloads.\n- `bazi_core.py`: actual Four Pillars, five elements and Ten Gods via `lunar-python`. Requires birth-location civil time; timezone/true-solar-time checks are **not yet integrated**.
+- `myanmar_calendar.py`: Python adaptation of Yan Naing Aye's MIT-licensed mmcal formulas for Gregorian→Myanmar month/day/year, leap-year type, Mahabote, Yatyaza and Pyathada, with date regression coverage.\n- `myanmar_core.py`: eight-day weekday from birth-location civil time, Wednesday morning vs afternoon (not a full Myanmar lunar calendar or Mahabote).\n- `evidence_ui.py`: stateless, button-driven method explanations; no user's birth data is embedded in callback payloads.\n- `bazi_core.py`: actual Four Pillars, five elements and Ten Gods via `lunar-python`. Requires birth-location civil time; timezone/true-solar-time checks are **not yet integrated**.
 - `tarot_core.py`: authentic 78-card structure with secure random draws without replacement; no fabricated traditional card interpretations.
-- `bot.py`: early aiogram Telegram interface with Burmese `/start`, `/help`, `/number`, `/myday`, `/bazi` and `/tarot` plus inline navigation. Group birth data redirected to private chat.
+- `bot.py`: early aiogram Telegram interface with Burmese `/start`, `/help`, `/number`, `/myday`, `/mmcal`, `/bazi` and `/tarot` plus inline navigation. Group birth data redirected to private chat.
 - `tests/`: test suites including upstream BaZi reference vector; CI configured at `.github/workflows/tests.yml`.
 - `rules/README.md`: editorial evidence policy for future interpretations.
 
@@ -27,7 +27,7 @@ python bot.py
 **Do not paste your token into chat, commit it, or add it to the repository.**
 
 ## Important limitations
-- Myanmar eight-day weekday is implemented, but no validated Myanmar lunar calendar engine, full Western natal chart, ascendant/ephemeris, timezone corrections, complete classical predictions, historical birth profile storage, or admin panel yet.
+- Myanmar calendar formulas are implemented with smoke fixtures, but independent cross-checks of historical boundary dates remain pending; no full Western natal chart, ascendant/ephemeris, timezone corrections, complete classical predictions, historical birth profile storage, or admin panel yet.
 - This is a development build, not production-ready; do not claim the bot predicts future events with measured accuracy.
 - Traditional astrology forecasts are not scientifically demonstrated to reliably predict future events.
 - No Render deployment yet, by request.
@@ -50,3 +50,6 @@ python bot.py
 - Separate card artwork for each actual card and traditional card-meaning corpus are still pending. The current generic flip animation must not imply that a different card was drawn.
 
 Research: [Telegram Bot API: sending by file_id and editing messages](https://core.telegram.org/bots/api), [aiogram editMessageMedia](https://docs.aiogram.dev/en/latest/api/methods/edit_message_media.html).
+
+## Myanmar calendar research milestone
+The new `myanmar_calendar.py` port follows [Yan Naing Aye's mmcal MIT implementation](https://github.com/yan9a/mmcal) (copyright 2018 Yan Naing Aye); no unrelated unverified year offset is used. A January 1, 2024 reference and full-leap-year iteration were checked locally. Cross-language exhaustive verification and more original sample dates remain release blockers; **do not claim complete validation**. `/mmcal YYYY-MM-DD` displays computed Myanmar year, month, day, Mahabote, Yatyaza and Pyathada, with rule-provenance button. Full professional predictions remain pending.
