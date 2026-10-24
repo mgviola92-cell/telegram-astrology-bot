@@ -107,3 +107,10 @@ This document tracks actual completed versus pending work. No features added bey
 - User-facing welcome statement corrected to reflect strictly opt-in encrypted birth storage, rather than claiming that no database can ever be used.
 - Added `tests/test_static_integrity.py` checks for syntactic validity, code-referenced evidence IDs, Bot constructor secrets, private birth handlers, and use of a local Skyfield kernel loader. New deploy preflight unit cases cover optional assets and enabled vs disabled kernel.
 - Direct Python execution of the entire repository was not available due to blocked GitHub network access from the local container and missing aiogram/lunar-python/skyfield. Passing GitHub Actions status is therefore **not verified**. No deploy occurred.
+
+## 2026-10-25 Tarot 78-card interpretation checkpoint
+- Added `tarot_meanings.py`: 22 individually authored Burmese Major Arcana themes/reflections plus 4 distinct suit contexts and 14 rank prompts covering the standard 56 Minor Arcana. The engine validates card names and never asserts a guaranteed future event.
+- `tests/test_tarot_meanings.py` verifies that generated names match the entire existing `tarot_core.DECK`, that every entry has a nonempty theme/reflection, and that unsupported card names are rejected. A standalone local 78-card draft passed four offline unit tests prior to the GitHub integration; a full remote CI pass is still unverified.
+- Integrated interpretation in native Telegram Tarot reveal with HTML escaping, concise reflective Burmese explanation and separate evidence button (`TAROT-INTERPRETATION-001`). Existing Telegram-hosted animation `file_id` and text fallback remain.
+- Interpretations are original, short symbolic prompts, not reproduced copyrighted guidebook passages, empirical predictions or medical/financial guarantees.
+- Remaining Tarot art tasks: copyright/license-safe distinct media for 78 cards, Telegram file_id asset mapping, visual QA, animation asset production, and full integration tests.
