@@ -17,6 +17,7 @@ from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
 from tarot_sessions import TarotSessions
 from myanmar_core import myanmar_birth_day
+from myanmar_calendar import calculate_myanmar_calendar
 from evidence_ui import evidence_button, get_rule
 
 dp=Dispatcher()
@@ -25,7 +26,7 @@ tarot_sessions = TarotSessions()
 def menu():
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='🌙 ဇာတာခန်း', callback_data='section:charts'),InlineKeyboardButton(text='📜 ဗေဒင်ကျမ်းတိုက်', callback_data='section:library')],
-        [InlineKeyboardButton(text='🇲🇲 မွေးနေ့နံ ကြည့်မယ်', callback_data='section:myday')],
+        [InlineKeyboardButton(text='🇲🇲 မွေးနေ့နံ ကြည့်မယ်', callback_data='section:myday'),InlineKeyboardButton(text='📅 မြန်မာပြက္ခဒိန်', callback_data='section:mmcal')],
         [InlineKeyboardButton(text='🃏 တားရော့ကတ် ဆွဲမယ်', callback_data='tarot:single')],
         [InlineKeyboardButton(text='✨ တွက်ချက်နည်းများ', callback_data='section:methods')],
     ])
@@ -39,6 +40,7 @@ WELCOME=(
     '• /number 1999-12-31 — မွေးနေ့ကိန်းဂဏန်း\n'
     '• /bazi 2005-12-23 08:37 Asia/Yangon — တရုတ်ဇာတာလေးတိုင်\n'
     '• /myday 2005-12-23 08:37 — မြန်မာ့မွေးနေ့နံ\n'
+    '• /mmcal 2024-01-01 — မြန်မာပြက္ခဒိန်\n'
     '• /tarot — တားရော့ကတ်တစ်ချပ်\n\n'
     'မွေးနေ့၊ မွေးချိန်တွေကို <b>သီးသန့်စကားဝိုင်းမှာသာ</b> ပို့ပါ။ '
     'လက်ရှိအဆင့်မှာ အချက်အလက်တွေကို Database ထဲမသိမ်းထားပါ။'
@@ -86,6 +88,46 @@ async def show_evidence(cb: CallbackQuery):
         '<b>မူရင်းကိုးကား</b>\n'+html.escape(record['source'])+'\n\n'
         '<b>သိထားရန်</b>\n'+html.escape(record['limits']),
         parse_mode='HTML'
+    )
+
+@dp.callback_query(F.data == 'section:mmcal')
+async def myanmar_calendar_guide(cb: CallbackQuery):
+    await cb.answer()
+    await cb.message.answer(
+        '📅 <b>မြန်မာပြက္ခဒိန်</b>\n'
+        'မြန်မာရက်စွဲ၊ မဟာဘုတ်၊ ရက်ရာဇာ၊ ပြဿဒါးတို့ကို တွက်ကြည့်နိုင်ပါတယ်။\n'
+        '<code>/mmcal 2024-01-01</code>',
+        parse_mode='HTML'
+    )
+
+@dp.message(Command('mmcal'))
+async def myanmar_calendar_command(message: Message):
+    if not private_only(message):
+        await message.answer('🔐 မွေးနေ့လို ကိုယ်ရေးအချက်အလက်တွေကို သီးသန့်ဇာတာခန်းမှာပဲ ဖြည့်ပါ။')
+        return
+    fields=(message.text or '').split()
+    if len(fields)!=2:
+        await message.answer('📅 မြန်မာပြက္ခဒိန်ကြည့်ဖို့ <code>/mmcal 2024-01-01</code> လို့ ဖြည့်ပါ။',parse_mode='HTML')
+        return
+    try:
+        day=date.fromisoformat(fields[1])
+        result=calculate_myanmar_calendar(day)
+    except (ValueError,TypeError):
+        await message.answer('🌫️ 1900–2100 အတွင်း YYYY-MM-DD ပုံစံနဲ့ ရက်စွဲပြန်ဖြည့်ပါ။')
+        return
+    yatyaza='ရက်ရာဇာ' if result['yatyaza'] else 'မဟုတ်ပါ'
+    pyathada={0:'မဟုတ်ပါ',1:'ပြဿဒါး',2:'မွန်းလွဲပြဿဒါး'}[result['pyathada']]
+    await message.answer(
+        '📅 <b>မြန်မာပြက္ခဒိန် ရက်စွဲ</b>\n━━━━━━━━━━━━━━\n'
+        f'မြန်မာသက္ကရာဇ် — <b>{result["myanmar_year"]}</b>\n'
+        f'မြန်မာလ — <b>{html.escape(result["month"])}</b>\n'
+        f'လရက် — <b>{result["day"]}</b>\n'
+        f'မဟာဘုတ် — <b>{html.escape(result["mahabote"])}</b>\n'
+        f'ရက်ရာဇာ — <b>{yatyaza}</b>\n'
+        f'ပြဿဒါး — <b>{pyathada}</b>\n\n'
+        'ရိုးရာတွက်ချက်မှုရလဒ်ဖြစ်ပြီး အနာဂတ်ဖြစ်ရပ်အာမခံချက် မဟုတ်ပါ။',
+        parse_mode='HTML',
+        reply_markup=evidence_button(result['evidence']['rule_id'])
     )
 
 @dp.callback_query(F.data == 'section:myday')
