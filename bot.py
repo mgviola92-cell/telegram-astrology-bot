@@ -320,8 +320,8 @@ async def tarot_pick(cb: CallbackQuery):
     result_text = (
         '🃏 <b>သင့်ထံ ရောက်လာသောကတ်</b>\n━━━━━━━━━━━━━━\n'
         f'<b>{html.escape(card)}</b>\n\n'
-        f'🌙 <b>{html.escape(meaning["theme"])}</b>\\n'
-        f'{html.escape(meaning["reflection"])}\\n\\n'
+        f'🌙 <b>{html.escape(meaning["theme"])}</b>\n'
+        f'{html.escape(meaning["reflection"])}\n\n'
         'ဤသည် ရိုးရာ Tarot သင်္ကေတအခြေခံ စဉ်းစားစရာအနက်ဖြစ်ပြီး အနာဂတ်ကို အာမခံမဟုတ်ပါ။'
     )
     # Reuse one Telegram-hosted asset for every reveal; result name always comes
