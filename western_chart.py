@@ -62,14 +62,15 @@ def geocentric_chart(birth_utc: datetime, ephemeris_path: str) -> dict:
     if not ephemeris_path or not Path(ephemeris_path).is_file():
         raise FileNotFoundError("Download and license-check an ephemeris separately")
     try:
-        from skyfield.api import load
+        from contextlib import closing
+        from skyfield.api import load, load_file
         from skyfield.framelib import ecliptic_frame
     except ImportError as exc:
         raise RuntimeError("Install skyfield to compute astronomical positions") from exc
     utc=birth_utc.astimezone(timezone.utc)
     ts=load.timescale()
     t=ts.from_datetime(utc)
-    with load(str(Path(ephemeris_path).resolve())) as kernel:
+    with closing(load_file(str(Path(ephemeris_path).resolve()))) as kernel:
         earth=kernel["earth"]
         values={}
         for label,target in TARGETS.items():
