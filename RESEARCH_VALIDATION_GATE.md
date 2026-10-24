@@ -6,7 +6,7 @@ Scope frozen: Myanmar astrology, Western natal/timing, Chinese BaZi, numerology,
 - Myanmar: Yan Naing Aye's `mmcal` MIT JS/C++ reference (https://github.com/yan9a/mmcal). Do not fake Myanmar dates by subtracting a constant from Gregorian years. Python formula port integrated with limited regression fixtures; independent, broader cross-language verification remains outstanding.
 - Independent Myanmar comparator: `chanmratekoko/mmcalendar` is a **Java** library with astrology markers and Myanmar Standard Time convention, not a Python package (https://github.com/chanmratekoko/mmcalendar). Compare only dates with equivalent calendar conventions.
 - BaZi: `6tail/lunar-python`, upstream fixture 2005-12-23 08:37 -> 乙酉 戊子 辛巳 壬辰 (https://github.com/6tail/lunar-python/blob/master/test/EightCharTest.py). Need sect, location, true solar time and Li Chun boundary review.
-- Western: Skyfield supports astronomy/ecliptic positions and local sidereal time (https://rhodesmill.org/skyfield/toc.html). Skyfield local-kernel geocentric planet position adapter now coded; live kernel fixtures, house calculations and ascendant not yet validated.
+- Western: Skyfield supports astronomy/ecliptic positions and local sidereal time (https://rhodesmill.org/skyfield/toc.html). Skyfield local-kernel geocentric planet position adapter and mean-sidereal ascendant/Whole Sign Houses prototypes are coded; live kernel fixtures and independent ascendant benchmarks remain unverified.
 - Swiss Ephemeris requires AGPL compliance or paid professional license (https://www.astro.com/swisseph/). No unlicensed incorporation.
 - Numerology: master number and transliteration choices require explicit school conventions.
 - Tarot: random card **draw**, not random fabricated prediction. Reviewed card meanings, matched art and animated assets are pending.
@@ -19,7 +19,7 @@ Scope frozen: Myanmar astrology, Western natal/timing, Chinese BaZi, numerology,
 
 ## Release criteria: ALL required before user's first end-to-end trial
 - [ ] Myanmar calendar and Mahabote/Yatyaza/Pyathada: Python adaptation written; historical edge-year, New Year, Waso and independent cross-language reference coverage still needed
-- [ ] Western natal: Skyfield local-kernel tropical longitudes and aspect geometry implemented; must verify JPL-kernel fixtures, geographic ascendant, houses and supported date ranges
+- [ ] Western natal: Skyfield local-kernel tropical longitudes and aspect geometry implemented; must verify JPL-kernel fixtures and independent ascendant/Whole Sign Houses references, including sign-boundary and latitude/date edge cases
 - [ ] BaZi time convention and historical timezone/longitude/solar correction decisions with benchmark tests
 - [ ] Traditional rule corpus with reviewer-approved citations/conditions and no invented interpretation
 - [ ] Tarot 78 correctly associated artworks + full documented interpretations + real native Telegram media assets
@@ -37,3 +37,10 @@ This document tracks actual completed versus pending work. No features added bey
 - Myanmar moon phase / fortnight display ported from mmcal and regression cases authored. Historical cross-validation remains release-blocking.
 - Western aspect angle geometry and configurable orb policy completed, with unit tests and provenance. Actual natal ephemeris, ascendant, tropical longitudes and school-specific timing need further work.
 - No new agreed feature scope, no Render, no Mini App, no Vedic.
+
+## 2026-10-25 Western houses checkpoint
+- New `western_houses.py` computes UT Julian Day, Meeus Greenwich **mean** sidereal time, mean obliquity, eastern-horizon ascendant, and Whole Sign Houses from **explicit** geographic latitude/longitude. It does not fabricate a location or birth time.
+- Ten self-contained geometric/date unit tests pass locally, after fixing a 360° floating-point wrap edge case. This is **not** independent chart validation.
+- Current geographic latitude guard is -65° to +65°: high-latitude horizons are not claimed supported; the whole-sign procedure is not Placidus and applies no refraction/nutation correction.
+- Cross-check against known Western chart datasets and integrate JPL ephemeris/natal aspects only after verifiable reference vectors.
+- Formula research: https://en.wikipedia.org/wiki/Ascendant ; mean obliquity: https://www2.mps.mpg.de/homes/fraenz/systems/systems3art/node3.html
