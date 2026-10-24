@@ -60,3 +60,11 @@ This document tracks actual completed versus pending work. No features added bey
 - Encryption at rest is **not** a substitute for filesystem access controls, secure backup/rotation, limited logging, user data expiry, and safe production deployment. SQLite deletion does not by itself guarantee erasure from existing backups.
 - No photo/animation binaries saved in profile database. Media uses Telegram-hosted `file_id` references.
 - The expected release remains **blocked** by independent astronomy fixtures, rule interpretations, fully reviewed Telegram group/privacy flows, operational security and CI.
+
+## 2026-10-25 Profile integrity research and implementation
+- Explicit SQLite transaction rollback added for failures; regression test verifies aborted delete does not remove a birth record.
+- Consent parser now matches only `/savebirth`, not unrelated command prefixes.
+- Before encryption, canonical birth dates, bounds and finite numeric coordinates are checked.
+- MultiFernet key rotation is implemented as a single database transaction using a primary key and prior decryption keys, with failure/rollback tests.
+- Research verified: https://docs.python.org/3/library/sqlite3.html#how-to-use-the-connection-context-manager and https://cryptography.io/en/stable/fernet/
+- Operational release blockers: secret manager provision, secure key backup, retention policy, WAL backups, restore drills, failed startup behavior and **passing CI**.
