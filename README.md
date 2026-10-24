@@ -38,3 +38,15 @@ python bot.py
 - Chinese BaZi reference vector: [lunar-python upstream test](https://github.com/6tail/lunar-python/blob/master/test/EightCharTest.py), 2005-12-23 08:37 → 乙酉 / 戊子 / 辛巳 / 壬辰.
 - Western Swiss Ephemeris is **not installed**: [Astrodienst licensing](https://www.astro.com/swisseph/sweph_e.htm) requires AGPL compliance or a commercial license before public activation; no license decision yet.
 - CI is configured in GitHub Actions, but its actual pass/fail state must be checked before any readiness claim.
+
+## Native Tarot reveal flow (implemented in code; media assets pending)
+- `/tarot` in a private chat starts a three-facedown-choice session.
+- The selected card is securely sampled from the 78-card deck, held only in bounded in-memory state.
+- Session expires after 10 minutes, single-use choice, verifies Telegram user/chat/message, rejects stale presses.
+- Optional environment variables `TAROT_SHUFFLE_FILE_ID` and `TAROT_REVEAL_FILE_ID` enable Telegram-hosted reusable animation assets. When unset or an animation send fails, clean text fallback remains available.
+- `file_id` is bot-specific. Do **not** paste public URLs or unrelated bots' file IDs expecting them to work.
+- No media binary blobs, raw card art or user birth data stored in database. Animated assets have **not** been uploaded or generated yet.
+- Single-process in-memory session is for development only; multiple worker processes require a shared atomic TTL session store to avoid lost state and race conditions.
+- Separate card artwork for each actual card and traditional card-meaning corpus are still pending. The current generic flip animation must not imply that a different card was drawn.
+
+Research: [Telegram Bot API: sending by file_id and editing messages](https://core.telegram.org/bots/api), [aiogram editMessageMedia](https://docs.aiogram.dev/en/latest/api/methods/edit_message_media.html).
