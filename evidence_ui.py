@@ -4,6 +4,12 @@ A method's rationale is not scientific proof that divination predicts the future
 Every listed ID must correspond to a real calculation or explicitly random draw.
 """
 RULES = {
+    'WEST-ASPECTS-GEOMETRY-001': {
+        'heading': 'အနောက်တိုင်းဇာတာ ဂြိုဟ်ထောင့်ဆက်သွယ်မှု',
+        'method': 'Tropical Ecliptic Longitude နှစ်ခုအကြား အတိုဆုံးထောင့်ကိုတွက်ပြီး 0°, 60°, 90°, 120°, 180° နှင့် သတ်မှတ်ထားသော Orb များဖြင့် စစ်ဆေးသည်။',
+        'source': 'Astrodienst Aspects: https://www.astro.com/astrology/in_aspect_e.htm ; orb sizes depend on a documented convention',
+        'limits': 'အခြား Ephemeris မှ သီးခြားအတည်ပြုထားသော ဂြိုဟ်တည်နေရာကိုသာ ထည့်သွင်းရမည်။ ဤ Engine က မွေးဇာတာနှင့် ဂြိုဟ်တည်နေရာကို ကိုယ်တိုင်မတွက်သေးပါ။'
+    },
     'MM-CALENDAR-MMCAL-001': {
         'heading': 'မြန်မာပြက္ခဒိန်နှင့် မဟာဘုတ်',
         'method': 'Gregorian Local Date ကို Julian Day Number ပြောင်းပြီး mmcal ဝါထပ်နှစ်၊ မြန်မာလ၊ လရက်၊ ရက်ရာဇာ၊ ပြဿဒါးနှင့် မဟာဘုတ် Formula များကို အဆင့်ဆင့် တွက်ချက်သည်။',
