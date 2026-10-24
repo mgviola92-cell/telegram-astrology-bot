@@ -15,6 +15,7 @@ from astro_core import life_path
 from bazi_core import calculate_bazi
 from tarot_core import draw_tarot
 from myanmar_core import myanmar_birth_day
+from evidence_ui import evidence_button, get_rule
 
 dp=Dispatcher()
 
@@ -66,6 +67,24 @@ async def methods(cb: CallbackQuery):
     await cb.message.answer('📖 <b>တွက်ချက်မှုမှတ်တမ်း</b>\n\nအတည်ပြုနိုင်သည့် တွက်ချက်နည်း၊ မူရင်းကိုးကားချက်နှင့် မူကွဲများကို ဟောစာတမ်းနှင့်အတူ ပြသနိုင်ရန် တည်ဆောက်နေပါပြီ။',parse_mode='HTML')
 
 
+@dp.callback_query(F.data.startswith('evidence:'))
+async def show_evidence(cb: CallbackQuery):
+    rule_id=(cb.data or '').split(':',1)[1]
+    try:
+        record=get_rule(rule_id)
+    except KeyError:
+        await cb.answer('🌫️ ဤမှတ်တမ်းကို မတွေ့တော့ပါ။',show_alert=True)
+        return
+    await cb.answer()
+    await cb.message.answer(
+        '📖 <b>'+html.escape(record['heading'])+'</b>\n'
+        '━━━━━━━━━━━━━━\n'
+        '<b>တွက်ချက်ပုံ</b>\n'+html.escape(record['method'])+'\n\n'
+        '<b>မူရင်းကိုးကား</b>\n'+html.escape(record['source'])+'\n\n'
+        '<b>သိထားရန်</b>\n'+html.escape(record['limits']),
+        parse_mode='HTML'
+    )
+
 @dp.callback_query(F.data == 'section:myday')
 async def myday_guide(cb: CallbackQuery):
     await cb.answer()
@@ -99,7 +118,7 @@ async def myday_command(message: Message):
         f'ဆက်စပ်ဂြိုဟ် — <b>{html.escape(result["planetary_association"])}</b>\n\n'
         f'📖 <code>{result["evidence"]["rule_id"]}</code>\n'
         'ဤရလဒ်မှာ ရိုးရာ ၈ နေ့နံအလိုက် တွက်ချက်ထားခြင်းဖြစ်ပြီး မဟာဘုတ်ဇာတာ မဟုတ်သေးပါ။',
-        parse_mode='HTML'
+        parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id'])
     )
 
 @dp.message(Command('number'))
@@ -124,7 +143,7 @@ async def numerology(message: Message):
         'Pythagorean-style ကိန်းဂဏန်းတွက်နည်းအရ ထွက်ပေါ်လာသည့်ရလဒ်ဖြစ်သည်။\n\n'
         f'📖 စည်းမျဉ်း: <code>{result["evidence"]["rule_id"]}</code>\n'
         'ဟောကိန်းအနက်ဖွင့်ဆိုချက်များကို ကျမ်းကိုးစစ်ဆေးပြီးမှ ဖြည့်သွင်းမည်။',
-        parse_mode='HTML',
+        parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id']),
     )
 
 @dp.message(Command('bazi'))
@@ -152,7 +171,7 @@ async def bazi(message: Message):
         f'နာရီတိုင် — <b>{html.escape(p["hour"])}</b>\n\n'
         f'📖 <code>{result["evidence"]["rule_id"]}</code>\n'
         'မွေးရပ်ဒေသ Timezone နှင့် True Solar Time ကို မစစ်နိုင်သေးသည့် စမ်းသပ်ဇာတာဖြစ်သည်။',
-        parse_mode='HTML'
+        parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id'])
     )
 
 @dp.message(Command('tarot'))
@@ -165,12 +184,13 @@ async def tarot_cb(cb: CallbackQuery):
     await send_tarot(cb.message)
 
 async def send_tarot(message: Message):
-    card=draw_tarot('single')['cards'][0]['card']
+    reading=draw_tarot('single')
+    card=reading['cards'][0]['card']
     await message.answer(
         f'🃏 <b>ယနေ့ သင့်လက်ထဲကျလာသောကတ်</b>\n━━━━━━━━━━━━━━\n'
         f'<b>{html.escape(card)}</b>\n\n'
         'ကတ်ဆွဲခြင်းမှာ ကျပန်းဖြစ်ပြီး ရိုးရာအနက်ဖွင့်ဆိုချက်ကို စိစစ်ပြုစုနေဆဲဖြစ်သည်။',
-        parse_mode='HTML'
+        parse_mode='HTML', reply_markup=evidence_button(reading['evidence']['rule_id'])
     )
 
 async def main():
