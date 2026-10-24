@@ -81,3 +81,11 @@ The new `myanmar_calendar.py` port follows [Yan Naing Aye's mmcal MIT implementa
 - SQLite record removal does not automatically delete previously created backups; provide retention/deletion policy covering backups.
 - Additional privacy/consent tests are committed, but full CI passing status remains unverified.
 - `natal_pipeline.py` now validates that returned zodiac labels match exact longitudes, preventing contradictory natal cards.
+
+## Profile storage integrity checkpoint — 2026-10-25
+- SQLite transaction wrapper now explicitly rolls back if an operation raises an error. Python reference: https://docs.python.org/3/library/sqlite3.html#how-to-use-the-connection-context-manager
+- Save rejects invalid/future/noncanonical birth dates, nonfinite/out-of-range latitudes and longitudes, and invalid HH:MM strings.
+- Birth-profile save consent parser now requires exactly the intended command marker; unrelated text does not grant consent.
+- `ProfileStore(db, new_key, old_keys=[prior_key])` can read old ciphertext and `rotate_encrypted_profiles()` re-encrypts all records with the new primary key in one SQL transaction. Rotate with secure backups and a carefully managed old-key overlap. It does NOT retroactively re-encrypt previously stored backups or guarantee physical erasure of deleted SQLite pages.
+- Review the new tests for rollback, key rotation and validation. **Not production-certified:** end-to-end tests, CI result, crash/recovery, disk permissions, concurrency and backup retention still pending.
+- Research: https://cryptography.io/en/stable/fernet/ (MultiFernet).
