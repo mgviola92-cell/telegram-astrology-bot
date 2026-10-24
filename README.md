@@ -72,3 +72,12 @@ The new `myanmar_calendar.py` port follows [Yan Naing Aye's mmcal MIT implementa
 
 ## Natal pipeline (development only)
 `natal_pipeline.assemble_natal(...)` now connects IANA timezone/DST and birth-location validation, mean-sidereal Rising Sign/Whole Sign Houses, externally supplied JPL ephemeris positions and aspects, and age-based annual profections. It does **not** expose private birth details in Telegram yet. A test-only injected astronomy provider can verify orchestration without downloading a kernel. Local birth **date** is used for age and profections, never an earlier UTC calendar date. **Research limitation:** Skyfield uses true ecliptic/equinox of date, while houses currently use a mean GMST/obliquity convention; reconcile and independently cross-check before public natal readings. No release readiness claim.
+
+## Opt-in encrypted birth profiles (development; not deployed)
+- `profile_store.py` stores only ciphertext, consent/update timestamps and a numeric user ID in local SQLite; encryption uses `cryptography.Fernet`. No media BLOBs, tokens or plaintext birth details in tables.
+- `profile_commands.py`: private-only `/savebirth YYYY-MM-DD အတည်ပြု` to explicitly consent, `/mybirth` to view, and `/forgetbirth` to delete. Nothing is saved automatically by `/bazi`, `/number`, or `/myday`.
+- Disabled until `PROFILE_DB_PATH` points to a protected persistent disk file and `PROFILE_ENCRYPTION_KEY` is injected via a secret manager. **Never commit the key**. Losing the key prevents profile recovery.
+- Generate a key only within the private deployment's own environment (not chat/GitHub), protect backup copies, and restrict filesystem access. Plan encryption-key rotation, database backups, expiry policies, and multi-instance migrations before production.
+- SQLite record removal does not automatically delete previously created backups; provide retention/deletion policy covering backups.
+- Additional privacy/consent tests are committed, but full CI passing status remains unverified.
+- `natal_pipeline.py` now validates that returned zodiac labels match exact longitudes, preventing contradictory natal cards.
