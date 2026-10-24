@@ -58,6 +58,19 @@ class ProfileStoreTests(unittest.TestCase):
  def test_reject_noncanonical_date(self):
     with self.assertRaises(ValueError):
         self.store.save(123,{"birth_date":"2005-2-3"},explicit_consent=True)
+ def test_key_rotation_preserves_readability(self):
+    self.store.save(123,self.birth,explicit_consent=True)
+    new_key=Fernet.generate_key()
+    transitional=ProfileStore(self.db,new_key,old_keys=[self.key])
+    self.assertEqual(transitional.rotate_encrypted_profiles(),1)
+    new_only=ProfileStore(self.db,new_key)
+    self.assertEqual(new_only.read(123),self.birth)
+    with self.assertRaises(ValueError):self.store.read(123)
+ def test_key_rotation_rolls_back_on_wrong_old_key(self):
+    self.store.save(123,self.birth,explicit_consent=True)
+    other=ProfileStore(self.db,Fernet.generate_key())
+    with self.assertRaises(Exception):other.rotate_encrypted_profiles()
+    self.assertEqual(self.store.read(123),self.birth)
  def test_cleanup(self):
     self.store.save(1,self.birth,explicit_consent=True)
     self.assertEqual(self.store.delete_older_than(1700000001),1)
