@@ -4,6 +4,12 @@ A method's rationale is not scientific proof that divination predicts the future
 Every listed ID must correspond to a real calculation or explicitly random draw.
 """
 RULES = {
+    'MM-CALENDAR-MMCAL-001': {
+        'heading': 'မြန်မာပြက္ခဒိန်နှင့် မဟာဘုတ်',
+        'method': 'Gregorian Local Date ကို Julian Day Number ပြောင်းပြီး mmcal ဝါထပ်နှစ်၊ မြန်မာလ၊ လရက်၊ ရက်ရာဇာ၊ ပြဿဒါးနှင့် မဟာဘုတ် Formula များကို အဆင့်ဆင့် တွက်ချက်သည်။',
+        'source': 'Yan Naing Aye, mmcal, javascript/ceMmDateTime.js (MIT license, copyright 2018); https://github.com/yan9a/mmcal',
+        'limits': '၁၉၀၀–၂၁၀၀ Gregorian ရက်စွဲအတွက် စမ်းသပ်ထားသော Calendar Calculation ဖြစ်သည်။ မဟာဘုတ်အိမ်ရလဒ်သည် အနာဂတ်ဟောကိန်း မဟုတ်သေးပါ။'
+    },
     'NUM-PYT-LIFE-PATH-001': {
         'heading': 'ဘဝလမ်းကြောင်းကိန်း',
         'method': 'မွေးလ၊ မွေးရက်နှင့် မွေးနှစ်ကိန်းတို့ကို သီးခြားပေါင်းလျှော့ပြီး ထပ်ပေါင်းလျှော့သည်။ 11, 22, 33 ကို Master Numbers အဖြစ်ထားသည်။',
