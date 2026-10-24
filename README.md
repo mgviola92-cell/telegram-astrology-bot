@@ -109,3 +109,6 @@ Python 3.12+ recommended. Install the four declared libraries with `python -m pi
 - In contrast, any **explicit nonempty** JPL kernel path that does not exist fails configuration validation. Integration tests and kernel content/date coverage still require independent checks.
 - Welcome text now accurately explains that opt-in `/savebirth` can store encrypted profiles when configured; other calculation commands never silently save birth dates.
 - The corresponding automated tests are committed; a passing full GitHub Actions run still has not been verified.
+
+## Burmese tarot reflection coverage (development)
+`tarot_meanings.py` now covers the entire 78-card standard Tarot deck: 22 individually authored Major Arcana reflections and 56 Minor Arcana meanings composed from suit-specific themes and rank-specific prompts. `bot.py` connects these to the native Tarot reveal and has source/limitation buttons. They are prompts for reflection, not predictions. Card images and art rights are **not** ready yet; Telegram file_id animation fallback is unchanged. `tests/test_tarot_meanings.py` enforces full coverage. Complete GitHub CI has not been confirmed as passing.
