@@ -162,7 +162,7 @@ async def bazi(message: Message):
         born=datetime.strptime(parts[1]+' '+parts[2],'%Y-%m-%d %H:%M')
         if born.date()>date.today(): raise ValueError('future date')
         normalized=normalize_birth_wall_time(born,parts[3])
-        result=calculate_bazi(normalized['wall_time'])
+        result=calculate_bazi(normalized['wall_time'], timezone_verified=normalized['timezone'])
     except (ValueError,RuntimeError):
         await message.answer('🌫️ မွေးချိန်ကို မတွက်နိုင်သေးပါ။ YYYY-MM-DD HH:MM Asia/Yangon ပုံစံနဲ့ မွေးရပ်ဒေသရဲ့ Timezone ကို စစ်ဆေးပါ။ DST နာရီနှစ်ခါဖြစ်တဲ့ ရက်တွေမှာ မွေးချိန်အတည်ပြုဖို့ လိုပါတယ်။')
         return
