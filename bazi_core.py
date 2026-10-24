@@ -8,7 +8,7 @@ from datetime import datetime
 from astro_core import Evidence
 
 
-def calculate_bazi(birth_local: datetime, *, sect: int = 2) -> dict:
+def calculate_bazi(birth_local: datetime, *, sect: int = 2, timezone_verified: str | None = None) -> dict:
     """Use lunar-python's solar-term aware Four Pillars algorithms.
 
     Caller must confirm birth location's historical timezone and time convention.
@@ -31,5 +31,5 @@ def calculate_bazi(birth_local: datetime, *, sect: int = 2) -> dict:
     pillars = {'year':chart.getYear(), 'month':chart.getMonth(), 'day':chart.getDay(), 'hour':chart.getTime()}
     elements = {'year':chart.getYearWuXing(), 'month':chart.getMonthWuXing(), 'day':chart.getDayWuXing(), 'hour':chart.getTimeWuXing()}
     ten_gods = {'year':chart.getYearShiShenGan(), 'month':chart.getMonthShiShenGan(), 'hour':chart.getTimeShiShenGan()}
-    evidence=Evidence(rule_id='CHN-BAZI-PILLARS-001',tradition='Chinese BaZi (Four Pillars)',method='lunar-python Solar -> Lunar -> EightChar; Li Chun and jieqi-based conventions as implemented by library',input_assumptions={'birth_wall_clock':birth_local.isoformat(),'sect':sect,'timezone_normalized':False,'true_solar_time_applied':False},derived_facts={'pillars':pillars},reference='6tail/lunar-python EightChar.py and upstream EightCharTest.py')
+    evidence=Evidence(rule_id='CHN-BAZI-PILLARS-001',tradition='Chinese BaZi (Four Pillars)',method='lunar-python Solar -> Lunar -> EightChar; Li Chun and jieqi-based conventions as implemented by library',input_assumptions={'birth_wall_clock':birth_local.isoformat(),'sect':sect,'timezone_verified':timezone_verified,'historical_iana_timezone_validated':bool(timezone_verified),'true_solar_time_applied':False},derived_facts={'pillars':pillars},reference='6tail/lunar-python EightChar.py and upstream EightCharTest.py')
     return {'pillars':pillars, 'elements':elements,'day_master':chart.getDayGan(),'ten_gods_stems':ten_gods,'evidence':asdict(evidence)}
