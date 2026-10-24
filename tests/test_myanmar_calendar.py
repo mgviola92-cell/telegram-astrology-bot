@@ -1,12 +1,21 @@
 import unittest
 from datetime import date
-from myanmar_calendar import calculate_myanmar_calendar, astrology_days, jdn_to_myanmar
+from myanmar_calendar import calculate_myanmar_calendar, astrology_days, jdn_to_myanmar, moon_phase_and_fortnight
 
 class MyanmarCalendarTests(unittest.TestCase):
     def test_upstream_reference_january_2024(self):
         v=calculate_myanmar_calendar(date(2024,1,1))
         self.assertEqual((v['myanmar_year'],v['month'],v['day'],v['mahabote']),
                          (1385,'Nadaw',20,'Marana'))
+    def test_waning_reference(self):
+        v=calculate_myanmar_calendar(date(2024,1,1))
+        self.assertEqual((v['moon_phase'],v['fortnight_day']),('waning',5))
+    def test_lunar_phases(self):
+        self.assertEqual(moon_phase_and_fortnight(1,1,0),('waxing',1))
+        self.assertEqual(moon_phase_and_fortnight(1,15,0),('full moon',15))
+        self.assertEqual(moon_phase_and_fortnight(1,16,0),('waning',1))
+        self.assertEqual(moon_phase_and_fortnight(1,29,0),('new moon',14))
+        with self.assertRaises(ValueError):moon_phase_and_fortnight(1,30,0)
     def test_new_year_boundary(self):
         v=calculate_myanmar_calendar(date(2024,4,17))
         self.assertEqual((v['myanmar_year'],v['month'],v['day']), (1386,'Tagu',9))
