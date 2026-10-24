@@ -216,12 +216,16 @@ async def bazi(message: Message):
         await message.answer('🌫️ မွေးချိန်ကို မတွက်နိုင်သေးပါ။ YYYY-MM-DD HH:MM Asia/Yangon ပုံစံနဲ့ မွေးရပ်ဒေသရဲ့ Timezone ကို စစ်ဆေးပါ။ DST နာရီနှစ်ခါဖြစ်တဲ့ ရက်တွေမှာ မွေးချိန်အတည်ပြုဖို့ လိုပါတယ်။')
         return
     p=result['pillars']
+    visible=result['visible_wuxing']
+    balance=' · '.join(f'{name}: {count}' for name,count in visible['visible_counts'].items())
     await message.answer(
         '🐉 <b>တရုတ်ဇာတာလေးတိုင်</b>\n━━━━━━━━━━━━━━\n'
         f'နှစ်တိုင် — <b>{html.escape(p["year"])}</b>\n'
         f'လတိုင် — <b>{html.escape(p["month"])}</b>\n'
         f'ရက်တိုင် — <b>{html.escape(p["day"])}</b>\n'
         f'နာရီတိုင် — <b>{html.escape(p["hour"])}</b>\n\n'
+        f'🌿 မြင်ရသော အဓိကဓာတ် ၈ လုံး — {html.escape(balance)}\n'
+        'ဤအရေအတွက်သည် Day Master အားကောင်း/အားနည်းခြင်းကို မဆုံးဖြတ်ပါ။\n\n'
         f'📖 <code>{result["evidence"]["rule_id"]}</code>\n'
         f'လက်ခံထားသော Timezone — <code>{html.escape(normalized["timezone"])}</code>\n'
         'True Solar Time မပြင်ရသေးသော စမ်းသပ်ဇာတာဖြစ်သည်။',
