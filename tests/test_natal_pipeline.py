@@ -59,6 +59,31 @@ class NatalPipelineTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             assemble_natal(*self.args,position_provider=lambda _utc,_path: {"points":{},"aspects":[]})
 
+    def test_local_date_not_prior_utc_date(self):
+        local = datetime(2005,1,1,0,10)
+        result=assemble_natal(local,"Asia/Yangon",16.85,96.15,"fixture.bsp",
+            position_provider=fake_positions)
+        self.assertTrue(result["birth"]["utc"].startswith("2004-12-31"))
+        self.assertEqual(result["annual_profection"]["house"],1)
+
+    def test_reject_nonexistent_dst(self):
+        with self.assertRaisesRegex(ValueError,"does not exist"):
+            assemble_natal(datetime(2024,3,10,2,30),"America/Los_Angeles",
+                34.05,-118.25,"fixture.bsp",position_provider=fake_positions)
+
+    def test_reject_ambiguous_dst(self):
+        with self.assertRaisesRegex(ValueError,"Ambiguous"):
+            assemble_natal(datetime(2024,11,3,1,30),"America/Los_Angeles",
+                34.05,-118.25,"fixture.bsp",position_provider=fake_positions)
+
+    def test_explicit_dst_fold(self):
+        local=datetime(2024,11,3,1,30)
+        a=assemble_natal(local,"America/Los_Angeles",34.05,-118.25,
+            "fixture.bsp",fold=0,position_provider=fake_positions)
+        b=assemble_natal(local,"America/Los_Angeles",34.05,-118.25,
+            "fixture.bsp",fold=1,position_provider=fake_positions)
+        self.assertNotEqual(a["birth"]["utc"],b["birth"]["utc"])
+
     def test_no_user_data_persistence(self):
         result=self.chart()
         self.assertNotIn("telegram_user_id",result)
