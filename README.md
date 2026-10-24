@@ -66,3 +66,6 @@ The new `myanmar_calendar.py` port follows [Yan Naing Aye's mmcal MIT implementa
 - `skyfield>=1.50,<2` is an astronomy dependency. The binary ephemeris is deliberately not included in Git and is **not fetched at runtime**. A locally installed JPL kernel, valid for the requested date, is required.
 - Rising sign, local coordinates, twelve houses and published-reference planetary ephemeris fixtures remain unimplemented/unverified. This is NOT yet a full natal horoscope.
 - Skyfield reference: https://rhodesmill.org/skyfield/coordinates.html and https://rhodesmill.org/skyfield/planets.html
+
+## Whole Sign Houses prototype
+`western_houses.py` computes an eastern-horizon tropical Rising Sign and twelve Whole Sign Houses from an **aware birth instant and supplied latitude/longitude**, using Meeus mean sidereal time/obliquity. Local deterministic tests cover J2000, quarter-circle geometry, boundaries, timezone equivalence and range rejection. Mean-equinoctial convention only: no nutation, horizon refraction, independent published ascendant benchmark or high-latitude support yet. **Not production validated; not hooked into user-facing bot.**
