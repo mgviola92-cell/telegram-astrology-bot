@@ -24,7 +24,7 @@ def _store():
 def parse_consent_command(body: str):
     """Exact syntax; a second affirmative marker is required."""
     items=(body or "").strip().split()
-    if len(items)!=3 or items[2]!="အတည်ပြု":
+    if len(items)!=3 or items[0]!="/savebirth" or items[2]!="အတည်ပြု":
         raise ValueError("Explicit affirmative required")
     birth_date=date.fromisoformat(items[1])
     if birth_date>date.today():
