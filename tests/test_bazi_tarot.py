@@ -53,6 +53,28 @@ class BaziTests(unittest.TestCase):
             with self.subTest(pillar=name):
                 self.assertEqual([entry["stem"] for entry in got[name]["hidden"]],list(getter()))
 
+    def test_ten_gods_match_upstream_stems(self):
+        try:
+            from lunar_python import Solar
+            from lunar_python.util import LunarUtil
+        except ImportError:
+            self.skipTest("lunar-python missing")
+        upstream=Solar.fromYmdHms(2005,12,23,8,37).getLunar().getEightChar()
+        result=calculate_bazi(datetime(2005,12,23,8,37))
+        day=upstream.getDayGan()
+        gods=result["ten_gods_all"]
+        for name,pillar in result["pillars"].items():
+            with self.subTest(pillar=name):
+                self.assertEqual(gods["visible"][name]["ten_god"],
+                                 LunarUtil.SHI_SHEN[day+pillar[0]])
+                self.assertEqual(
+                    [g["ten_god"] for g in gods["hidden"][name]],
+                    [LunarUtil.SHI_SHEN[day+g] for g in
+                     {"year":upstream.getYearHideGan,
+                      "month":upstream.getMonthHideGan,
+                      "day":upstream.getDayHideGan,
+                      "hour":upstream.getTimeHideGan}[name]()])
+
     def test_invalid_sect(self):
         with self.assertRaises(ValueError): calculate_bazi(datetime(2000,1,1),sect=3)
 
