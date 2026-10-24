@@ -59,3 +59,10 @@ The new `myanmar_calendar.py` port follows [Yan Naing Aye's mmcal MIT implementa
 - `myanmar_calendar.py`: moon phase, lunar fortnight day and month-length logic adapted from the original MIT mmcal `cal_mp`, `cal_mf`, `cal_mml` formulas. Bot `/mmcal` now displays Burmese waxing/waning information.
 - Research limitations remain: actual Western ephemeris/ascendant, Myanmar historical cross-validation, Chinese BaZi solar-time validation, full traditional interpretation corpus, complete Telegram UX, images and production DB.
 - CI checks still require verification on GitHub Actions. Deployment remains deferred.
+
+## Western natal astronomy milestone
+- `western_chart.py` accepts a timezone-aware birth instant and an **already available** JPL SPK .bsp ephemeris; it computes geocentric apparent tropical ecliptic longitudes for Sun, Moon and major planets (outer entries clearly marked as barycenters) using Skyfield, then applies sign and aspect geometry.
+- `tests/test_western_chart.py` checks twelve 30-degree boundaries, aspects, missing ephemeris, naive birth time and nonfinite coordinates. These are source-level tests, not a published complete birth-chart benchmark.
+- `skyfield>=1.50,<2` is an astronomy dependency. The binary ephemeris is deliberately not included in Git and is **not fetched at runtime**. A locally installed JPL kernel, valid for the requested date, is required.
+- Rising sign, local coordinates, twelve houses and published-reference planetary ephemeris fixtures remain unimplemented/unverified. This is NOT yet a full natal horoscope.
+- Skyfield reference: https://rhodesmill.org/skyfield/coordinates.html and https://rhodesmill.org/skyfield/planets.html
