@@ -217,8 +217,11 @@ async def bazi(message: Message):
         return
     p=result['pillars']
     visible=result['visible_wuxing']
+    hidden=result['hidden_stems']['pillars']
+    hidden_summary=' · '.join(f'{k}: {"/".join(s["stem"] for s in hidden[k]["hidden"])}' for k in ('year','month','day','hour'))
     bazi_markup=evidence_button(result['evidence']['rule_id'])
     bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-VISIBLE-WUXING-001').inline_keyboard)
+    bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-HIDDEN-STEMS-001').inline_keyboard)
     balance=' · '.join(f'{name}: {count}' for name,count in visible['visible_counts'].items())
     await message.answer(
         '🐉 <b>တရုတ်ဇာတာလေးတိုင်</b>\n━━━━━━━━━━━━━━\n'
@@ -228,6 +231,8 @@ async def bazi(message: Message):
         f'နာရီတိုင် — <b>{html.escape(p["hour"])}</b>\n\n'
         f'🌿 မြင်ရသော အဓိကဓာတ် ၈ လုံး — {html.escape(balance)}\n'
         'ဤအရေအတွက်သည် Day Master အားကောင်း/အားနည်းခြင်းကို မဆုံးဖြတ်ပါ။\n\n'
+        f'🍃 Hidden Stems — {html.escape(hidden_summary)}\n'
+        'အဓိက/အရံဓာတ်အစဉ်သာ ဖြစ်ပြီး ရာသီအင်အား မတွက်ရသေးပါ။\n\n'
         f'📖 <code>{result["evidence"]["rule_id"]}</code>\n'
         f'လက်ခံထားသော Timezone — <code>{html.escape(normalized["timezone"])}</code>\n'
         'True Solar Time မပြင်ရသေးသော စမ်းသပ်ဇာတာဖြစ်သည်။',
