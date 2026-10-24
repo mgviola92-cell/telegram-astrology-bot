@@ -41,7 +41,7 @@ def assemble_natal(
     utc = birth["utc_time"]
     if utc > datetime.now(timezone.utc):
         raise ValueError("Future birth instant is invalid")
-    date_for_profection = evaluation_date if evaluation_date is not None else utc.date()
+    date_for_profection = evaluation_date if evaluation_date is not None else wall_clock.date()
     if not isinstance(date_for_profection, date) or isinstance(date_for_profection, datetime):
         raise ValueError("Evaluation date must be a date")
     if date_for_profection < wall_clock.date():
