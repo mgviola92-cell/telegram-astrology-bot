@@ -84,6 +84,24 @@ class NatalPipelineTests(unittest.TestCase):
             "fixture.bsp",fold=1,position_provider=fake_positions)
         self.assertNotEqual(a["birth"]["utc"],b["birth"]["utc"])
 
+    def test_inconsistent_planet_sign_rejected(self):
+        def inconsistent(_utc,_path):
+            return {"points":{"Sun":{"sign":"Taurus","longitude":10.0}},"aspects":[]}
+        with self.assertRaisesRegex(ValueError,"inconsistent zodiac sign"):
+            assemble_natal(*self.args,position_provider=inconsistent)
+
+    def test_missing_planet_longitude_rejected(self):
+        def incomplete(_utc,_path):
+            return {"points":{"Sun":{"sign":"Aries"}},"aspects":[]}
+        with self.assertRaisesRegex(ValueError,"ecliptic longitude"):
+            assemble_natal(*self.args,position_provider=incomplete)
+
+    def test_nonfinite_planet_longitude_rejected(self):
+        def invalid(_utc,_path):
+            return {"points":{"Sun":{"sign":"Aries","longitude":float("nan")}},"aspects":[]}
+        with self.assertRaises(ValueError):
+            assemble_natal(*self.args,position_provider=invalid)
+
     def test_no_user_data_persistence(self):
         result=self.chart()
         self.assertNotIn("telegram_user_id",result)
