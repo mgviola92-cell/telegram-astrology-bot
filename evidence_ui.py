@@ -22,6 +22,12 @@ RULES = {
         'source': 'Modern Pythagorean-style numerology convention (school-dependent; book-level citation pending)',
         'limits': 'နာမည်/မွေးနေ့ကိန်းဂဏန်း၏ ရိုးရာအနက်ဖွင့်ဆိုချက်သာ ဖြစ်ပြီး ဖြစ်ရပ်တစ်ခုကို အာမခံမဟုတ်ပါ။'
     },
+    'CHN-BAZI-VISIBLE-WUXING-001': {
+        'heading': 'BaZi မြင်ရသော ဓာတ်ငါးပါး',
+        'method': 'လေးတိုင်၏ Heavenly Stems ၄ လုံးနှင့် Earthly Branches ၄ လုံးကို ရိုးရာ အဓိကဓာတ်အလိုက်ရေတွက်သည်။',
+        'source': 'Traditional Five Phases correspondences: https://www.ibiblio.org/chinesehistory/contents/08fea/c06s02.htm ; https://uaya.org/iching/correspondences/',
+        'limits': 'Hidden Stems, Seasonal Strength နှင့် Day Master အားကောင်းမှု မတွက်ရသေးပါ။ အရေအတွက်တစ်ခုတည်းဖြင့် အနာဂတ်ဖြစ်ရပ် မဆုံးဖြတ်နိုင်ပါ။'
+    },
     'CHN-BAZI-PILLARS-001': {
         'heading': 'တရုတ်ဇာတာလေးတိုင်',
         'method': 'မွေးရပ်ဒေသ ဒေသစံတော်ချိန်ကို lunar-python ၏ Solar -> Lunar -> EightChar စနစ်ထဲ ဖြတ်သန်းတွက်ချက်သည်။',
