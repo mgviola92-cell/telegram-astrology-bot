@@ -34,9 +34,10 @@ class StaticIntegrityTests(unittest.TestCase):
         tree=source_ast("bot.py")
         for node in ast.walk(tree):
             if isinstance(node,ast.Call) and isinstance(node.func,ast.Name) and node.func.id=="Bot":
-                self.assertTrue(node.args,"Bot constructor should read secret config, not a literal")
-                self.assertFalse(isinstance(node.args[0],ast.Constant),
-                                 "Do not embed a Telegram token as a literal")
+                tokens = list(node.args) + [kw.value for kw in node.keywords if kw.arg=="token"]
+                self.assertTrue(tokens,"Bot constructor must receive a token from configuration")
+                self.assertTrue(all(not isinstance(value,ast.Constant) for value in tokens),
+                                "Do not embed a Telegram token as a literal")
     def test_private_birth_commands_guard_chat(self):
         tree=source_ast("profile_commands.py")
         for node in ast.walk(tree):
