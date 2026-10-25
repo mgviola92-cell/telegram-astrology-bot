@@ -114,3 +114,10 @@ This document tracks actual completed versus pending work. No features added bey
 - Integrated interpretation in native Telegram Tarot reveal with HTML escaping, concise reflective Burmese explanation and separate evidence button (`TAROT-INTERPRETATION-001`). Existing Telegram-hosted animation `file_id` and text fallback remain.
 - Interpretations are original, short symbolic prompts, not reproduced copyrighted guidebook passages, empirical predictions or medical/financial guarantees.
 - Remaining Tarot art tasks: copyright/license-safe distinct media for 78 cards, Telegram file_id asset mapping, visual QA, animation asset production, and full integration tests.
+
+## 2026-10-25 Tarot message safety and optional photo manifest
+- `tarot_sessions.py` now refuses expired message binding, message ID rebinding, invalid message IDs and invalid owner IDs; session tokens are longer and avoid collisions in the live pool. Regression tests cover replay, expiry, boolean indexes and one-time binding.
+- `tarot_media.py` defines optional `TAROT_CARD_PHOTOS_JSON` local JSON file mapping exact 78-card deck names to **Telegram photo file_id** values, not URLs/paths. Files are bounded to 64KB and unknown cards/unsafe values rejected.
+- `bot.py` prefers per-card Telegram-hosted photo where available, otherwise an existing generic reveal animation, otherwise a text reply. If editing text to photo fails, bot attempts a direct photo reply before using text. No photo bytes, animation bytes or image URLs are written to the SQLite profile database.
+- No per-card artwork is claimed to have been created or uploaded: registry remains empty until separately reviewed rights-safe card art is available. There is no per-card photo file_id bundle yet.
+- Unit tests authored in `tests/test_tarot_sessions.py` and `tests/test_tarot_media.py`; current deployment and full GitHub CI have **not** been validated.
