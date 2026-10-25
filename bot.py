@@ -357,7 +357,16 @@ async def tarot_pick(cb: CallbackQuery):
             await cb.message.edit_text(result_text, parse_mode='HTML',
                 reply_markup=tarot_markup)
     except Exception:
-        logging.exception('Cannot edit Tarot card message; sending text fallback')
+        logging.exception('Cannot edit Tarot card message; using safe reply fallback')
+        if photo_id:
+            try:
+                await cb.message.answer_photo(
+                    photo=photo_id, caption=result_text, parse_mode='HTML',
+                    reply_markup=tarot_markup
+                )
+                return
+            except Exception:
+                logging.warning('Tarot card photo unavailable; sending text-only result')
         await cb.message.answer(result_text, parse_mode='HTML',
             reply_markup=tarot_markup)
 
