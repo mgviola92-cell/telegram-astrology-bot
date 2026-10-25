@@ -20,7 +20,7 @@ class Draw:
 
 class TarotSessions:
     def __init__(self, ttl: int = 600, max_sessions: int = 1000, clock=None):
-        if ttl <= 0 or max_sessions <= 0:
+        if type(ttl) is not int or type(max_sessions) is not int or ttl <= 0 or max_sessions <= 0:
             raise ValueError('Positive TTL and session count required')
         self.ttl, self.max_sessions = ttl, max_sessions
         self._clock = clock or time.monotonic
@@ -33,6 +33,8 @@ class TarotSessions:
                 del self._items[key]
 
     def start(self, owner_id: int, chat_id: int) -> str:
+        if type(owner_id) is not int or type(chat_id) is not int or owner_id<=0 or chat_id<=0:
+            raise ValueError('Positive owner and chat IDs required')
         with self._lock:
             now = self._clock()
             self._cleanup(now)
@@ -46,14 +48,20 @@ class TarotSessions:
             cards = []
             for _ in range(3):
                 cards.append(deck.pop(secrets.randbelow(len(deck))))
-            token = secrets.token_urlsafe(9)
+            token = secrets.token_urlsafe(12)
+            while token in self._items:
+                token = secrets.token_urlsafe(12)
             self._items[token] = Draw(owner_id, chat_id, None, tuple(cards), now)
             return token
 
     def bind_message(self, token: str, *, owner_id: int, chat_id: int, message_id: int) -> bool:
+        if type(message_id) is not int or message_id <= 0:
+            return False
         with self._lock:
+            self._cleanup(self._clock())
             draw = self._items.get(token)
-            if draw is None or draw.owner_id != owner_id or draw.chat_id != chat_id:
+            if (draw is None or draw.owner_id != owner_id or draw.chat_id != chat_id
+                    or draw.message_id is not None or draw.chosen is not None):
                 return False
             draw.message_id = message_id
             return True
@@ -68,7 +76,7 @@ class TarotSessions:
                 return ('unauthorized', None)
             if draw.chosen is not None:
                 return ('already_used', None)
-            if choice not in (0, 1, 2):
+            if type(choice) is not int or choice not in (0, 1, 2):
                 return ('invalid', None)
             draw.chosen = choice
             return ('ok', draw.cards[choice])
