@@ -17,6 +17,7 @@ from bazi_core import calculate_bazi
 from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
 from tarot_meanings import interpret_tarot_card
+from tarot_media import load_media_registry, card_photo_file_id
 from tarot_sessions import TarotSessions
 from myanmar_core import myanmar_birth_day
 from myanmar_calendar import calculate_myanmar_calendar
@@ -329,8 +330,20 @@ async def tarot_pick(cb: CallbackQuery):
     # Reuse one Telegram-hosted asset for every reveal; result name always comes
     # from the previously assigned session, not from media filenames.
     reveal_id = os.getenv('TAROT_REVEAL_FILE_ID', '').strip()
+    photo_id = None
     try:
-        if reveal_id:
+        card_registry=load_media_registry(os.getenv('TAROT_CARD_PHOTOS_JSON','').strip())
+        photo_id=card_photo_file_id(card,card_registry)
+    except (OSError,ValueError,UnicodeError):
+        logging.warning('Tarot photo registry unavailable; using default reveal fallback')
+    try:
+        if photo_id:
+            from aiogram.types import InputMediaPhoto
+            await cb.message.edit_media(
+                media=InputMediaPhoto(media=photo_id, caption=result_text, parse_mode='HTML'),
+                reply_markup=tarot_markup
+            )
+        elif reveal_id:
             from aiogram.types import InputMediaAnimation
             await cb.message.edit_media(
                 media=InputMediaAnimation(media=reveal_id, caption=result_text, parse_mode='HTML'),
