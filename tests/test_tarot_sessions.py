@@ -44,6 +44,30 @@ class SessionTests(unittest.TestCase):
             self.sessions.start(i,i)
         self.assertLessEqual(len(self.sessions._items),2)
 
+    def test_expired_session_cannot_be_bound(self):
+        token=self.sessions.start(10,10)
+        self.t[0]+=10
+        self.assertFalse(self.sessions.bind_message(token,owner_id=10,chat_id=10,message_id=99))
+    def test_bound_message_cannot_be_replaced(self):
+        token=self.start_bound()
+        self.assertFalse(self.sessions.bind_message(token,owner_id=10,chat_id=10,message_id=100))
+        self.assertEqual(self.sessions.reveal(token,owner_id=10,chat_id=10,message_id=100,choice=0)[0],"unauthorized")
+    def test_unbound_session_not_revealable(self):
+        token=self.sessions.start(10,10)
+        self.assertEqual(self.sessions.reveal(token,owner_id=10,chat_id=10,message_id=99,choice=0)[0],"unauthorized")
+    def test_bool_choice_is_invalid(self):
+        token=self.start_bound()
+        self.assertEqual(self.sessions.reveal(token,owner_id=10,chat_id=10,message_id=99,choice=True)[0],"invalid")
+    def test_invalid_message_id_does_not_bind(self):
+        token=self.sessions.start(10,10)
+        self.assertFalse(self.sessions.bind_message(token,owner_id=10,chat_id=10,message_id=0))
+    def test_invalid_ids_rejected(self):
+        with self.assertRaises(ValueError):
+            self.sessions.start(0,10)
+    def test_bad_settings_rejected(self):
+        for ttl,count in ((0,2),(10,0),(True,10),(10,False)):
+            with self.subTest(ttl=ttl,count=count),self.assertRaises(ValueError):
+                TarotSessions(ttl=ttl,max_sessions=count)
     def test_invalid_index(self):
         token=self.start_bound()
         self.assertEqual(self.sessions.reveal(token,owner_id=10,chat_id=10,message_id=99,choice=4)[0],'invalid')
