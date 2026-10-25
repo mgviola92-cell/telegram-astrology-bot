@@ -112,3 +112,9 @@ Python 3.12+ recommended. Install the four declared libraries with `python -m pi
 
 ## Burmese tarot reflection coverage (development)
 `tarot_meanings.py` now covers the entire 78-card standard Tarot deck: 22 individually authored Major Arcana reflections and 56 Minor Arcana meanings composed from suit-specific themes and rank-specific prompts. `bot.py` connects these to the native Tarot reveal and has source/limitation buttons. They are prompts for reflection, not predictions. Card images and art rights are **not** ready yet; Telegram file_id animation fallback is unchanged. `tests/test_tarot_meanings.py` enforces full coverage. Complete GitHub CI has not been confirmed as passing.
+
+## Tarot photo manifest and callback hardening
+- `TAROT_CARD_PHOTOS_JSON` optionally points to a local JSON mapping such as `{"The Star":"<Telegram photo file_id>"}`. Do not commit actual credentials. Only exact card names from the existing 78-card deck are accepted. No binary media in SQLite.
+- `tarot_media.py` validates JSON keys, file IDs, 64KB size limit, prevents URL/path substitutions, and reports coverage. `bot.py` uses per-card photo ID when configured; otherwise falls back to shared animation or plain Telegram text. It also attempts `answer_photo` if changing an existing text message into photo media fails.
+- `tarot_sessions.py` now enforces single message binding, expiry on bind, strict index/identifier types and collision-resistant token generation. Tests exercise replay, expiration and incorrect ownership.
+- This is only the integration layer; copyrighted artwork licensing, 78 suitable art assets, Telegram uploads and collecting the resulting `file_id` values are still outstanding. CI, actual Telegram API media editing and production assets have not been verified.
