@@ -1,17 +1,84 @@
+import copy
 import unittest
+from datetime import date, datetime
+from astro_core import life_path
+from myanmar_calendar import calculate_myanmar_calendar
 from reading_facts import reading_facts
 
+BAZI_PILLARS={"year":"乙酉","month":"戊子","day":"辛巳","hour":"壬辰"}
+
+def bazi_fixture():
+    return {
+        "pillars": BAZI_PILLARS.copy(),
+        "day_master": "辛",
+        "evidence":{
+            "rule_id":"CHN-BAZI-PILLARS-001",
+            "input_assumptions":{"birth_wall_clock":"2005-12-23T08:37:00"},
+            "derived_facts":{"pillars":BAZI_PILLARS.copy()},
+        },
+    }
+
 class ReadingFactsTests(unittest.TestCase):
-    def test_numerology(self):
-        data={"number":11,"evidence":{"rule_id":"NUM-PYT-LIFE-PATH-001","derived_facts":{"number":11}}}
-        result=reading_facts("numerology",data)
-        self.assertEqual(result["facts"]["life_path"],11)
-        self.assertFalse(result["prediction_supported"])
-    def test_no_evidence(self):
+    def test_actual_numerology_engine(self):
+        result=life_path(date(1999,12,31))
+        reading=reading_facts("numerology",result)
+        self.assertEqual(reading["facts"]["life_path"],result["number"])
+        self.assertFalse(reading["prediction_supported"])
+
+    def test_actual_myanmar_calendar_engine(self):
+        result=calculate_myanmar_calendar(date(2024,1,1))
+        reading=reading_facts("myanmar_calendar",result)
+        self.assertEqual(reading["facts"]["myanmar_year"],result["myanmar_year"])
+        self.assertEqual(reading["facts"]["mahabote"],result["mahabote"])
+
+    def test_bazi_evidence_fixture_consistent(self):
+        self.assertEqual(reading_facts("bazi",bazi_fixture())["facts"]["day_master"],"辛")
+
+    def test_reject_missing_evidence(self):
         with self.assertRaises(ValueError):
             reading_facts("numerology",{"number":11})
-    def test_invalid_number(self):
+
+    def test_reject_modified_numerology_without_matching_evidence(self):
+        original=life_path(date(1999,12,31))
+        modified=copy.deepcopy(original)
+        modified["number"]=8 if original["number"] != 8 else 9
         with self.assertRaises(ValueError):
-            reading_facts("numerology",{"number":99,"evidence":{"rule_id":"NUM-PYT-LIFE-PATH-001","derived_facts":{}}})
+            reading_facts("numerology",modified)
+
+    def test_reject_modified_myanmar_year_without_matching_evidence(self):
+        original=calculate_myanmar_calendar(date(2024,1,1))
+        modified=copy.deepcopy(original)
+        modified["myanmar_year"]+=1
+        with self.assertRaises(ValueError):
+            reading_facts("myanmar_calendar",modified)
+
+    def test_reject_modified_myanmar_day_without_matching_evidence(self):
+        modified=copy.deepcopy(calculate_myanmar_calendar(date(2024,1,1)))
+        modified["day"]+=1
+        with self.assertRaises(ValueError):
+            reading_facts("myanmar_calendar",modified)
+
+    def test_reject_modified_bazi_pillar_without_matching_evidence(self):
+        modified=bazi_fixture()
+        modified["pillars"]["year"]="甲子"
+        with self.assertRaises(ValueError):
+            reading_facts("bazi",modified)
+
+    def test_reject_inconsistent_day_master(self):
+        modified=bazi_fixture()
+        modified["day_master"]="甲"
+        with self.assertRaises(ValueError):
+            reading_facts("bazi",modified)
+
+    def test_reject_missing_input_provenance(self):
+        modified=bazi_fixture()
+        del modified["evidence"]["input_assumptions"]
+        with self.assertRaises(ValueError):
+            reading_facts("bazi",modified)
+
+    def test_reject_unknown_system(self):
+        with self.assertRaises(ValueError):
+            reading_facts("unreviewed_prediction",bazi_fixture())
+
 if __name__=="__main__":
     unittest.main()
