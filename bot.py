@@ -63,7 +63,7 @@ async def native_navigation(cb: CallbackQuery):
     parts=data.split(":")
     text=None
     markup=None
-    if cb.message is None:
+    if not isinstance(cb.message, Message):
         await cb.answer("စာမျက်နှာကို ဖွင့်မရပါ။",show_alert=True)
         return
     # Navigation includes personal birth-date and chart routes; never expose
@@ -124,6 +124,9 @@ async def show_evidence(cb: CallbackQuery):
         record=get_rule(rule_id)
     except KeyError:
         await cb.answer('🌫️ ဤမှတ်တမ်းကို မတွေ့တော့ပါ။',show_alert=True)
+        return
+    if not isinstance(cb.message, Message):
+        await cb.answer("တွက်ချက်မှုမှတ်တမ်း မရနိုင်တော့ပါ။",show_alert=True)
         return
     await cb.answer()
     await cb.message.answer(
@@ -422,7 +425,7 @@ async def tarot_cmd(message: Message):
 @dp.callback_query(F.data == 'tarot:single')
 async def tarot_cb(cb: CallbackQuery):
     await cb.answer()
-    if cb.message:
+    if isinstance(cb.message, Message):
         await open_tarot(cb.message, user_id=cb.from_user.id)
 
 
@@ -434,7 +437,7 @@ async def tarot_pick(cb: CallbackQuery):
     except (ValueError, TypeError):
         await cb.answer('🌫️ ကတ်ရွေးချယ်မှု မမှန်ပါ။', show_alert=True)
         return
-    if not cb.message:
+    if not isinstance(cb.message, Message):
         await cb.answer('🌫️ ဤကတ်ကို ဖွင့်မရတော့ပါ။', show_alert=True)
         return
     status, card = tarot_sessions.reveal(
