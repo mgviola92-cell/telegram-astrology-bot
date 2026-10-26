@@ -2,21 +2,12 @@ import copy
 import unittest
 from datetime import date, datetime
 from astro_core import life_path
+from bazi_core import calculate_bazi
 from myanmar_calendar import calculate_myanmar_calendar
 from reading_facts import reading_facts
 
-BAZI_PILLARS={"year":"乙酉","month":"戊子","day":"辛巳","hour":"壬辰"}
-
 def bazi_fixture():
-    return {
-        "pillars": BAZI_PILLARS.copy(),
-        "day_master": "辛",
-        "evidence":{
-            "rule_id":"CHN-BAZI-PILLARS-001",
-            "input_assumptions":{"birth_wall_clock":"2005-12-23T08:37:00"},
-            "derived_facts":{"pillars":BAZI_PILLARS.copy()},
-        },
-    }
+    return calculate_bazi(datetime(2005,12,23,8,37),sect=2,timezone_verified="Asia/Yangon")
 
 class ReadingFactsTests(unittest.TestCase):
     def test_actual_numerology_engine(self):
@@ -32,7 +23,7 @@ class ReadingFactsTests(unittest.TestCase):
         self.assertEqual(reading["facts"]["mahabote"],result["mahabote"])
 
     def test_bazi_evidence_fixture_consistent(self):
-        self.assertEqual(reading_facts("bazi",bazi_fixture())["facts"]["day_master"],"辛")
+        self.assertEqual(reading_facts("bazi",bazi_fixture())["facts"]["day_master"],bazi_fixture()["day_master"])
 
     def test_reject_missing_evidence(self):
         with self.assertRaises(ValueError):
@@ -60,13 +51,13 @@ class ReadingFactsTests(unittest.TestCase):
 
     def test_reject_modified_bazi_pillar_without_matching_evidence(self):
         modified=bazi_fixture()
-        modified["pillars"]["year"]="甲子"
+        modified["pillars"]["year"]="甲子" if modified["pillars"]["year"]!="甲子" else "乙丑"
         with self.assertRaises(ValueError):
             reading_facts("bazi",modified)
 
     def test_reject_inconsistent_day_master(self):
         modified=bazi_fixture()
-        modified["day_master"]="甲"
+        modified["day_master"]="甲" if modified["day_master"]!="甲" else "辛"
         with self.assertRaises(ValueError):
             reading_facts("bazi",modified)
 
@@ -97,6 +88,19 @@ class ReadingFactsTests(unittest.TestCase):
         modified["evidence"]["input_assumptions"]["birth_date"]="invalid-date"
         with self.assertRaises(ValueError):
             reading_facts("numerology",modified)
+
+    def test_reject_forged_bazi_result_and_matching_evidence(self):
+        modified=bazi_fixture()
+        modified["pillars"]["year"]="甲子" if modified["pillars"]["year"]!="甲子" else "乙丑"
+        modified["evidence"]["derived_facts"]["pillars"]=modified["pillars"].copy()
+        with self.assertRaises(ValueError):
+            reading_facts("bazi",modified)
+
+    def test_reject_wrong_bazi_birth_time(self):
+        modified=bazi_fixture()
+        modified["evidence"]["input_assumptions"]["birth_wall_clock"]="2005-12-24T08:37:00"
+        with self.assertRaises(ValueError):
+            reading_facts("bazi",modified)
 
     def test_reject_unknown_system(self):
         with self.assertRaises(ValueError):
