@@ -17,6 +17,7 @@ from reading_facts import reading_facts
 from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
 from bazi_element_reading import bazi_element_reading
+from bazi_growth_stages import calculate_growth_stages
 from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
 from tarot_meanings import interpret_tarot_card
@@ -300,6 +301,9 @@ async def myday_command(message: Message):
         '🇲🇲 <b>မြန်မာ့မွေးနေ့နံ</b>\n━━━━━━━━━━━━━━\n'
         f'<b>{html.escape(result["weekday"])}</b>\n'
         f'ဆက်စပ်ဂြိုဟ် — <b>{html.escape(result["planetary_association"])}</b>\n\n'
+        '<b>十二长生 — ရိုးရာအဆင့် ၁၂ မျိုး</b>\n'
+        f'{html.escape(growth_summary)}\n'
+        'ဤအဆင့်အမည်များသည် အသက်၊ ကျန်းမာရေး သို့မဟုတ် အနာဂတ်ဖြစ်ရပ်များကို ခန့်မှန်းခြင်း မဟုတ်ပါ။\n\n'
         f'📖 <code>{result["evidence"]["rule_id"]}</code>\n'
         'ဤရလဒ်မှာ ရိုးရာ ၈ နေ့နံအလိုက် တွက်ချက်ထားခြင်းဖြစ်ပြီး မဟာဘုတ်ဇာတာ မဟုတ်သေးပါ။',
         parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id'])
@@ -347,6 +351,7 @@ async def bazi(message: Message):
         result=calculate_bazi(normalized['wall_time'], timezone_verified=normalized['timezone'])
         reading_facts('bazi',result)
         element_reading=bazi_element_reading(result)
+        growth_reading=calculate_growth_stages(result)
     except (ValueError,RuntimeError):
         await message.answer('🌫️ မွေးချိန်ကို မတွက်နိုင်သေးပါ။ YYYY-MM-DD HH:MM Asia/Yangon ပုံစံနဲ့ မွေးရပ်ဒေသရဲ့ Timezone ကို စစ်ဆေးပါ။ DST နာရီနှစ်ခါဖြစ်တဲ့ ရက်တွေမှာ မွေးချိန်အတည်ပြုဖို့ လိုပါတယ်။')
         return
@@ -360,7 +365,9 @@ async def bazi(message: Message):
     bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-VISIBLE-WUXING-001').inline_keyboard)
     bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-HIDDEN-STEMS-001').inline_keyboard)
     bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-TENGODS-001').inline_keyboard)
+    bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-CHANGSHENG-001').inline_keyboard)
     balance=' · '.join(f'{name}: {count}' for name,count in visible['visible_counts'].items())
+    growth_summary=' · '.join(f'{name}: {growth_reading["stages"][name]} ({growth_reading["burmese_stage_names"][name]})' for name in ('year','month','day','hour'))
     relations='\n'.join(f'{g["burmese_element"]} ({g["visible_count"]}) — {g["relationship_label"]}' for g in element_reading['groups'])
     await message.answer(
         '🐉 <b>တရုတ်ဇာတာလေးတိုင်</b>\n━━━━━━━━━━━━━━\n'
