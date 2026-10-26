@@ -5,6 +5,7 @@ result displayed by the bot agrees with the core engine's evidence payload.
 Never manufacture a divination interpretation from a rule ID alone.
 """
 from evidence_ui import RULES
+from myanmar_calendar import MONTHS
 
 EXPECTED = {
     "myanmar_calendar": "MM-CALENDAR-MMCAL-001",
@@ -13,7 +14,7 @@ EXPECTED = {
 }
 CALENDAR_FIELDS = {
     "myanmar_year": "myanmar_year",
-    "month": "month",
+    "month": "month_id",
     "day": "month_day",
     "mahabote": "mahabote_house",
     "yatyaza": "yatyaza",
@@ -57,7 +58,8 @@ def reading_facts(kind, result):
         facts = {"life_path": number}
     else:
         for field, evidence_field in CALENDAR_FIELDS.items():
-            if field not in result or derived.get(evidence_field) != result[field]:
+            observed = MONTHS.get(derived.get("month_id")) if field == "month" else result.get(field)
+            if field not in result or observed != result[field] or (field != "month" and derived.get(evidence_field) != result[field]):
                 raise ValueError("Myanmar calendar fact mismatches evidence: " + field)
         if (type(result["myanmar_year"]) is not int
                 or type(result["day"]) is not int
