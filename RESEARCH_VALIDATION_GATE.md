@@ -151,3 +151,24 @@ This document tracks actual completed versus pending work. No features added bey
 - `tests/test_native_ui.py`: enforce no emoji in inline labels and no public owner route.
 - Prior CI failure on commit `b88f84c`, run `40372698357`, was an older BaZi test fixture lacking sect provenance. Subsequent fixture was replaced with the actual `calculate_bazi` engine result in `tests/test_reading_facts.py`. **Do not claim latest CI is green until a completed run for the latest commit is observed.**
 - Release blockers: full CI green, actual Telegram private/group smoke tests, chart validation on documented boundary vectors, traditional Burmese interpretation corpus, Western natal kernel/reference vectors, and operator approval. Render deployment remains deferred.
+
+## 2026-10-27 primary-source Myanmar astrology implementation and verification
+### Verified algorithm sources
+1. Yan Naing Aye, *Myanmar Astrological Calendar Days* (2013), English: https://cool-emerald.blogspot.com/2013/12/myanmar-astrological-calendar-days.html and original Burmese: https://coolemerald.blogspot.com/2013/12/blog-post.html . Primary arithmetic and weekday tables describe Mahabote (Myanmar year minus weekday modulo seven), Sabbath, Yatyaza, Pyathada, Thamanyo and other day classifications.
+2. Yan Naing Aye, *mmcal* C++/JS MIT implementation: https://github.com/yan9a/mmcal ; published independent test in cpp/test/cedate/cedate.cpp: 2024-01-01 is Myanmar year 1385, Nadaw day 20, Monday, Mahabote Marana, Nagahle south, and has no active day categories. Our `test_mahabote_core.py` and `test_myanmar_day_signals.py` assert those same expected results.
+3. Independently published worked Mahabote example: https://horo.kesta.store/academy/myanmar/mahabote-calculation?lang=en : 1990-05-14, Myanmar year 1352, Monday=2, remainder=6, Puti. `test_mahabote_core.py` checks that explicit vector.
+4. Myanmar marker translations cross-checked against the original author's Burmese article and the independent `mmcalendar` Java documentation: https://chanmratekoko.github.io/mmcalendar/ .
+5. Interpretive house names are recognized, but glosses diverge between schools. The seven Burmese symbolic explanations in `mahabote_reading.py` are **our own labelled editorial synthesis**, not direct calculations and not scientifically established fortunes. Source examples: https://horo.kesta.store/academy/myanmar/placements-and-signals?lang=en .
+
+### New implemented paths
+- `mahabote_core.py` computes all seven house-to-weekday planet positions from actual Myanmar calendar year, keeps the seven-house calculation separate from optional Wednesday Rahu naming, and attaches source evidence.
+- `mahabote_reading.py` independently reconstructs the chart from input provenance before displaying symbolic interpretations. Calculation rule and editorial interpretation rule have distinct IDs.
+- `myanmar_day_signals.py` computes 16 documented marker fields, plus localized Nagahle and Nakhat category labels. First-Waso/late-month normalization is an **explicit convention requiring further independent school review**, not a universal standard.
+- `myanmar_signal_reading.py` recomputes from the given source date, rejects modified calculated facts and derived evidence, and displays only active traditional categories without invented fortune claims.
+- `bot.py` now supports **private-only** `/mahabote YYYY-MM-DD [HH:MM]` and `/days YYYY-MM-DD`, separate calculations and method buttons, connected to `native_ui.py` without a Mini App.
+- Regression tests: `tests/test_mahabote_core.py`, `tests/test_myanmar_day_signals.py`, `tests/test_myanmar_signal_reading.py`; `tests/test_bot_myanmar_commands.py` adds no-network Telegram output, private-chat, date error and evidence-button smoke tests.
+
+### Validation status
+- GitHub Actions run https://github.com/mgviola92-cell/telegram-astrology-bot/actions/runs/40387263909 completed **success** on commit `97c378bce`, after the Mahabote, day-marker and key source-vector regression tests were pushed.
+- Commit `c69c8a8e9` added offline Telegram command tests after that successful run; check its own run before claiming latest green.
+- No live Telegram network testing, Western natal chart independent validation, optional artifact upload or Render deployment was performed. Traditions' cultural rules are documented as cultural systems, not guarantees of events.
