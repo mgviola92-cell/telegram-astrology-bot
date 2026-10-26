@@ -76,6 +76,28 @@ class ReadingFactsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             reading_facts("bazi",modified)
 
+    def test_reject_forged_matching_numerology_evidence(self):
+        original=life_path(date(1999,12,31))
+        modified=copy.deepcopy(original)
+        modified["number"]=8 if original["number"]!=8 else 9
+        modified["evidence"]["derived_facts"]["life_path"]=modified["number"]
+        with self.assertRaises(ValueError):
+            reading_facts("numerology",modified)
+
+    def test_reject_forged_matching_calendar_evidence(self):
+        original=calculate_myanmar_calendar(date(2024,1,1))
+        modified=copy.deepcopy(original)
+        modified["myanmar_year"]+=1
+        modified["evidence"]["derived_facts"]["myanmar_year"]+=1
+        with self.assertRaises(ValueError):
+            reading_facts("myanmar_calendar",modified)
+
+    def test_reject_invalid_source_birth_date(self):
+        modified=copy.deepcopy(life_path(date(1999,12,31)))
+        modified["evidence"]["input_assumptions"]["birth_date"]="invalid-date"
+        with self.assertRaises(ValueError):
+            reading_facts("numerology",modified)
+
     def test_reject_unknown_system(self):
         with self.assertRaises(ValueError):
             reading_facts("unreviewed_prediction",bazi_fixture())
