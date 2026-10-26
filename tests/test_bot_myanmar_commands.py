@@ -3,7 +3,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
-from bot import mahabote_command, myanmar_day_signals_command
+from bot import mahabote_command, myanmar_day_signals_command, myday_command
 from evidence_ui import RULES
 
 
@@ -15,6 +15,15 @@ def message(text, chat_type="private"):
     )
 
 class MyanmarCommandsTests(unittest.IsolatedAsyncioTestCase):
+    async def test_myday_birth_weekday_isolated_from_bazi_growth_stages(self):
+        msg=message("/myday 2005-12-23 08:37")
+        await myday_command(msg)
+        msg.answer.assert_awaited_once()
+        args,kwargs=msg.answer.await_args
+        self.assertIn("မြန်မာ့မွေးနေ့နံ",args[0])
+        self.assertNotIn("十二长生",args[0])
+        self.assertEqual(kwargs["parse_mode"],"HTML")
+
     async def test_mahabote_writes_complete_chart(self):
         msg=message("/mahabote 1990-05-14")
         await mahabote_command(msg)
