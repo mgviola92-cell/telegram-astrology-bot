@@ -4,8 +4,9 @@ This is NOT a traditional prediction rule corpus. It verifies that the
 result displayed by the bot agrees with the core engine's evidence payload.
 Never manufacture a divination interpretation from a rule ID alone.
 """
-from datetime import date
+from datetime import date, datetime
 from astro_core import life_path
+from bazi_core import calculate_bazi
 from myanmar_calendar import calculate_myanmar_calendar
 from evidence_ui import RULES
 from myanmar_calendar import MONTHS
@@ -50,6 +51,16 @@ def reading_facts(kind, result):
             raise ValueError("Four pillars must match the calculated evidence")
         if result.get("day_master") != pillars["day"][0]:
             raise ValueError("Day Master mismatches the Day Pillar")
+        assumptions = result["evidence"]["input_assumptions"]
+        try:
+            sect = assumptions["sect"]
+            wall_time = datetime.fromisoformat(assumptions["birth_wall_clock"])
+            verified_timezone = assumptions.get("timezone_verified")
+            expected = calculate_bazi(wall_time, sect=sect, timezone_verified=verified_timezone)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError("Invalid BaZi birth-time provenance") from exc
+        if expected["pillars"] != pillars or expected["day_master"] != result["day_master"]:
+            raise ValueError("BaZi pillars do not match recomputed birth time")
         facts = {name: pillars[name] for name in ("year", "month", "day", "hour")}
         facts["day_master"] = result["day_master"]
     elif kind == "numerology":
