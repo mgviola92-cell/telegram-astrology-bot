@@ -59,7 +59,7 @@ def reading_facts(kind, result):
             expected = calculate_bazi(wall_time, sect=sect, timezone_verified=verified_timezone)
         except (KeyError, TypeError, ValueError) as exc:
             raise ValueError("Invalid BaZi birth-time provenance") from exc
-        if expected["pillars"] != pillars or expected["day_master"] != result["day_master"]:
+        if any(result.get(k) != expected[k] for k in ("pillars", "day_master", "elements", "ten_gods_stems", "visible_wuxing", "hidden_stems", "ten_gods_all")):
             raise ValueError("BaZi pillars do not match recomputed birth time")
         facts = {name: pillars[name] for name in ("year", "month", "day", "hour")}
         facts["day_master"] = result["day_master"]
