@@ -41,7 +41,7 @@ class SessionTests(unittest.TestCase):
 
     def test_bounded(self):
         for i in range(15):
-            self.sessions.start(i,i)
+            self.sessions.start(i+1,i+1)
         self.assertLessEqual(len(self.sessions._items),2)
 
     def test_expired_session_cannot_be_bound(self):
