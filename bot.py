@@ -14,6 +14,7 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from astro_core import life_path
 from reading_facts import reading_facts
+from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
 from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
@@ -144,6 +145,7 @@ async def myanmar_calendar_command(message: Message):
         day=date.fromisoformat(fields[1])
         result=calculate_myanmar_calendar(day)
         reading_facts('myanmar_calendar',result)
+        day_markers=calendar_marker_reading(result)
     except (ValueError,TypeError):
         await message.answer('🌫️ 1900–2100 အတွင်း YYYY-MM-DD ပုံစံနဲ့ ရက်စွဲပြန်ဖြည့်ပါ။')
         return
@@ -160,6 +162,8 @@ async def myanmar_calendar_command(message: Message):
         f'မဟာဘုတ် — <b>{html.escape(result["mahabote"])}</b>\n'
         f'ရက်ရာဇာ — <b>{yatyaza}</b>\n'
         f'ပြဿဒါး — <b>{pyathada}</b>\n\n'
+        '<b>ရိုးရာနေ့ရက်အနက်</b>\n'
+        + '\n'.join(html.escape(item['text']) for item in day_markers['markers']) + '\n\n'
         'ရိုးရာတွက်ချက်မှုရလဒ်ဖြစ်ပြီး အနာဂတ်ဖြစ်ရပ်အာမခံချက် မဟုတ်ပါ။',
         parse_mode='HTML',
         reply_markup=evidence_button(result['evidence']['rule_id'])
