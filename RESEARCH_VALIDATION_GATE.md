@@ -121,3 +121,8 @@ This document tracks actual completed versus pending work. No features added bey
 - `bot.py` prefers per-card Telegram-hosted photo where available, otherwise an existing generic reveal animation, otherwise a text reply. If editing text to photo fails, bot attempts a direct photo reply before using text. No photo bytes, animation bytes or image URLs are written to the SQLite profile database.
 - No per-card artwork is claimed to have been created or uploaded: registry remains empty until separately reviewed rights-safe card art is available. There is no per-card photo file_id bundle yet.
 - Unit tests authored in `tests/test_tarot_sessions.py` and `tests/test_tarot_media.py`; current deployment and full GitHub CI have **not** been validated.
+
+## 2026-10-26 UI implementation checkpoint
+- Main menu and section navigation now route through native Telegram inline keyboards, with clean English discipline labels except Burmese `မြန်မာဗေဒင်`, as requested. Source: `native_ui.py`; integrated into `bot.py`.
+- Buttons only navigate to real command guides or Tarot, while incomplete features are honestly marked development-only. No Mini App, custom button fonts, custom bubble background or fabricated natal predictions.
+- Review live Telegram button wrapping/mobile widths and callback interaction tests after CI passes. No live Telegram UI screenshot verified; do not claim pixel-perfect prototype parity.
