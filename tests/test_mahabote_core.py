@@ -14,6 +14,13 @@ class MahaboteCalculationTests(unittest.TestCase):
         self.assertEqual(result["house"],"Puti")
         self.assertEqual(result["placements"]["Puti"]["planet"],"Moon")
 
+    def test_upstream_mmcal_cpp_2024_jan1_marana(self):
+        # Independent yan9a/mmcal C++ cedate.cpp regression vector.
+        chart=calculate_mahabote(date(2024,1,1))
+        self.assertEqual(chart["myanmar_year"],1385)
+        self.assertEqual(chart["weekday_code"],2)
+        self.assertEqual(chart["house"],"Marana")
+
     def test_full_seven_house_planets_unique(self):
         dates=(date(1900,1,1),date(1950,12,31),date(1990,5,14),
                date(2005,12,23),date(2024,1,1),date(2026,10,27),
