@@ -4,9 +4,9 @@ Myanmar-first Telegram bot, with traditional-source-aware calculations and natur
 
 ## Currently implemented
 - `astro_core.py`: Hellenistic whole-sign Annual Profections (requires a separately calculated rising sign), Pythagorean-style Life Path number with method evidence.
-- `myanmar_calendar.py`: Python adaptation of Yan Naing Aye's MIT-licensed mmcal formulas for Gregorian→Myanmar month/day/year, leap-year type, Mahabote, Yatyaza and Pyathada, with date regression coverage.\n- `myanmar_core.py`: eight-day weekday from birth-location civil time, Wednesday morning vs afternoon (not a full Myanmar lunar calendar or Mahabote).\n- `evidence_ui.py`: stateless, button-driven method explanations; no user's birth data is embedded in callback payloads.\n- `bazi_core.py`: actual Four Pillars, five elements and Ten Gods via `lunar-python`. Requires birth-location civil time; timezone/true-solar-time checks are **not yet integrated**.
+- `myanmar_calendar.py`: Python adaptation of Yan Naing Aye's MIT-licensed mmcal formulas for Gregorian→Myanmar month/day/year, leap-year type, Mahabote, Yatyaza and Pyathada, with date regression coverage.\n- `myanmar_core.py`: eight-day weekday from birth-location civil time, Wednesday morning vs afternoon (not a full Myanmar lunar calendar or Mahabote).\n- `evidence_ui.py`: stateless, button-driven method explanations; no user's birth data is embedded in callback payloads.\n- `bazi_core.py`: actual Four Pillars, five elements and Ten Gods via `lunar-python`. Requires birth-location civil time; IANA civil-time validation is integrated for `/bazi`; true-solar-time correction and independent seasonal chart benchmarks remain pending.
 - `tarot_core.py`: authentic 78-card structure with secure random draws without replacement; no fabricated traditional card interpretations.
-- `bot.py`: early aiogram Telegram interface with Burmese `/start`, `/help`, `/number`, `/myday`, `/mmcal`, `/bazi` and `/tarot` plus inline navigation. Group birth data redirected to private chat.
+- `bot.py`: early aiogram Telegram interface with Burmese `/start`, `/help`, `/number`, `/myday`, `/mmcal`, `/mahabote`, `/days`, `/bazi` and `/tarot` plus inline navigation. Group birth data redirected to private chat.
 - `tests/`: test suites including upstream BaZi reference vector; CI configured at `.github/workflows/tests.yml`.
 - `rules/README.md`: editorial evidence policy for future interpretations.
 
@@ -34,7 +34,7 @@ python bot.py
 - Repository is currently public; set Private on GitHub if you want restricted access.
 
 ## Research checkpoint (2026-10-24)
-- Myanmar calendar candidate: [Yan Naing Aye mmcal](https://github.com/yan9a/mmcal), MIT; original implementation primarily JS/C++ and **not yet integrated** with Python.
+- Myanmar calendar candidate: [Yan Naing Aye mmcal](https://github.com/yan9a/mmcal), MIT; original implementation primarily JS/C++; the audited Python port is in `myanmar_calendar.py`.
 - Chinese BaZi reference vector: [lunar-python upstream test](https://github.com/6tail/lunar-python/blob/master/test/EightCharTest.py), 2005-12-23 08:37 → 乙酉 / 戊子 / 辛巳 / 壬辰.
 - Western Swiss Ephemeris is **not installed**: [Astrodienst licensing](https://www.astro.com/swisseph/sweph_e.htm) requires AGPL compliance or a commercial license before public activation; no license decision yet.
 - CI is configured in GitHub Actions, but its actual pass/fail state must be checked before any readiness claim.
@@ -129,3 +129,25 @@ Python 3.12+ recommended. Install the four declared libraries with `python -m pi
 ## 2026-10-26 CI unblock and public-menu safeguard
 Read the actual GitHub Actions runner logs for `Calculation tests` run 40351480931 (174 tests; five fixture errors after successful dependency installs, syntax and preflight). Fixed four missing `seconds=0` arguments in upstream `Solar.fromYmdHms` tests and one invalid test-only Telegram owner ID of zero. These fixes retain production validation and do not alter planetary calculations. A subsequent fully green workflow run remains to be confirmed.
 The public `More` menu no longer exposes the unimplemented `Owner Controls` item. An owner-only authenticated dashboard must be implemented before enabling owner UI; no security based solely on hiding a menu item is claimed.
+
+## Primary-source Myanmar Mahabote and day-marker batch (2026-10-27)
+
+**New native private commands**:
+- `/mahabote 1990-05-14` — date-only seven-house birth chart; optional local time `/mahabote 2024-01-03 12:30` labels Wednesday afternoon Rahu separately, without changing the seven-house arithmetic.
+- `/days 2024-01-01` — source-based traditional calendar day categories, Sabbath and eve, Yatyaza/Pyathada, Nagahle direction and Nakhat. Neither command stores date inputs in a profile or callback.
+
+**Calculation modules**:
+- `mahabote_core.py` calculates the full seven-house placement by inverting `(my-wd)%7`, where `wd` is Saturday=0 through Friday=6; Myanmar year comes from the actual `mmcal` date conversion.
+- `mahabote_reading.py` contains seven original Burmese symbolic descriptions, explicitly separated from mathematical evidence as school-variable **editorial interpretation**; no specific personal future-event predictions.
+- `myanmar_day_signals.py` calculates 16 day-marker fields according to the Yan Naing Aye tables. Its declared handling treats First Waso as Waso and Late Tagu/Kason as Tagu/Kason in monthly lookup conventions. These month variants require independent calendar-school confirmation before release.
+- `myanmar_signal_reading.py` recomputes date evidence before revealing Burmese labels.
+- The Evidence UI documents two separate Mahabote rule IDs (calculation vs. symbolic reading) and one day-marker formula family.
+
+**Primary references**:
+- Yan Naing Aye, [Myanmar Astrological Calendar Days (2013)](https://cool-emerald.blogspot.com/2013/12/myanmar-astrological-calendar-days.html) and [original Burmese edition](https://coolemerald.blogspot.com/2013/12/blog-post.html).
+- Yan Naing Aye, [mmcal MIT library](https://github.com/yan9a/mmcal). Its [C++ cedate regression](https://github.com/yan9a/mmcal/blob/master/cpp/test/cedate/cedate.cpp) documents 2024-01-01 as Myanmar year 1385, Nadaw day 20, Monday, Marana, Nagahle south, and no active astrological days. This is checked in new tests.
+- Independently published worked [Mahabote example 1990-05-14 → Myanmar year 1352, Monday, Puti](https://horo.kesta.store/academy/myanmar/mahabote-calculation?lang=en).
+
+**New test modules**: `tests/test_mahabote_core.py`, `tests/test_myanmar_day_signals.py`, `tests/test_myanmar_signal_reading.py`. They check fixed source vectors, all seven-house positions, Rahu noon boundaries, multi-year weekday tables and forged result/evidence rejection.
+
+**Status**: Development only. Tests have been committed, but the latest full GitHub Actions green state and Telegram live tests remain unconfirmed; no Render deployment or claim of scientifically reliable future prediction.
