@@ -141,9 +141,9 @@ async def mahabote_command(message: Message):
     parts=(message.text or '').split()
     if len(parts) not in (2,3):
         await message.answer(
-            'မဟာဘုတ်ဇာတာတွက်ရန် မွေးရပ်ဒေသရဲ့ ရက်စွဲကို ဖြည့်ပါ။\\n'
-            '<code>/mahabote 1990-05-14</code>\\n'
-            'ဗုဒ္ဓဟူးမွန်းလွဲ ရာဟုခွဲရန် မွေးချိန်ထည့်နိုင်ပါတယ်။\\n'
+            'မဟာဘုတ်ဇာတာတွက်ရန် မွေးရပ်ဒေသရဲ့ ရက်စွဲကို ဖြည့်ပါ။\n'
+            '<code>/mahabote 1990-05-14</code>\n'
+            'ဗုဒ္ဓဟူးမွန်းလွဲ ရာဟုခွဲရန် မွေးချိန်ထည့်နိုင်ပါတယ်။\n'
             '<code>/mahabote 2024-01-03 12:30</code>',
             parse_mode='HTML'
         )
@@ -158,7 +158,7 @@ async def mahabote_command(message: Message):
     except (TypeError,ValueError):
         await message.answer('မွေးရက်/မွေးချိန် မမှန်သေးပါ။ 1900–2100 အတွင်း YYYY-MM-DD နဲ့ HH:MM ပုံစံဖြည့်ပါ။')
         return
-    placements='\\n'.join(
+    placements='\n'.join(
         f'{BURMESE_HOUSES[h]} — {html.escape(info["weekday"])} ({html.escape(info["planet"])})'
         for h,info in chart['placements'].items()
     )
@@ -168,16 +168,16 @@ async def mahabote_command(message: Message):
                              callback_data='evidence:'+reading['interpretation_rule_id'])
     ])
     await message.answer(
-        'မြန်မာမဟာဘုတ် — <b>မွေးဇာတာ ၇ အိမ်</b>\\n'
-        '━━━━━━━━━━━━━━\\n'
-        f'မြန်မာသက္ကရာဇ် — <b>{chart["myanmar_year"]}</b>\\n'
-        f'မွေးနေ့နံ — <b>{html.escape(chart["eight_day_weekday_label"])}</b>\\n'
-        f'မဟာဘုတ်အကြွင်း — <b>{chart["house_index"]}</b>\\n'
-        f'ဖွားအိမ် — <b>{html.escape(chart["house_burmese"])}</b>\\n\\n'
-        '<b>အိမ် ၇ လုံး၏ ဂြိုဟ်နေရာချထားမှု</b>\\n'
-        f'{placements}\\n\\n'
-        f'<b>{html.escape(reading["theme"])}</b>\\n'
-        f'{html.escape(reading["interpretation"])}\\n\\n'
+        'မြန်မာမဟာဘုတ် — <b>မွေးဇာတာ ၇ အိမ်</b>\n'
+        '━━━━━━━━━━━━━━\n'
+        f'မြန်မာသက္ကရာဇ် — <b>{chart["myanmar_year"]}</b>\n'
+        f'မွေးနေ့နံ — <b>{html.escape(chart["eight_day_weekday_label"])}</b>\n'
+        f'မဟာဘုတ်အကြွင်း — <b>{chart["house_index"]}</b>\n'
+        f'ဖွားအိမ် — <b>{html.escape(chart["house_burmese"])}</b>\n\n'
+        '<b>အိမ် ၇ လုံး၏ ဂြိုဟ်နေရာချထားမှု</b>\n'
+        f'{placements}\n\n'
+        f'<b>{html.escape(reading["theme"])}</b>\n'
+        f'{html.escape(reading["interpretation"])}\n\n'
         f'{html.escape(reading["disclaimer"])}',
         reply_markup=method_markup,
         parse_mode='HTML'
