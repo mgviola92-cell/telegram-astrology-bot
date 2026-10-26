@@ -23,35 +23,19 @@ from myanmar_core import myanmar_birth_day
 from myanmar_calendar import calculate_myanmar_calendar
 from evidence_ui import evidence_button, get_rule
 from profile_commands import router as profile_router
+from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
+                       feature_keyboard, feature_text, guide_keyboard, guide_text,
+                       SECTIONS, FEATURES, COMMAND_GUIDES)
 
 dp=Dispatcher()
 dp.include_router(profile_router)
 tarot_sessions = TarotSessions()
 
 def menu():
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='🌙 ဇာတာခန်း', callback_data='section:charts'),InlineKeyboardButton(text='📜 ဗေဒင်ကျမ်းတိုက်', callback_data='section:library')],
-        [InlineKeyboardButton(text='🇲🇲 မွေးနေ့နံ ကြည့်မယ်', callback_data='section:myday'),InlineKeyboardButton(text='📅 မြန်မာပြက္ခဒိန်', callback_data='section:mmcal')],
-        [InlineKeyboardButton(text='🃏 တားရော့ကတ် ဆွဲမယ်', callback_data='tarot:single')],
-        [InlineKeyboardButton(text='✨ တွက်ချက်နည်းများ', callback_data='section:methods')],
-    ])
+    return home_keyboard()
 
-WELCOME=(
-    '🌙 <b>ကြယ်စင်တို့၏ လမ်းညွှန်ရာ</b>\n'
-    '━━━━━━━━━━━━━━\n'
-    'မြန်မာ့ရိုးရာ၊ အနောက်တိုင်းနှင့် တရုတ်ဇာတာပညာ၊ ကိန်းဂဏန်းဗေဒင်၊ '
-    'တားရော့ကတ်တို့ကို လေ့လာနိုင်မည့် ဇာတာခန်းမှ ကြိုဆိုပါတယ်။\n\n'
-    '📜 <b>လက်ရှိ စမ်းသပ်နိုင်သောတွက်ချက်မှုများ</b>\n'
-    '• /number 1999-12-31 — မွေးနေ့ကိန်းဂဏန်း\n'
-    '• /bazi 2005-12-23 08:37 Asia/Yangon — တရုတ်ဇာတာလေးတိုင်\n'
-    '• /myday 2005-12-23 08:37 — မြန်မာ့မွေးနေ့နံ\n'
-    '• /mmcal 2024-01-01 — မြန်မာပြက္ခဒိန်\n'
-    '• /tarot — တားရော့ကတ်တစ်ချပ်\n\n'
-    '📜 ကိုယ်ပိုင်မွေးနေ့ သိမ်းလိုပါက /savebirth ၊ ဖျက်ရန် /forgetbirth ကို သုံးနိုင်ပါတယ်။\n'
-    'သိမ်းဆည်းမှုကို Server မှာ ဖွင့်ထားမှသာ အသုံးပြုနိုင်ပါတယ်။\n\n'
-    'မွေးနေ့၊ မွေးချိန်တွေကို <b>သီးသန့်စကားဝိုင်းမှာသာ</b> ပို့ပါ။ '
-    '/savebirth နဲ့ အတည်ပြုမှသာ မွေးနေ့မှတ်တမ်းကို လုံခြုံစွာ သိမ်းဆည်းပါမယ်။'
-)
+
+WELCOME = home_text()
 
 def private_only(message: Message) -> bool:
     return message.chat.type == 'private'
@@ -63,6 +47,45 @@ async def welcome(message: Message):
 @dp.message(Command('help'))
 async def help_message(message: Message):
     await welcome(message)
+
+@dp.callback_query(F.data.startswith("ui:"))
+async def native_navigation(cb: CallbackQuery):
+    # Callback identifiers contain no birth data and are checked against
+    # an explicit whitelist; unknown values receive only a short alert.
+    data=cb.data or ""
+    parts=data.split(":")
+    text=None
+    markup=None
+    if data=="ui:home":
+        text,markup=home_text(),home_keyboard()
+    elif len(parts)==3 and parts[0]=="ui" and parts[1]=="category" and parts[2] in SECTIONS:
+        text,markup=section_text(parts[2]),section_keyboard(parts[2])
+    elif len(parts)==3 and parts[0]=="ui" and parts[1]=="feature" and parts[2] in FEATURES:
+        text,markup=feature_text(parts[2]),feature_keyboard(parts[2])
+    elif len(parts)==3 and parts[0]=="ui" and parts[1]=="guide" and parts[2] in COMMAND_GUIDES:
+        if cb.message is None or cb.message.chat.type!="private":
+            await cb.answer("ကိုယ်ရေးအချက်အလက်ကို Private Chat မှာသာ ဖြည့်ပါ။",show_alert=True)
+            return
+        text,markup=guide_text(parts[2]),guide_keyboard(parts[2])
+    elif data=="ui:tarot":
+        if cb.message is None or cb.message.chat.type!="private":
+            await cb.answer("Tarot ကို Private Chat မှာ ဖွင့်ပါ။",show_alert=True)
+            return
+        await cb.answer()
+        await open_tarot(cb.message,user_id=cb.from_user.id)
+        return
+    else:
+        await cb.answer("ဤစာမျက်နှာ မရှိတော့ပါ။",show_alert=True)
+        return
+    await cb.answer()
+    if cb.message is None:
+        return
+    try:
+        await cb.message.edit_text(text,reply_markup=markup,parse_mode="HTML")
+    except Exception:
+        logging.warning("Cannot edit native navigation message; sending text fallback")
+        await cb.message.answer(text,reply_markup=markup,parse_mode="HTML")
+
 
 @dp.callback_query(F.data == 'section:charts')
 async def charts(cb: CallbackQuery):
