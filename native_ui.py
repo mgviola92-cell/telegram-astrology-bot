@@ -53,7 +53,7 @@ FEATURES = {
     "daily": ("Daily Reading", "နေ့စဉ်ဟောစာတမ်းတွက်ချက်မှု မပြီးသေးပါ။", ()),
     "timing": ("Timing Cycles", "Timing backend အချို့ရှိပေမဲ့ လုံလောက်စွာ မစမ်းသပ်ရသေးပါ။", ()),
     "mmcal": ("မြန်မာပြက္ခဒိန်", "မြန်မာရက်စွဲ၊ လဆန်းလဆုတ်၊ ရက်ရာဇာနှင့် ပြဿဒါးတို့ကို တွက်နိုင်ပါတယ်။", (
-        ("ရက်စွဲတွက်မယ်", "mmcal"),)),
+        ("ရက်စွဲတွက်မယ်", "mmcal"), ("အခါပေးရက်များ", "days"),)),
     "library": ("Reference Library", "တွက်ချက်နည်းကို ရှင်းပြနိုင်တဲ့ Evidence Buttons ရှိပြီးသားပါ။ စာကြည့်တိုက်အပြည့် မပြီးသေးပါ။", ()),
     "study": ("Astrology Study", "သီးခြားလေ့လာခန်း မပြီးသေးပါ။", ()),
     "group": ("Group Settings", "Group Management UI မပြီးသေးပါ။ ကိုယ်ရေးအချက်အလက်ကို Private Chat မှာသာ ဖြည့်ပါ။", ()),
@@ -63,6 +63,7 @@ COMMAND_GUIDES = {
     "myday": "/myday 2005-12-23 08:37",
     "mahabote": "/mahabote 1990-05-14",
     "mmcal": "/mmcal 2024-01-01",
+    "days": "/days 2024-01-01",
     "bazi": "/bazi 2005-12-23 08:37 Asia/Yangon",
     "number": "/number 1999-12-31",
     "savebirth": "/savebirth 2005-12-23 အတည်ပြု",
