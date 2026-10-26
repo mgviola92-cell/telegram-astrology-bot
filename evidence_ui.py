@@ -58,6 +58,12 @@ RULES = {
         'source': '6tail/lunar-python: lunar_python/util/LunarUtil.py ZHI_HIDE_GAN; https://github.com/6tail/lunar-python',
         'limits': 'ဤဇယားမှာ အလေးချိန် သတ်မှတ်ခြင်း၊ ရာသီအင်အားအချိုးတွက်ခြင်း၊ Day Master Strength သတ်မှတ်ခြင်း မပါသေးပါ။'
     },
+    'CHN-BAZI-CHANGSHENG-001': {
+        'heading': 'BaZi 十二长生 — ရိုးရာအဆင့် ၁၂ မျိုး',
+        'method': 'အတည်ပြုပြီးသော Four Pillars နှင့် Day Master, Sect ကို တူညီသည့်မွေးချိန်မှ ပြန်တွက်စစ်ပြီး lunar-python EightChar ၏ getYearDiShi, getMonthDiShi, getDayDiShi, getTimeDiShi နည်းလမ်းများဖြင့် အဆင့် ၁၂ မျိုးထဲက အိမ်တိုင်ဆိုင်ရာအမျိုးအစားကို ထုတ်သည်။',
+        'source': '6tail/lunar-python lunar_python/EightChar.py, CHANG_SHENG stages and growth-stage getters; https://github.com/6tail/lunar-python/blob/master/lunar_python/EightChar.py',
+        'limits': 'ရိုးရာကဏ္ဍအမည်များသာဖြစ်ပြီး အသက်အရွယ်၊ ကျန်းမာရေး၊ အသက်ရှည်မှု၊ ဖြစ်ရပ်ကံကြမ္မာကို ခန့်မှန်းသော အထောက်အထားမဟုတ်ပါ။ Day Master ရာသီအင်အား သို့မဟုတ် Useful God ကို မတွက်ထားပါ။'
+    },
     'CHN-BAZI-PILLARS-001': {
         'heading': 'တရုတ်ဇာတာလေးတိုင်',
         'method': 'မွေးရပ်ဒေသ ဒေသစံတော်ချိန်ကို lunar-python ၏ Solar -> Lunar -> EightChar စနစ်ထဲ ဖြတ်သန်းတွက်ချက်သည်။',
