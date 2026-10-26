@@ -58,6 +58,14 @@ async def native_navigation(cb: CallbackQuery):
     parts=data.split(":")
     text=None
     markup=None
+    if cb.message is None:
+        await cb.answer("စာမျက်နှာကို ဖွင့်မရပါ။",show_alert=True)
+        return
+    # Navigation includes personal birth-date and chart routes; never expose
+    # those controls in groups or let an old group callback bypass privacy.
+    if cb.message.chat.type != "private":
+        await cb.answer("ကိုယ်ပိုင်ဇာတာကို Private Chat မှာသာ ကြည့်ပါ။",show_alert=True)
+        return
     if data=="ui:home":
         text,markup=home_text(),home_keyboard()
     elif len(parts)==3 and parts[0]=="ui" and parts[1]=="category" and parts[2] in SECTIONS:
