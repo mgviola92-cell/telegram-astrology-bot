@@ -37,7 +37,7 @@ SECTIONS = {
 }
 FEATURES = {
     "mm": ("မြန်မာဗေဒင်", "မွေးနေ့နံနှင့် မဟာဘုတ်/ပြက္ခဒိန်တွက်ချက်မှုများ", (
-        ("မွေးနေ့နံ", "myday"), ("မြန်မာပြက္ခဒိန်", "mmcal"))),
+        ("မွေးနေ့နံ", "myday"), ("မဟာဘုတ်ဇာတာ", "mahabote"), ("မြန်မာပြက္ခဒိန်", "mmcal"))),
     "western": ("Western Astrology", "Western natal chart ကို Reference နဲ့ စစ်ဆေးနေဆဲဖြစ်လို့ မဖွင့်ရသေးပါ။", ()),
     "bazi": ("BaZi", "Four Pillars ကို တွက်နိုင်ပါတယ်။ True Solar Time နဲ့ seasonal validation မပြီးသေးပါ။", (
         ("Four Pillars", "bazi"),)),
@@ -61,6 +61,7 @@ FEATURES = {
 }
 COMMAND_GUIDES = {
     "myday": "/myday 2005-12-23 08:37",
+    "mahabote": "/mahabote 1990-05-14",
     "mmcal": "/mmcal 2024-01-01",
     "bazi": "/bazi 2005-12-23 08:37 Asia/Yangon",
     "number": "/number 1999-12-31",
