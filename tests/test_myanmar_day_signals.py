@@ -54,6 +54,16 @@ class MyanmarDaySignalsTests(unittest.TestCase):
             day+=timedelta(days=1)
         self.assertGreater(sabbaths,40)
 
+    def test_independent_mmcal_cpp_2024_jan1_golden_vector(self):
+        # yan9a/mmcal cpp/test/cedate/cedate.cpp published regression.
+        cal=calculate_myanmar_calendar(date(2024,1,1))
+        result=calculate_day_signals(date(2024,1,1))
+        self.assertEqual((cal["myanmar_year"],cal["month_index"],cal["day"]),
+                         (1385,9,20))
+        self.assertEqual(result["nagahle_direction"],"တောင်")
+        self.assertFalse(any(result["markers"][name] for name in BOOL_MARKERS))
+        self.assertEqual(result["markers"]["pyathada"],0)
+
     def test_evidence_and_labels_all_days(self):
         for day in (date(1900,1,1),date(1990,5,14),date(2024,1,1),
                     date(2026,10,27),date(2099,10,27),date(2100,12,30)):
