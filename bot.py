@@ -7,7 +7,7 @@ import asyncio
 import html
 import logging
 import os
-from datetime import date, datetime
+from datetime import date, datetime, time
 
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart
@@ -24,6 +24,8 @@ from tarot_media import load_media_registry, card_photo_file_id
 from tarot_sessions import TarotSessions
 from myanmar_core import myanmar_birth_day
 from myanmar_calendar import calculate_myanmar_calendar
+from mahabote_core import calculate_mahabote, BURMESE_HOUSES
+from mahabote_reading import interpret_mahabote
 from evidence_ui import evidence_button, get_rule
 from profile_commands import router as profile_router
 from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
@@ -130,6 +132,57 @@ async def show_evidence(cb: CallbackQuery):
         '<b>သိထားရန်</b>\n'+html.escape(record['limits']),
         parse_mode='HTML'
     )
+
+@dp.message(Command('mahabote'))
+async def mahabote_command(message: Message):
+    if not private_only(message):
+        await message.answer('မဟာဘုတ်မွေးဇာတာကို သီးသန့်စကားဝိုင်းမှာပဲ တွက်ပေးနိုင်ပါတယ်။')
+        return
+    parts=(message.text or '').split()
+    if len(parts) not in (2,3):
+        await message.answer(
+            'မဟာဘုတ်ဇာတာတွက်ရန် မွေးရပ်ဒေသရဲ့ ရက်စွဲကို ဖြည့်ပါ။\\n'
+            '<code>/mahabote 1990-05-14</code>\\n'
+            'ဗုဒ္ဓဟူးမွန်းလွဲ ရာဟုခွဲရန် မွေးချိန်ထည့်နိုင်ပါတယ်။\\n'
+            '<code>/mahabote 2024-01-03 12:30</code>',
+            parse_mode='HTML'
+        )
+        return
+    try:
+        local_date=date.fromisoformat(parts[1])
+        if local_date>date.today():
+            raise ValueError('future birth date')
+        clock=time.fromisoformat(parts[2]) if len(parts)==3 else None
+        chart=calculate_mahabote(local_date,clock)
+        reading=interpret_mahabote(chart)
+    except (TypeError,ValueError):
+        await message.answer('မွေးရက်/မွေးချိန် မမှန်သေးပါ။ 1900–2100 အတွင်း YYYY-MM-DD နဲ့ HH:MM ပုံစံဖြည့်ပါ။')
+        return
+    placements='\\n'.join(
+        f'{BURMESE_HOUSES[h]} — {html.escape(info["weekday"])} ({html.escape(info["planet"])})'
+        for h,info in chart['placements'].items()
+    )
+    method_markup=evidence_button(chart['evidence']['rule_id'])
+    method_markup.inline_keyboard.append([
+        InlineKeyboardButton(text='Interpretation Method',
+                             callback_data='evidence:'+reading['interpretation_rule_id'])
+    ])
+    await message.answer(
+        'မြန်မာမဟာဘုတ် — <b>မွေးဇာတာ ၇ အိမ်</b>\\n'
+        '━━━━━━━━━━━━━━\\n'
+        f'မြန်မာသက္ကရာဇ် — <b>{chart["myanmar_year"]}</b>\\n'
+        f'မွေးနေ့နံ — <b>{html.escape(chart["eight_day_weekday_label"])}</b>\\n'
+        f'မဟာဘုတ်အကြွင်း — <b>{chart["house_index"]}</b>\\n'
+        f'ဖွားအိမ် — <b>{html.escape(chart["house_burmese"])}</b>\\n\\n'
+        '<b>အိမ် ၇ လုံး၏ ဂြိုဟ်နေရာချထားမှု</b>\\n'
+        f'{placements}\\n\\n'
+        f'<b>{html.escape(reading["theme"])}</b>\\n'
+        f'{html.escape(reading["interpretation"])}\\n\\n'
+        f'{html.escape(reading["disclaimer"])}',
+        reply_markup=method_markup,
+        parse_mode='HTML'
+    )
+
 
 @dp.callback_query(F.data == 'section:mmcal')
 async def myanmar_calendar_guide(cb: CallbackQuery):
