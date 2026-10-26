@@ -78,5 +78,5 @@ def evidence_button(rule_id: str):
     if rule_id not in RULES:
         raise KeyError(rule_id)
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='📖 ဤတွက်ချက်မှု၏ အခြေခံ', callback_data=f'evidence:{rule_id}')]
+        [InlineKeyboardButton(text='Calculation Method', callback_data=f'evidence:{rule_id}')]
     ])
