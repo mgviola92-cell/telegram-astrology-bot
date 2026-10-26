@@ -57,7 +57,7 @@ FEATURES = {
     "library": ("Reference Library", "တွက်ချက်နည်းကို ရှင်းပြနိုင်တဲ့ Evidence Buttons ရှိပြီးသားပါ။ စာကြည့်တိုက်အပြည့် မပြီးသေးပါ။", ()),
     "study": ("Astrology Study", "သီးခြားလေ့လာခန်း မပြီးသေးပါ။", ()),
     "group": ("Group Settings", "Group Management UI မပြီးသေးပါ။ ကိုယ်ရေးအချက်အလက်ကို Private Chat မှာသာ ဖြည့်ပါ။", ()),
-    "owner": ("Owner Controls", "Owner Dashboard မပြီးသေးပါ။", ()),
+
 }
 COMMAND_GUIDES = {
     "myday": "/myday 2005-12-23 08:37",
