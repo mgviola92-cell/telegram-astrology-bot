@@ -26,6 +26,8 @@ from myanmar_core import myanmar_birth_day
 from myanmar_calendar import calculate_myanmar_calendar
 from mahabote_core import calculate_mahabote, BURMESE_HOUSES
 from mahabote_reading import interpret_mahabote
+from myanmar_day_signals import calculate_day_signals
+from myanmar_signal_reading import describe_day_signals
 from evidence_ui import evidence_button, get_rule
 from profile_commands import router as profile_router
 from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
@@ -132,6 +134,39 @@ async def show_evidence(cb: CallbackQuery):
         '<b>သိထားရန်</b>\n'+html.escape(record['limits']),
         parse_mode='HTML'
     )
+
+@dp.message(Command('days'))
+async def myanmar_day_signals_command(message: Message):
+    if not private_only(message):
+        await message.answer('မြန်မာနေ့ရက်အမှတ်အသားကို Private Chat မှာသာ တွက်ပေးနိုင်ပါတယ်။')
+        return
+    parts=(message.text or '').split()
+    if len(parts)!=2:
+        await message.answer('မြန်မာအခါပေးရက်များကို တွက်ကြည့်ရန် <code>/days 2024-01-01</code> လို့ ဖြည့်ပါ။',parse_mode='HTML')
+        return
+    try:
+        day=date.fromisoformat(parts[1])
+        signals=calculate_day_signals(day)
+        description=describe_day_signals(signals)
+    except (ValueError,TypeError):
+        await message.answer('ရက်စွဲကို 1900–2100 အတွင်း YYYY-MM-DD ပုံစံနဲ့ ပြန်ဖြည့်ပါ။')
+        return
+    labels=description['active_labels']
+    names='၊ '.join(labels) if labels else 'ဤနေ့တွင် သီးခြားအခါပေးရက်အမှတ်အသား မတွေ့ပါ။'
+    await message.answer(
+        'မြန်မာရိုးရာ အခါပေးရက်များ\n'
+        '━━━━━━━━━━━━━━\n'
+        f'ရက်စွဲ — <b>{html.escape(signals["date"])}</b>\n'
+        f'မြန်မာလ — <b>{html.escape(signals["myanmar_month"])}</b>\n\n'
+        '<b>ဤနေ့၏ ရိုးရာအမှတ်အသားများ</b>\n'
+        f'{html.escape(names)}\n\n'
+        f'နဂါးခေါင်းလှည့်ရာ — <b>{html.escape(description["nagahle_direction"])}</b>\n'
+        f'နက္ခတ် — <b>{html.escape(description["nakhat_name"])}</b>\n\n'
+        f'{html.escape(description["note"])}',
+        parse_mode='HTML',
+        reply_markup=evidence_button(description['rule_id'])
+    )
+
 
 @dp.message(Command('mahabote'))
 async def mahabote_command(message: Message):
