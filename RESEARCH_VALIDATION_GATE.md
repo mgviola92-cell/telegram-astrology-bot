@@ -172,3 +172,11 @@ This document tracks actual completed versus pending work. No features added bey
 - GitHub Actions run https://github.com/mgviola92-cell/telegram-astrology-bot/actions/runs/40387263909 completed **success** on commit `97c378bce`, after the Mahabote, day-marker and key source-vector regression tests were pushed.
 - Commit `c69c8a8e9` added offline Telegram command tests after that successful run; check its own run before claiming latest green.
 - No live Telegram network testing, Western natal chart independent validation, optional artifact upload or Render deployment was performed. Traditions' cultural rules are documented as cultural systems, not guarantees of events.
+
+## 2026-10-27 BaZi Twelve Chang Sheng primary-code research
+- Read the upstream lunar-python EightChar implementation: https://github.com/6tail/lunar-python/blob/master/lunar_python/EightChar.py . Its `CHANG_SHENG` tuple defines the 12 stage categories; the upstream `getYearDiShi/getMonthDiShi/getDayDiShi/getTimeDiShi` functions compute branch-relative stages using the checked Day Master and chosen Sect.
+- Added `bazi_growth_stages.py`: validates the complete chart with `reading_facts('bazi',...)`, reconstructs the same upstream birth chart, checks four pillars, then obtains each stage directly from lunar-python's own methods. The source rule is `CHN-BAZI-CHANGSHENG-001`.
+- `tests/test_bazi_growth_stages.py` cross-checks upstream getters for Sect 1/2, tests the late-night time boundary and fails closed on tampered charts or missing birth-time provenance. GitHub Actions run 40388473377 (commit b290411b23) completed success including these tests.
+- `bot.py` now shows the four stage symbols and careful Burmese thematic labels in `/bazi`, along with separate rule-provenance button. Evidence controls were condensed to five distinct native inline labels across three rows.
+- `tests/test_bot_bazi_command.py` runs no-token handler smoke tests for rendered Four Pillars, stage names, timezone display, DST fall-back warning, group privacy, and evidence controls.
+- **Explicit uncertainty**: Chang Sheng names represent cyclical traditional categories only. They are not measured aging, life expectancy, health risk, future predictions, seasonal qi strength, or a claim of mathematically deduced fortunes. The work is BaZi only: no Vedic or Jyotish algorithms were added.
