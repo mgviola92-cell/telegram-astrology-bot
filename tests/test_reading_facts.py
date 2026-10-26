@@ -102,6 +102,12 @@ class ReadingFactsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             reading_facts("bazi",modified)
 
+    def test_bazi_element_mismatch(self):
+        chart=bazi_fixture()
+        chart["elements"]["year"]="INVALID"
+        with self.assertRaises(ValueError):
+            reading_facts("bazi",chart)
+
     def test_reject_unknown_system(self):
         with self.assertRaises(ValueError):
             reading_facts("unreviewed_prediction",bazi_fixture())
