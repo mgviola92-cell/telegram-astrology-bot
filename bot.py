@@ -280,9 +280,9 @@ async def bazi(message: Message):
 
 def tarot_choice_keyboard(token: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[[
-        InlineKeyboardButton(text='🌙 ပထမကတ်', callback_data=f'tarotpick:{token}:0'),
-        InlineKeyboardButton(text='✨ ဒုတိယကတ်', callback_data=f'tarotpick:{token}:1'),
-        InlineKeyboardButton(text='🔮 တတိယကတ်', callback_data=f'tarotpick:{token}:2'),
+        InlineKeyboardButton(text='Card I', callback_data=f'tarotpick:{token}:0'),
+        InlineKeyboardButton(text='Card II', callback_data=f'tarotpick:{token}:1'),
+        InlineKeyboardButton(text='Card III', callback_data=f'tarotpick:{token}:2'),
     ]])
 
 
