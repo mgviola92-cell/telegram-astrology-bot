@@ -42,7 +42,7 @@ class BaziTests(unittest.TestCase):
             from lunar_python import Solar
         except ImportError:
             self.skipTest("lunar-python missing")
-        solar=Solar.fromYmdHms(2005,12,23,8,37)
+        solar=Solar.fromYmdHms(2005,12,23,8,37,0)
         upstream=solar.getLunar().getEightChar()
         local=calculate_bazi(datetime(2005,12,23,8,37))
         got=local["hidden_stems"]["pillars"]
@@ -59,7 +59,7 @@ class BaziTests(unittest.TestCase):
             from lunar_python.util import LunarUtil
         except ImportError:
             self.skipTest("lunar-python missing")
-        upstream=Solar.fromYmdHms(2005,12,23,8,37).getLunar().getEightChar()
+        upstream=Solar.fromYmdHms(2005,12,23,8,37,0).getLunar().getEightChar()
         result=calculate_bazi(datetime(2005,12,23,8,37))
         day=upstream.getDayGan()
         gods=result["ten_gods_all"]
