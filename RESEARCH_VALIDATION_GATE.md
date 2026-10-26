@@ -140,3 +140,14 @@ This document tracks actual completed versus pending work. No features added bey
 - Research cross-check: Yan Naing Aye's calendrical Yatyaza/Pyathada categories and patterns are explained at https://cool-emerald.blogspot.com/2013/12/myanmar-astrological-calendar-days.html . These are **traditional calendar date labels**, not scientifically demonstrated predictors, and do not substitute for real-world safety, medical, finance or legal decisions.
 - Inline Tarot selection and Evidence buttons use clean English labels without decorative emoji. Existing Myanmar text for readings is preserved. Full professional birth-based Mahabote interpretations, BaZi seasonal strength and Western Natal benchmarks remain **unfinished**.
 - GitHub Actions run 40362572739 on earlier commit 4482893 reported 185 tests with one `month` comparison error; the later commit 4daa227 corrects that mapping. A full passing CI run after the fix has not yet been independently confirmed.
+
+## 2026-10-27 larger logic and stability batch
+- `reading_facts.py`: independent BaZi recalculation now checks Four Pillars, Day Master, original elemental summaries, stem Ten Gods, hidden stems, and full Ten Gods mapping. It rejects mismatches before rendering a user reading.
+- `bazi_element_reading.py`: a deterministic traditional Five Phases generating/controlling relationship matrix based on the validated Day Master; explicitly does **not** infer seasonal strength, useful gods, personal character or future events.
+- `bot.py`: `/bazi` now displays Burmese Five Phases relations, day element and Yin/Yang; native navigation is private-chat-only to avoid accidental personal-chart flows in group callbacks.
+- `native_ui.py`: remove unfinished owner route from direct callback lookup, not just the public menu.
+- `tests/test_bazi_element_reading.py`: complete 5x5 Five Phases relation coverage, real lunar-python chart vector, and tampering rejection.
+- `tests/test_birth_time_boundaries.py`: Yangon offset, invalid UTC/aware time, New York DST spring gap and fall overlap/fold vectors.
+- `tests/test_native_ui.py`: enforce no emoji in inline labels and no public owner route.
+- Prior CI failure on commit `b88f84c`, run `40372698357`, was an older BaZi test fixture lacking sect provenance. Subsequent fixture was replaced with the actual `calculate_bazi` engine result in `tests/test_reading_facts.py`. **Do not claim latest CI is green until a completed run for the latest commit is observed.**
+- Release blockers: full CI green, actual Telegram private/group smoke tests, chart validation on documented boundary vectors, traditional Burmese interpretation corpus, Western natal kernel/reference vectors, and operator approval. Render deployment remains deferred.
