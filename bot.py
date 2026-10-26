@@ -398,6 +398,9 @@ async def bazi(message: Message):
         'အဓိက/အရံဓာတ်အစဉ်သာ ဖြစ်ပြီး ရာသီအင်အား မတွက်ရသေးပါ။\n\n'
         f'☯️ Ten Gods — {html.escape(gods_summary)}\n'
         'ဤသည် ရိုးရာ ဆက်စပ်မှုအမျိုးအစားများသာဖြစ်သည်။\n\n'
+        '<b>十二长生 — ရိုးရာအဆင့် ၁၂ မျိုး</b>\n'
+        f'{html.escape(growth_summary)}\n'
+        'ဤအဆင့်အမည်များသည် ကျန်းမာရေး သို့မဟုတ် အနာဂတ်ဖြစ်ရပ်ကို ခန့်မှန်းခြင်း မဟုတ်ပါ။\n\n'
         f'📖 <code>{result["evidence"]["rule_id"]}</code>\n'
         f'လက်ခံထားသော Timezone — <code>{html.escape(normalized["timezone"])}</code>\n'
         'True Solar Time မပြင်ရသေးသော စမ်းသပ်ဇာတာဖြစ်သည်။',
