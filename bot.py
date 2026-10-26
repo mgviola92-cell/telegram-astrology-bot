@@ -361,11 +361,24 @@ async def bazi(message: Message):
     gods=result['ten_gods_all']['visible']
     gods_summary=' · '.join(f'{name}: {gods[name]["ten_god"]}' for name in ('year','month','day','hour'))
     hidden_summary=' · '.join(f'{k}: {"/".join(s["stem"] for s in hidden[k]["hidden"])}' for k in ('year','month','day','hour'))
-    bazi_markup=evidence_button(result['evidence']['rule_id'])
-    bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-VISIBLE-WUXING-001').inline_keyboard)
-    bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-HIDDEN-STEMS-001').inline_keyboard)
-    bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-TENGODS-001').inline_keyboard)
-    bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-CHANGSHENG-001').inline_keyboard)
+    methods=(
+        ("Four Pillars",result['evidence']['rule_id']),
+        ("Five Elements","CHN-BAZI-VISIBLE-WUXING-001"),
+        ("Hidden Stems","CHN-BAZI-HIDDEN-STEMS-001"),
+        ("Ten Gods","CHN-BAZI-TENGODS-001"),
+        ("Twelve Stages","CHN-BAZI-CHANGSHENG-001"),
+    )
+    # The card uses distinct, compact native inline labels rather than five
+    # identical "Calculation Method" buttons.
+    for _,rule_id in methods:
+        get_rule(rule_id)
+    buttons=[
+        InlineKeyboardButton(text=label,callback_data="evidence:"+rule_id)
+        for label,rule_id in methods
+    ]
+    bazi_markup=InlineKeyboardMarkup(inline_keyboard=[
+        buttons[0:2],buttons[2:4],buttons[4:5]
+    ])
     balance=' · '.join(f'{name}: {count}' for name,count in visible['visible_counts'].items())
     growth_summary=' · '.join(f'{name}: {growth_reading["stages"][name]} ({growth_reading["burmese_stage_names"][name]})' for name in ('year','month','day','hour'))
     relations='\n'.join(f'{g["burmese_element"]} ({g["visible_count"]}) — {g["relationship_label"]}' for g in element_reading['groups'])
