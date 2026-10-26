@@ -125,3 +125,7 @@ Python 3.12+ recommended. Install the four declared libraries with `python -m pi
 - Only **already implemented** calculations link to command-entry guides; Tarot opens the current session flow. Incomplete features show a clear development description, not fabricated calculation results. Birth-date entry guides are private-only and do not store data automatically.
 - The layout uses actual Telegram `InlineKeyboardMarkup` and `InlineKeyboardButton` primitives; no custom backgrounds, fonts, widget tabs, gradient cards or Mini App are claimed. The Telegram client chooses final button shape/colors.
 - `tests/test_native_ui.py` covers callback byte limits, navigable targets, Back/Home, button labels, and unavailable-feature behavior. Actual Telegram mobile/desktop rendering, full CI and bot deployment remain unverified.
+
+## 2026-10-26 CI unblock and public-menu safeguard
+Read the actual GitHub Actions runner logs for `Calculation tests` run 40351480931 (174 tests; five fixture errors after successful dependency installs, syntax and preflight). Fixed four missing `seconds=0` arguments in upstream `Solar.fromYmdHms` tests and one invalid test-only Telegram owner ID of zero. These fixes retain production validation and do not alter planetary calculations. A subsequent fully green workflow run remains to be confirmed.
+The public `More` menu no longer exposes the unimplemented `Owner Controls` item. An owner-only authenticated dashboard must be implemented before enabling owner UI; no security based solely on hiding a menu item is claimed.
