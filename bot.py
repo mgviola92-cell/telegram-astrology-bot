@@ -13,6 +13,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from astro_core import life_path
+from reading_facts import reading_facts
 from bazi_core import calculate_bazi
 from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
@@ -142,6 +143,7 @@ async def myanmar_calendar_command(message: Message):
     try:
         day=date.fromisoformat(fields[1])
         result=calculate_myanmar_calendar(day)
+        reading_facts('myanmar_calendar',result)
     except (ValueError,TypeError):
         await message.answer('🌫️ 1900–2100 အတွင်း YYYY-MM-DD ပုံစံနဲ့ ရက်စွဲပြန်ဖြည့်ပါ။')
         return
@@ -212,6 +214,7 @@ async def numerology(message: Message):
         born=date.fromisoformat(parts[1])
         if born > date.today(): raise ValueError('future date')
         result=life_path(born)
+        reading_facts('numerology',result)
     except ValueError:
         await message.answer('🌫️ မွေးနေ့ပုံစံ မမှန်သေးပါ။ YYYY-MM-DD အတိုင်း ပြန်ဖြည့်ပေးပါ။')
         return
@@ -238,6 +241,7 @@ async def bazi(message: Message):
         if born.date()>date.today(): raise ValueError('future date')
         normalized=normalize_birth_wall_time(born,parts[3])
         result=calculate_bazi(normalized['wall_time'], timezone_verified=normalized['timezone'])
+        reading_facts('bazi',result)
     except (ValueError,RuntimeError):
         await message.answer('🌫️ မွေးချိန်ကို မတွက်နိုင်သေးပါ။ YYYY-MM-DD HH:MM Asia/Yangon ပုံစံနဲ့ မွေးရပ်ဒေသရဲ့ Timezone ကို စစ်ဆေးပါ။ DST နာရီနှစ်ခါဖြစ်တဲ့ ရက်တွေမှာ မွေးချိန်အတည်ပြုဖို့ လိုပါတယ်။')
         return
