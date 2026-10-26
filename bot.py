@@ -398,9 +398,7 @@ async def bazi(message: Message):
         '<b>十二长生 — ရိုးရာအဆင့် ၁၂ မျိုး</b>\n'
         f'{html.escape(growth_summary)}\n'
         'ဤအဆင့်အမည်များသည် ကျန်းမာရေး သို့မဟုတ် အနာဂတ်ဖြစ်ရပ်ကို ခန့်မှန်းခြင်း မဟုတ်ပါ။\n\n'
-        '<b>十二长生 — ရိုးရာအဆင့် ၁၂ မျိုး</b>\n'
-        f'{html.escape(growth_summary)}\n'
-        'ဤအဆင့်အမည်များသည် အသက်၊ ကျန်းမာရေး သို့မဟုတ် အနာဂတ်ဖြစ်ရပ်များကို ခန့်မှန်းခြင်း မဟုတ်ပါ။\n\n'
+
         f'📖 <code>{result["evidence"]["rule_id"]}</code>\n'
         f'လက်ခံထားသော Timezone — <code>{html.escape(normalized["timezone"])}</code>\n'
         'True Solar Time မပြင်ရသေးသော စမ်းသပ်ဇာတာဖြစ်သည်။',
