@@ -16,6 +16,7 @@ from astro_core import life_path
 from reading_facts import reading_facts
 from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
+from bazi_element_reading import bazi_element_reading
 from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
 from tarot_meanings import interpret_tarot_card
@@ -254,6 +255,7 @@ async def bazi(message: Message):
         normalized=normalize_birth_wall_time(born,parts[3])
         result=calculate_bazi(normalized['wall_time'], timezone_verified=normalized['timezone'])
         reading_facts('bazi',result)
+        element_reading=bazi_element_reading(result)
     except (ValueError,RuntimeError):
         await message.answer('🌫️ မွေးချိန်ကို မတွက်နိုင်သေးပါ။ YYYY-MM-DD HH:MM Asia/Yangon ပုံစံနဲ့ မွေးရပ်ဒေသရဲ့ Timezone ကို စစ်ဆေးပါ။ DST နာရီနှစ်ခါဖြစ်တဲ့ ရက်တွေမှာ မွေးချိန်အတည်ပြုဖို့ လိုပါတယ်။')
         return
@@ -268,6 +270,7 @@ async def bazi(message: Message):
     bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-HIDDEN-STEMS-001').inline_keyboard)
     bazi_markup.inline_keyboard.extend(evidence_button('CHN-BAZI-TENGODS-001').inline_keyboard)
     balance=' · '.join(f'{name}: {count}' for name,count in visible['visible_counts'].items())
+    relations='\n'.join(f'{g["burmese_element"]} ({g["visible_count"]}) — {g["relationship_label"]}' for g in element_reading['groups'])
     await message.answer(
         '🐉 <b>တရုတ်ဇာတာလေးတိုင်</b>\n━━━━━━━━━━━━━━\n'
         f'နှစ်တိုင် — <b>{html.escape(p["year"])}</b>\n'
@@ -276,6 +279,10 @@ async def bazi(message: Message):
         f'နာရီတိုင် — <b>{html.escape(p["hour"])}</b>\n\n'
         f'🌿 မြင်ရသော အဓိကဓာတ် ၈ လုံး — {html.escape(balance)}\n'
         'ဤအရေအတွက်သည် Day Master အားကောင်း/အားနည်းခြင်းကို မဆုံးဖြတ်ပါ။\n\n'
+        f'<b>Day Master</b> — {html.escape(element_reading["day_master"])} / {html.escape(element_reading["day_element_burmese"])} ({html.escape(element_reading["polarity_burmese"])})\n'
+        '<b>ဓာတ်ငါးပါး ဆက်နွယ်မှု</b>\n'
+        f'{html.escape(relations)}\n'
+        'ဤဆက်နွယ်မှုများသည် ရိုးရာအမျိုးအစားခွဲခြားချက်များသာဖြစ်ပြီး ကံကြမ္မာခန့်မှန်းချက် မဟုတ်ပါ။\n\n'
         f'🍃 Hidden Stems — {html.escape(hidden_summary)}\n'
         'အဓိက/အရံဓာတ်အစဉ်သာ ဖြစ်ပြီး ရာသီအင်အား မတွက်ရသေးပါ။\n\n'
         f'☯️ Ten Gods — {html.escape(gods_summary)}\n'
