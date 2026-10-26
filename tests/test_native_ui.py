@@ -52,6 +52,22 @@ class NativeUiTests(unittest.TestCase):
             actions=[b.text for b in self.all_buttons(feature_keyboard(feature))]
             self.assertIn("Back",actions)
             self.assertIn("Home",actions)
+    def test_owner_controls_not_exposed(self):
+        self.assertNotIn("owner",FEATURES)
+        for section in SECTIONS.values():
+            self.assertNotIn("owner",[item[1] for item in section[1]])
+
+    def test_all_buttons_are_nonempty_and_clean(self):
+        keyboards=[home_keyboard()]
+        keyboards.extend(section_keyboard(s) for s in SECTIONS)
+        keyboards.extend(feature_keyboard(f) for f in FEATURES)
+        keyboards.extend(guide_keyboard(g) for g in COMMAND_GUIDES)
+        for keyboard in keyboards:
+            for b in self.all_buttons(keyboard):
+                self.assertTrue(b.text.strip())
+                self.assertFalse(any(ord(c)>0x1F000 for c in b.text),
+                                 "Decorative emoji in button label: "+b.text)
+
     def test_invalid_callbacks_rejected(self):
         with self.assertRaises(ValueError):
             button("test","x"*65)
