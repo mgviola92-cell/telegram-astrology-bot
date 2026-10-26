@@ -47,10 +47,8 @@ def calculate_growth_stages(chart: dict) -> dict:
         "day":upstream.getDay(),
         "hour":upstream.getTime(),
     }
-    if pillars!=checked["facts"].copy() | {"day_master":checked["facts"]["day_master"]}:
-        # Compare the four pillars only, not the separately derived day master.
-        if any(pillars[name]!=checked["facts"][name] for name in pillars):
-            raise ValueError("Twelve-stage upstream chart differs from verified pillars")
+    if any(pillars[name]!=checked["facts"][name] for name in pillars):
+        raise ValueError("Twelve-stage upstream chart differs from verified pillars")
     stages={
         "year":upstream.getYearDiShi(),
         "month":upstream.getMonthDiShi(),
