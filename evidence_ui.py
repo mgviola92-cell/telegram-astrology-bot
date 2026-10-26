@@ -10,6 +10,18 @@ RULES = {
         'source': 'Astrodienst Aspects: https://www.astro.com/astrology/in_aspect_e.htm ; orb sizes depend on a documented convention',
         'limits': 'အခြား Ephemeris မှ သီးခြားအတည်ပြုထားသော ဂြိုဟ်တည်နေရာကိုသာ ထည့်သွင်းရမည်။ ဤ Engine က မွေးဇာတာနှင့် ဂြိုဟ်တည်နေရာကို ကိုယ်တိုင်မတွက်သေးပါ။'
     },
+    'MM-MAHABOTE-SEVEN-HOUSE-001': {
+        'heading': 'မဟာဘုတ် ၇ အိမ် ဇာတာတွက်ချက်နည်း',
+        'method': 'မွေးရက်၏ နေ့နံကို စနေ=၀ မှ သောကြာ=၆ စဉ်ဖြင့် နံပါတ်ချ၊ mmcal မှ မြန်မာသက္ကရာဇ်တွက်ပြီး (မြန်မာနှစ်−နေ့နံ) mod 7 ဖြင့် မွေးဖွားရာအိမ် ရှာသည်။ နေ့နံ ၇ မျိုးကို ပြန်လှန်တွက်၍ အိမ် ၇ လုံးလုံးမှာ ဂြိုဟ်နေရာချသည်။ ရာဟုသည် ၈ နေ့နံခွဲခြားချက်သာဖြစ်၍ မဟာဘုတ်အိမ်အသစ်မဖြစ်ပါ။',
+        'source': 'Yan Naing Aye, Myanmar Astrological Calendar Days (2013), Mahabote; https://cool-emerald.blogspot.com/2013/12/myanmar-astrological-calendar-days.html ; Myanmar calendar algorithm: https://github.com/yan9a/mmcal',
+        'limits': 'မွေးရက်သည် မွေးရပ်ဒေသ၏ Local Date ဖြစ်ရမည်။ ဤနည်းမှာ ၇ အိမ်တွက်ချက်မှုဖြစ်ပြီး အပြည့်အစုံကံကြမ္မာဟောကိန်း မဟုတ်ပါ။ ၁၉၀၀–၂၁၀၀ အတွင်းသာ တွက်သည်။'
+    },
+    'MM-MAHABOTE-SYMBOLIC-THEMES-001': {
+        'heading': 'မဟာဘုတ်အိမ် ၇ မျိုး၏ ရိုးရာအနက်ဖွင့်နည်း',
+        'method': 'တွက်ပြီးမှန်ကန်သော မဟာဘုတ်အိမ်အမည်ကို ရိုးရာဆိုင်ရာ သင်္ကေတအကြောင်းအရာနှင့် ချိတ်ဖော်ပြသည်။ အိမ်အမည်၊ ရိုးရာဆက်စပ်မှုနှင့် စဉ်းစားစရာ အနက်ကို သီးခြားထားသည်။ စာသားများမှာ မူရင်းရေးသားထားသော မြန်မာလို အကျဉ်းချုပ်ဖြစ်သည်။',
+        'source': 'Traditional house names: Yan Naing Aye Myanmar Astrological Calendar Days (2013); seven-house interpretations cross-read against Mahabote school summaries, https://horo.kesta.store/academy/myanmar/placements-and-signals?lang=en',
+        'limits': 'ကျောင်းနှင့် ဆရာအလိုက် အိမ်အနက်များ ကွဲပြားနိုင်သည်။ အိမ်အမည်တစ်ခုတည်းနှင့် ကျန်းမာရေး၊ အသက်၊ စီးပွားရေး၊ အနာဂတ်ကို မဆုံးဖြတ်နိုင်ပါ။ ဤသည် ယဉ်ကျေးမှုအခြေခံ သင်္ကေတအနက်သာဖြစ်သည်။'
+    },
     'MM-CALENDAR-MMCAL-001': {
         'heading': 'မြန်မာပြက္ခဒိန်နှင့် မဟာဘုတ်',
         'method': 'Gregorian Local Date ကို Julian Day Number ပြောင်းပြီး mmcal ဝါထပ်နှစ်၊ မြန်မာလ၊ လရက်၊ ရက်ရာဇာ၊ ပြဿဒါးနှင့် မဟာဘုတ် Formula များကို အဆင့်ဆင့် တွက်ချက်သည်။',
