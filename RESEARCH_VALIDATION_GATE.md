@@ -126,3 +126,9 @@ This document tracks actual completed versus pending work. No features added bey
 - Main menu and section navigation now route through native Telegram inline keyboards, with clean English discipline labels except Burmese `မြန်မာဗေဒင်`, as requested. Source: `native_ui.py`; integrated into `bot.py`.
 - Buttons only navigate to real command guides or Tarot, while incomplete features are honestly marked development-only. No Mini App, custom button fonts, custom bubble background or fabricated natal predictions.
 - Review live Telegram button wrapping/mobile widths and callback interaction tests after CI passes. No live Telegram UI screenshot verified; do not claim pixel-perfect prototype parity.
+
+## 2026-10-26 GitHub Actions test failure diagnosis and fixes
+- Examined actual GitHub Actions run `40351480931` job `121672406669` on commit `2d73f6c`. Python 3.12 package installation, syntax compilation and preflight all **passed**; full unittest finished **174 tests with five errors**.
+- Four fixture errors came from calling `Solar.fromYmdHms(2005,12,23,8,37)` without the required seconds argument. Updated affected tests in `tests/test_bazi_luck.py` and `tests/test_bazi_tarot.py` to pass `0` seconds. Main production `bazi_core.py` already passed the full six arguments.
+- One error in `test_tarot_sessions.test_bounded` was caused by generating owner/chat IDs starting at `0` after the new positive-ID validation. Updated fixtures to start at `1`, preserving strict IDs in production.
+- These are targeted changes to test fixtures **not** a claim that the production bot is ready. Reconfirm full GitHub Actions green after new commits; no deployment made.
