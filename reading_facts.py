@@ -4,6 +4,9 @@ This is NOT a traditional prediction rule corpus. It verifies that the
 result displayed by the bot agrees with the core engine's evidence payload.
 Never manufacture a divination interpretation from a rule ID alone.
 """
+from datetime import date
+from astro_core import life_path
+from myanmar_calendar import calculate_myanmar_calendar
 from evidence_ui import RULES
 from myanmar_calendar import MONTHS
 
@@ -55,6 +58,13 @@ def reading_facts(kind, result):
                 or number not in set(range(1, 10)) | {11, 22, 33}
                 or derived.get("life_path") != number):
             raise ValueError("Life Path must match the calculated evidence")
+        source_date = result["evidence"]["input_assumptions"].get("birth_date")
+        try:
+            expected = life_path(date.fromisoformat(source_date), preserve_master=result["evidence"]["input_assumptions"].get("preserve_master_numbers", True))
+        except (TypeError, ValueError):
+            raise ValueError("Invalid numerology birth date provenance") from None
+        if expected["number"] != number:
+            raise ValueError("Life Path does not match independently recomputed birth date")
         facts = {"life_path": number}
     else:
         for field, evidence_field in CALENDAR_FIELDS.items():
@@ -70,6 +80,13 @@ def reading_facts(kind, result):
                 or type(result["pyathada"]) is not int
                 or result["pyathada"] not in (0, 1, 2)):
             raise ValueError("Invalid Myanmar calendar fact types")
+        source_date = result["evidence"]["input_assumptions"].get("local_gregorian_date")
+        try:
+            expected = calculate_myanmar_calendar(date.fromisoformat(source_date))
+        except (TypeError, ValueError):
+            raise ValueError("Invalid Myanmar calendar date provenance") from None
+        if any(expected.get(key) != result[key] for key in CALENDAR_FIELDS):
+            raise ValueError("Myanmar calendar facts do not match independently recomputed date")
         facts = {key: result[key] for key in CALENDAR_FIELDS}
     return {
         "kind": kind,
