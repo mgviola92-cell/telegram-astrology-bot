@@ -24,7 +24,7 @@ class DaYunTests(unittest.TestCase):
         try:import lunar_python
         except ImportError:self.skipTest("lunar-python dependency not present")
         from lunar_python import Solar
-        solar=Solar.fromYmdHms(2005,12,23,8,37)
+        solar=Solar.fromYmdHms(2005,12,23,8,37,0)
         upstream=solar.getLunar().getEightChar().getYun(1,1)
         got=calculate_bazi_luck(self.birth,gender=1,cycles=4,timezone_verified="Asia/Yangon")
         expected=upstream.getDaYun(5)[1:]
@@ -51,7 +51,7 @@ class DaYunTests(unittest.TestCase):
         try:import lunar_python
         except ImportError:self.skipTest("lunar-python dependency not present")
         from lunar_python import Solar
-        eight=Solar.fromYmdHms(2005,12,23,8,37).getLunar().getEightChar()
+        eight=Solar.fromYmdHms(2005,12,23,8,37,0).getLunar().getEightChar()
         expected=eight.getYun(0,2)
         got=calculate_bazi_luck(self.birth,gender=0,yun_sect=2,cycles=2)
         self.assertEqual(got["start_offset"]["hours"],expected.getStartHour())
