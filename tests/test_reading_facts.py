@@ -98,7 +98,7 @@ class ReadingFactsTests(unittest.TestCase):
 
     def test_reject_wrong_bazi_birth_time(self):
         modified=bazi_fixture()
-        modified["evidence"]["input_assumptions"]["birth_wall_clock"]="2005-12-24T08:37:00"
+        modified["evidence"]["input_assumptions"]["birth_wall_clock"]="2006-12-24T08:37:00"
         with self.assertRaises(ValueError):
             reading_facts("bazi",modified)
 
