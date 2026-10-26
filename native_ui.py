@@ -33,7 +33,6 @@ SECTIONS = {
         ("Reference Library", "library"),
         ("Astrology Study", "study"),
         ("Group Settings", "group"),
-        ("Owner Controls", "owner"),
     )),
 }
 FEATURES = {
