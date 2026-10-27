@@ -31,15 +31,40 @@ def validate_kernel_segments(kernel, moment: datetime) -> dict:
     utc = moment.astimezone(timezone.utc)
     jd += (utc.hour * 3600 + utc.minute * 60 + utc.second
            + utc.microsecond / 1000000) / 86400
-    # For each supported target chain, verify at least a segment exists whose
-    # validity span includes the birth date. Final chained evaluation remains
-    # Skyfield's responsibility.
-    if not all(any(getattr(getattr(segment, "spk_segment", segment), "start_jd", float("inf")) <= jd <=
-                   getattr(getattr(segment, "spk_segment", segment), "end_jd", float("-inf"))
-                   and getattr(segment, "target", None) == target
-                   for segment in segments)
-               for target in (10, 301, 399, 1, 2, 3, 4, 5, 6, 7, 8, 9, 199, 299, 499)):
-        raise ValueError("JPL ephemeris does not cover the requested date and planetary targets")
+    # JPL SPK segments describe center -> target links. A target may exist
+    # without an Earth-connected chain. Check reachability from Solar-System
+    # barycenter (0) through only segments covering the requested epoch.
+    # Segment bounds are TDB Julian days; the UTC estimate below is only a
+    # conservative preflight and Skyfield performs final TDB evaluation.
+    utc = moment.astimezone(timezone.utc)
+    active_edges = {}
+    for segment in segments:
+        spk = getattr(segment, "spk_segment", segment)
+        start = getattr(spk, "start_jd", None)
+        end = getattr(spk, "end_jd", None)
+        center = getattr(segment, "center", getattr(spk, "center", None))
+        target = getattr(segment, "target", getattr(spk, "target", None))
+        if start is None or end is None or center is None or target is None:
+            raise ValueError("Unrecognized JPL SPK segment metadata")
+        # UTC can differ from TDB by tens of seconds; retain an adequate
+        # preflight margin, with the actual evaluation authoritative.
+        margin_days = 120 / 86400
+        if start - margin_days <= jd <= end + margin_days:
+            active_edges.setdefault(center, set()).add(target)
+    reachable = {0}
+    frontier = [0]
+    while frontier:
+        for node in active_edges.get(frontier.pop(), ()):
+            if node not in reachable:
+                reachable.add(node)
+                frontier.append(node)
+    required_codes = {10, 301, 399, 199, 299, 499, 5, 6, 7, 8, 9}
+    missing_codes = required_codes - reachable
+    if missing_codes:
+        raise ValueError(
+            "JPL ephemeris lacks an active barycentric path to: " +
+            ", ".join(str(code) for code in sorted(missing_codes))
+        )
     return {
         "target_count": len(REQUIRED_TARGETS),
         "birth_jd": round(jd, 8),
