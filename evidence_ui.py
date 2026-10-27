@@ -58,6 +58,12 @@ RULES = {
         'source': '6tail/lunar-python: lunar_python/util/LunarUtil.py ZHI_HIDE_GAN; https://github.com/6tail/lunar-python',
         'limits': 'ဤဇယားမှာ အလေးချိန် သတ်မှတ်ခြင်း၊ ရာသီအင်အားအချိုးတွက်ခြင်း၊ Day Master Strength သတ်မှတ်ခြင်း မပါသေးပါ။'
     },
+    'CHN-BAZI-DAYUN-001': {
+        'heading': 'BaZi 大运 — ရိုးရာ ၁၀ နှစ်စက်ဝန်း',
+        'method': 'မွေးရပ်ဒေသ၏ အတည်ပြုထားသော civil time ကို lunar-python EightChar.getYun(0/1,sect) နှင့် DaYun.getDaYun() ထဲ ဖြတ်တွက်သည်။ နှစ်တိုင်ကောင်းကင်ပင်စည်၏ ယင်/ယန်နဲ့ အသုံးပြုသူရွေးထားသည့် စနစ်ရိုးရာ 0/1 ကုတ်ပေါ်မူတည်၍ အစဉ်ရှေ့/နောက် သတ်မှတ်သည်။ Solar-Term Jie နီးစပ်မှုမှ စတင်ချိန်နှင့် ၁၀ နှစ်စက်ဝန်းတိုင်များတွက်သည်။',
+        'source': '6tail/lunar-python lunar_python/eightchar/Yun.py and DaYun.py; https://github.com/6tail/lunar-python/blob/master/lunar_python/eightchar/Yun.py ; https://github.com/6tail/lunar-python/blob/master/lunar_python/eightchar/DaYun.py',
+        'limits': 'Upstream ရိုးရာစနစ်က 0/1 binary method code ကို သီးခြားရွေးရန် လိုသည်၊ Telegram profile သို့မဟုတ် gender identity မှ ခန့်မှန်းမည်မဟုတ်ပါ။ အသက်သည် East Asian nominal age ဖြစ်သည်။ True Solar Time ပြင်ဆင်မှုနှင့် ကံကြမ္မာအာမခံဟောချက် မပါပါ။'
+    },
     'CHN-BAZI-CHANGSHENG-001': {
         'heading': 'BaZi 十二长生 — ရိုးရာအဆင့် ၁၂ မျိုး',
         'method': 'အတည်ပြုပြီးသော Four Pillars နှင့် Day Master, Sect ကို တူညီသည့်မွေးချိန်မှ ပြန်တွက်စစ်ပြီး lunar-python EightChar ၏ getYearDiShi, getMonthDiShi, getDayDiShi, getTimeDiShi နည်းလမ်းများဖြင့် အဆင့် ၁၂ မျိုးထဲက အိမ်တိုင်ဆိုင်ရာအမျိုးအစားကို ထုတ်သည်။',
