@@ -34,8 +34,8 @@ class NatalPreviewRendererTests(unittest.TestCase):
     def test_true_vs_mean_frame_caveat_is_visible(self):
         chart=self.make_chart()
         result=render_natal_preview(chart)
-        self.assertIn("True Ecliptic",result)
-        self.assertIn("Mean Sidereal",result)
+        self.assertIn("Test Fixture",result)
+        self.assertIn("Coordinate Frame",result)
         self.assertIn("ယာယီ",result)
 
     def test_missing_mixed_frame_disclosure_rejected(self):
