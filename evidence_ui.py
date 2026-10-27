@@ -4,6 +4,12 @@ A method's rationale is not scientific proof that divination predicts the future
 Every listed ID must correspond to a real calculation or explicitly random draw.
 """
 RULES = {
+    'WEST-HEL-ANNUAL-PROFECTION-001': {
+        'heading': 'Western Annual Profection — ရိုးရာနှစ်တိုင်',
+        'method': 'အတည်ပြုထားသည့် Natal Ascendant Sign အပေါ် အခြေခံပြီး မွေးနေ့ကျော်ပြီးသော အသက် n အတွက် (n mod 12)+1 အိမ်ကို ရွေးသည်။ Rising Sign မှ နက္ခတ်ရာသီ n ခု ရှေ့တိုး၍ ထိုရာသီ၏ ရိုးရာဂြိုဟ်အုပ်စိုးသူကို Lord of the Year အဖြစ် သတ်မှတ်သည်။',
+        'source': 'Chris Brennan, Hellenistic Astrology (2017), annual profections; https://www.astro.com/astrology/tma_article190314_e.htm ; Vettius Valens, Anthology',
+        'limits': 'ဤ Bot ၏ /profection Command သည် Ascendant ကို မတွက်ပါ။ အသုံးပြုသူက သီးခြားတွက်ထားသော Rising Sign ကို ကိုယ်တိုင်ပေးရမည်။ ရိုးရာနှစ်တိုင်အမျိုးအစားခွဲခြားမှုသာဖြစ်ပြီး အနာဂတ်ကို အာမခံမဟုတ်ပါ။'
+    },
     'WEST-ASPECTS-GEOMETRY-001': {
         'heading': 'အနောက်တိုင်းဇာတာ ဂြိုဟ်ထောင့်ဆက်သွယ်မှု',
         'method': 'Tropical Ecliptic Longitude နှစ်ခုအကြား အတိုဆုံးထောင့်ကိုတွက်ပြီး 0°, 60°, 90°, 120°, 180° နှင့် သတ်မှတ်ထားသော Orb များဖြင့် စစ်ဆေးသည်။',
