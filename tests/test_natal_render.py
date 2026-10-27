@@ -55,6 +55,37 @@ class NatalPreviewRendererTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             render_natal_preview(record)
 
+    def test_reject_forged_rising_sign(self):
+        record=self.make_chart()
+        record["rising"]["rising_sign"]="Aries" if record["rising"]["rising_sign"]!="Aries" else "Taurus"
+        with self.assertRaisesRegex(ValueError,"Rising sign|Houses"):
+            render_natal_preview(record)
+
+    def test_reject_modified_ascendant_houses(self):
+        record=self.make_chart()
+        record["rising"]["ascendant_longitude"]=float("nan")
+        with self.assertRaisesRegex(ValueError,"ascendant"):
+            render_natal_preview(record)
+
+    def test_reject_planet_sign_without_coordinate_match(self):
+        record=self.make_chart()
+        record["planets"]["Sun"]["sign"]="Pisces"
+        with self.assertRaisesRegex(ValueError,"sign differs"):
+            render_natal_preview(record)
+
+    def test_reject_planet_house_mismatch(self):
+        record=self.make_chart()
+        old=record["planets"]["Sun"]["whole_sign_house"]
+        record["planets"]["Sun"]["whole_sign_house"]=(old%12)+1
+        with self.assertRaisesRegex(ValueError,"house differs"):
+            render_natal_preview(record)
+
+    def test_reject_forged_aspect_rows(self):
+        record=self.make_chart()
+        record["aspects"]=[]
+        with self.assertRaisesRegex(ValueError,"Aspects differ"):
+            render_natal_preview(record)
+
     def test_html_escaping_planet_label(self):
         record=self.make_chart()
         record["planets"]["<fake>"]=record["planets"].pop("Mars")
