@@ -22,11 +22,16 @@ class CrossEphemerisChecks(unittest.TestCase):
             first=geocentric_chart(moment,os.environ["JPL_EPHEMERIS_PATH"])
             second=geocentric_chart(moment,os.environ["JPL_SECOND_EPHEMERIS_PATH"])
             self.assertEqual(set(first["points"]),set(TARGETS))
-            self.assertEqual(set(second["points"]),set(TARGETS))
+            self.assertEqual(
+                (set(second["points"])-{"Mars barycenter"})|{"Mars"},
+                set(TARGETS)
+            )
+            self.assertFalse(second["evidence"]["input_assumptions"]["mars_center_available"])
             for name in TARGETS:
                 with self.subTest(epoch=moment,body=name):
                     a=first["points"][name]["longitude"]
-                    b=second["points"][name]["longitude"]
+                    second_label="Mars barycenter" if name=="Mars" else name
+                    b=second["points"][second_label]["longitude"]
                     d=abs(a-b)
                     separation=min(d,360-d)
                     # Conservative 0.03-degree tolerance; not a claim of
