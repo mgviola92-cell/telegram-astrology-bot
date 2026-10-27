@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/real-jpl.yml'
       - 'tests/test_real_jpl_integration.py'
+      - 'tests/test_cross_jpl_ephemerides.py'
       - 'jpl_kernel_audit.py'
       - 'western_chart.py'
 
@@ -30,10 +31,20 @@ jobs:
           curl --fail --location --silent --show-error --retry 3 --connect-timeout 20 \
             --max-time 240 "$JPL_URL" --output "$RUNNER_TEMP/de421.bsp"
           test "$(stat -c%s "$RUNNER_TEMP/de421.bsp")" -gt 10000000
+      - name: Retrieve second official JPL DE440s ephemeris
+        env:
+          JPL_URL: https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de440s.bsp
+        run: |
+          curl --fail --location --silent --show-error --retry 3 --connect-timeout 20 \
+            --max-time 240 "$JPL_URL" --output "$RUNNER_TEMP/de440s.bsp"
+          test "$(stat -c%s "$RUNNER_TEMP/de440s.bsp")" -gt 20000000
       - name: Run real kernel integration and out-of-range regression
         env:
           JPL_EPHEMERIS_PATH: ${{ runner.temp }}/de421.bsp
-        run: python -m unittest discover -s tests -p 'test_real_jpl_integration.py' -v
+          JPL_SECOND_EPHEMERIS_PATH: ${{ runner.temp }}/de440s.bsp
+        run: |
+          python -m unittest discover -s tests -p 'test_real_jpl_integration.py' -v
+          python -m unittest discover -s tests -p 'test_cross_jpl_ephemerides.py' -v
       - name: Remove temporary ephemeris
         if: always()
-        run: rm -f "$RUNNER_TEMP/de421.bsp"
+        run: rm -f "$RUNNER_TEMP/de421.bsp" "$RUNNER_TEMP/de440s.bsp"
