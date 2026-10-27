@@ -39,12 +39,13 @@ def render_natal_preview(chart: dict) -> str:
         raise ValueError("Rising sign does not match the ascendant")
     conventions=chart.get("coordinate_conventions")
     if not isinstance(conventions,dict) or not (
-        conventions.get("mixed_true_mean_frames") is True
-        and conventions.get("cross_frame_alignment_verified") is False
+        type(conventions.get("mixed_true_mean_frames")) is bool
+        and type(conventions.get("cross_frame_alignment_verified")) is bool
+        and conventions["mixed_true_mean_frames"] != conventions["cross_frame_alignment_verified"]
         and conventions.get("planet_house_assignments_provisional") is True
         and conventions.get("rising_horizon_vector_checked") is True
     ):
-        raise ValueError("Unverified coordinate-frame conventions must be disclosed")
+        raise ValueError("Coordinate-frame conventions must be declared consistently")
     if not 1<=len(planets)<=20:
         raise ValueError("Planetary positions missing or excessive")
     lines=[
@@ -97,10 +98,11 @@ def render_natal_preview(chart: dict) -> str:
             lines.append(f'နောက်ထပ် Aspects {len(aspects)-MAX_ASPECT_ROWS} ခု ရှိပါသေးသည်။')
     lines += [
         "",
-        "ဂြိုဟ်တည်နေရာကို True Ecliptic of Date ဖြင့်၊ Ascendant ကို Mean "
-        "Sidereal/Mean Obliquity ဖြင့်တွက်ထားသည်။ ဤ Coordinate Frame နှစ်ခုကို "
-        "တူညီသော Convention အဖြစ် သီးခြားအတည်မပြုရသေးပါ။ "
-        "Planet-to-House နေရာချထားမှုများမှာ ယာယီသာဖြစ်သည်။",
+        ("Test Fixture: ဂြိုဟ်တည်နေရာရဲ့ Coordinate Frame ကို အတည်မပြုနိုင်သေးပါ။"
+         if conventions["mixed_true_mean_frames"] else
+         "ဂြိုဟ်တည်နေရာနဲ့ Ascendant ကို Mean Equinox of Date နည်းတူညီစွာတွက်ထားသည်။ "
+         "UT1/Nutation နဲ့ သီးခြားဇာတာ Benchmark စစ်ဆေးမှု ကျန်သေးသည်။")
+         + " Planet-to-House နေရာချထားမှုများမှာ ယာယီသာဖြစ်သည်။",
         "Independent Full Natal Benchmark နဲ့ ကျမ်းကိုးအနက်ဖွင့်မှု မပြီးသေးသောကြောင့် "
         "အပြည့်အဝ အတည်ပြုပြီး ဟောစာတမ်းအဖြစ် မသုံးပါနှင့်။",
     ]
