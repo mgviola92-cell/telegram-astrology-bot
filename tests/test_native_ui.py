@@ -28,7 +28,7 @@ class NativeUiTests(unittest.TestCase):
                     parts=b.callback_data.split(":")
                     self.assertEqual(parts[0],"ui")
                     if len(parts)==2:
-                        self.assertIn(parts[1],("home","tarot"))
+                        self.assertIn(parts[1],("home","tarot","library"))
                     elif parts[1]=="category":
                         self.assertIn(parts[2],SECTIONS)
                     elif parts[1]=="feature":
