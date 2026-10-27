@@ -90,6 +90,26 @@ class NatalPipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"inconsistent zodiac sign"):
             assemble_natal(*self.args,position_provider=inconsistent)
 
+    def test_reject_forged_aspects_that_disagree_with_positions(self):
+        def inconsistent_aspects(_utc,_path):
+            return {
+                "points":{"Sun":{"sign":"Aries","longitude":10.0},
+                          "Moon":{"sign":"Aries","longitude":11.0}},
+                "aspects":[],
+            }
+        with self.assertRaisesRegex(ValueError,"aspects disagree"):
+            assemble_natal(*self.args,position_provider=inconsistent_aspects)
+
+    def test_accept_aspects_recomputed_from_verified_longitudes(self):
+        from western_chart import chart_from_longitudes
+        def consistent(_utc,_path):
+            return chart_from_longitudes(
+                {"Sun":10.0,"Moon":11.0},
+                verified_source="CI calculation fixture only"
+            )
+        record=assemble_natal(*self.args,position_provider=consistent)
+        self.assertEqual(record["aspects"][0]["aspect"],"conjunction")
+
     def test_missing_planet_longitude_rejected(self):
         def incomplete(_utc,_path):
             return {"points":{"Sun":{"sign":"Aries"}},"aspects":[]}
