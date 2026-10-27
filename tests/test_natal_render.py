@@ -89,6 +89,8 @@ class NatalPreviewRendererTests(unittest.TestCase):
     def test_html_escaping_planet_label(self):
         record=self.make_chart()
         record["planets"]["<fake>"]=record["planets"].pop("Mars")
+        from western_aspects import calculate_aspects
+        record["aspects"]=calculate_aspects({name:item["longitude"] for name,item in record["planets"].items()})["aspects"]
         rendered=render_natal_preview(record)
         self.assertIn("&lt;fake&gt;",rendered)
         self.assertNotIn("<fake>",rendered)
