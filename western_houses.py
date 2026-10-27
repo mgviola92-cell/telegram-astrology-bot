@@ -55,10 +55,19 @@ def calculate_whole_sign_chart(birth_instant, longitude_east_deg, latitude_deg):
     lst=(greenwich_mean_sidereal(jd)+longitude)%360
     epsilon=mean_obliquity(jd)
     asc=ascendant_from_sidereal(lst,latitude,epsilon)
+    # Independently confirm the eastern horizon crossing in vector geometry.
+    from western_ascendant_audit import vector_horizon_audit
+    audit=vector_horizon_audit(lst,latitude,epsilon)
+    if abs(asc-audit["ascendant_longitude"])>1e-8:
+        raise ValueError("Mean Ascendant vector cross-check failed")
     return {'ascendant_longitude':round(asc,8), 'rising_sign':SIGNS[int(asc//30)], 'whole_sign_houses':whole_sign_houses(asc),
             'local_mean_sidereal_deg':round(lst,8), 'mean_obliquity_deg':round(epsilon,8),
             'metadata':{'method':'Meeus GMST + mean obliquity, eastern horizon intersection, Whole Sign Houses',
                         'latitude_limit':'-65 to +65 degrees', 'uses_geographic_longitude':True,
                         'nutation_and_refraction_applied':False,
                         'birth_time_verified_externally':False,
+                        'ascendant_vector_audit_rule_id':audit['rule_id'],
+                        'ascendant_frame':'mean_equinox_of_date',
+                        'planetary_frame_compatible_without_conversion':False,
+                        'planetary_frame_note':'Geocentric planets use true ecliptic/equinox of date; Ascendant uses mean sidereal/obliquity approximation',
                         'reference':'Meeus Astronomical Algorithms GMST; https://www2.mps.mpg.de/homes/fraenz/systems/systems3art/node3.html'}}
