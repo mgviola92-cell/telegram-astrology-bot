@@ -243,3 +243,17 @@ This document tracks actual completed versus pending work. No features added bey
 - `natal_render.py` displays the mixed-frame warning in Burmese and refuses missing/forged frame verification flags. `tests/test_natal_render.py` protects against falsely claiming validated frame alignment.
 - GitHub Actions run https://github.com/mgviola92-cell/telegram-astrology-bot/actions/runs/40496693859 completed successfully with **332 tests** on commit `9790d86f78f2`. Authentic DE421/DE440s integration checks were last separately successful; they do not establish exact true/mean Ascendant frame alignment.
 - Western Natal stays operator gated and **default OFF**. No live Telegram network test, astronomical independent commercial chart benchmark or Render deployment was performed.
+
+## 2026-10-27 evening — consistent mean-frame Western Natal pipeline
+
+**Research sources**:
+- Skyfield documents `mean_equator_and_equinox_of_date` as the mean equatorial frame tracking precession without nutation; `ecliptic_frame` is the distinct **true** ecliptic/equinox of date: https://rhodesmill.org/skyfield/api-framelib.html .
+- NASA/JPL SPICE frame documentation describes constructing a **mean ecliptic and equinox of date** by rotating the mean equatorial frame about X through the mean obliquity: https://naif.jpl.nasa.gov/pub/naif/toolkit_docs/FORTRAN/req/frames.html .
+
+**Code update**:
+- `western_chart.geocentric_chart(...,coordinate_frame='mean_ecliptic_of_date')` now obtains authentic JPL geocentric apparent xyz vectors in Skyfield's mean equator/equinox of date and rotates into an ecliptic using the same Meeus mean-obliquity polynomial employed by `western_houses`. Existing `true_ecliptic_of_date` remains the default for compatibility and explicit use. Planetary position evidence records the selected frame.
+- Production `natal_pipeline.assemble_natal` selects the **mean** planetary frame, matching its mean sidereal/obliquity Ascendant convention. Synthetic test providers do not falsely inherit those source assurances. Whole Sign house assignments remain **provisional** pending external reference-chart benchmarks, UT1/nutation/model audit and cusp-proximity studies.
+- `natal_render` distinguishes verified-by-path mean-frame configurations from explicitly unverified test input frames; it continues to refuse forged coordinate flags and highlights the provisional status in Burmese.
+- Genuine downloaded DE421 integration test `tests/test_real_jpl_integration.py` now checks mean-ecliptic longitudes from actual mean equatorial vectors at three epochs plus a full natal pipeline → Telegram HTML preview run. This shares Skyfield's upstream implementation; independent external chart accuracy remains unproven.
+- GitHub Actions for commit `2aa9304a5cbd`: Real JPL workflow `40535332733` succeeded (**4 real-kernel integration tests + cross-ephemeris check**); Calculation workflow `40535332386` succeeded (**334 total unit/offline tests**, some kernel-conditional tests skipped there).
+- No Vedic Jyotish/Dasha, no new data persistence, no Render deployment or live Telegram smoke test. The `/natal` feature remains operator gated/default OFF until full validation and owner approval.
