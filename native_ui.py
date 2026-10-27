@@ -38,7 +38,7 @@ SECTIONS = {
 FEATURES = {
     "mm": ("မြန်မာဗေဒင်", "မွေးနေ့နံနှင့် မဟာဘုတ်/ပြက္ခဒိန်တွက်ချက်မှုများ", (
         ("မွေးနေ့နံ", "myday"), ("မဟာဘုတ်ဇာတာ", "mahabote"), ("မြန်မာပြက္ခဒိန်", "mmcal"))),
-    "western": ("Western Astrology", "Western natal chart ကို Reference နဲ့ စစ်ဆေးနေဆဲဖြစ်လို့ မဖွင့်ရသေးပါ။", ()),
+    "western": ("Western Astrology", "Natal Chart ကို Reference နဲ့ စစ်ဆေးနေဆဲဖြစ်ပါတယ်။ သီးခြားတွက်ထားတဲ့ Rising Sign ရှိရင် ရိုးရာ Annual Profection ကို တွက်နိုင်ပါတယ်။", (("Annual Profection", "profection"),)),
     "bazi": ("BaZi", "Four Pillars ကို တွက်နိုင်ပါတယ်။ True Solar Time နဲ့ seasonal validation မပြီးသေးပါ။", (
         ("Four Pillars", "bazi"), ("Da Yun Cycles", "dayun"),)),
     "number": ("Numerology", "Life Path ကို တွက်ချက်နိုင်ပါတယ်။ အသေးစိတ်ဟောစာတမ်း မပြီးသေးပါ။", (
@@ -66,6 +66,7 @@ COMMAND_GUIDES = {
     "days": "/days 2024-01-01",
     "bazi": "/bazi 2005-12-23 08:37 Asia/Yangon",
     "dayun": "/dayun 2005-12-23 08:37 Asia/Yangon 1",
+    "profection": "/profection 2005-12-23 2026-10-27 Aries",
     "number": "/number 1999-12-31",
     "savebirth": "/savebirth 2005-12-23 အတည်ပြု",
     "mybirth": "/mybirth",
