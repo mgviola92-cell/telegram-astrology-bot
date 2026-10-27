@@ -186,3 +186,25 @@ This document tracks actual completed versus pending work. No features added bey
 - New independent `bazi_growth_reference.py` reconstructs this table from stem offset + polarity + earthly branch index, rather than calling the existing library getter. `tests/test_bazi_growth_reference.py` checks the complete 10x12 cross-product for exactly twelve stages and compares ordinary-hours real calendar vectors against the upstream getters.
 - The distinct late-night sect boundary must continue to be tested with the upstream Four Pillars and growth-stage getters; this implementation deliberately does not claim verified solar-time geographical correction.
 - Fixed `/bazi` card rendering to show the computed stages, and removed a duplicate interpolated block; GitHub Actions run `40389112898` succeeded on the fixed message before this independent reference module was added.
+
+## 2026-10-27 research/implementation sprint — critical paths and release blockers
+
+### Verified BaZi Da Yun and solar-term seasons
+- `dayun_reading.py` reconstructs the birth-time chart and checks each upstream 10-year period, nominal age label, starting solar date, direction and source inputs. The yearly stem polarity calculation independently checks the forward/backward choice. `bot.py` now supports private `/dayun YYYY-MM-DD HH:MM IANA_ZONE 0|1 [1|2]`. Code 0/1 is an explicitly selected **upstream traditional convention**, never inferred from someone's gender identity or personal profile; users can simply avoid this optional method.
+- Primary Yun source https://github.com/6tail/lunar-python/blob/master/lunar_python/eightchar/Yun.py ; DaYun source https://github.com/6tail/lunar-python/blob/master/lunar_python/eightchar/DaYun.py . Their convention uses solar-term Jie boundaries and East Asian nominal ages.
+- `bazi_seasons.py`: checked month branch from `lunar-python` Jie calendar is classified into `寅卯辰 Wood Spring`, `巳午未 Fire Summer`, `申酉戌 Metal Autumn`, or `亥子丑 Water Winter`. Complete directional three-branch membership requires *all three distinct branches*; mere membership does not establish a transformed combination, dominance or auspiciousness. See https://www.amfengshui.com/wp-content/uploads/2014/09/as101.pdf and https://clarifyhk.com/learn/bazi/stem-branch-relations/directional-meeting-conditions .
+- Both features have real upstream regression tests and corresponding no-network Telegram handler tests. The user sees concise Burmese rule descriptions and a source method button.
+
+### Hellenistic Annual Profections
+- The verified `astro_core.annual_profection` calculation is now reachable as private `/profection YYYY-MM-DD EVALUATION_DATE RISING_SIGN`. `profection_reading.py` independently checks all 12 signs against completed age and the 7 traditional domicile rulers. The rising sign is **user provided, not verified**, and the command openly states that limitation.
+- Source: Chris Brennan, https://www.astro.com/astrology/tma_article190314_e.htm . This Hellenistic method is **not** Vedic Jyotish or Dasha; those systems remain excluded.
+
+### Western astronomy, natal provisional status
+- NOAA/JPL/USNO reference checks confirm J2000 JD 2451545.0, Greenwich Mean Sidereal Time 280.46061837 degrees and mean obliquity 23°26′21.448″. `tests/test_western_astronomy_benchmarks.py` also verifies equatorial ascendant quadrants and Whole Sign houses.
+- USNO https://aa.usno.navy.mil/faq/GAST ; NASA/JPL ESAA https://spsweb.fltops.jpl.nasa.gov/portaldataops/mpg/MPG_Docs/MPG%20Book/Release/Chapter2-TimeScales.pdf .
+- `/natal` is explicitly operator gated (`ENABLE_WESTERN_NATAL=1` plus pre-existing `.bsp` file path) and default OFF. Its `natal_pipeline` keeps a provisional status; `natal_render` refuses untrusted/unsupported status, missing provenance, invalid positions, invalid houses, or Telegram-length overflow. No JPL ephemeris bytes or private birth data is stored in the database, downloaded automatically, or embedded in Telegram callback data. Test seam uses synthetic positions exclusively; a real DE421/DE440 ephemeris test against another tool remains a release blocker.
+- `preflight.py --mode deploy` requires a real JPL path when this optional feature is enabled. No deployment was attempted.
+
+### Confirmation and blockers
+- GitHub Actions run 40447759422 passed **300 unit and offline handler tests** including new `/dayun`, `/profection`, and `/natal` gating behavior. Newer documentation-only commits still require the same CI status check.
+- Remaining tasks: independently benchmark actual JPL ephemeris and full natal Ascendant across dates/locations, establish non-contradictory school-specific interpretive corpora and add true-solar-time policy for BaZi, review Telegram live private/group UI and launch secrets/operational storage. Do not declare entire bot complete, run a public bot, or deploy Render before the owner's requested release gate.
