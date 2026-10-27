@@ -9,7 +9,7 @@ import math
 from western_chart import TARGETS
 
 REQUIRED_TARGETS = {"earth":399}
-REQUIRED_TARGETS.update({v:v for v in TARGETS.values()})
+REQUIRED_TARGETS.update({v:v for v in TARGETS.values() if v != "mars"})
 
 def validate_kernel_segments(kernel, moment: datetime, *, tdb_jd: float | None = None) -> dict:
     if not isinstance(moment, datetime) or moment.tzinfo is None or moment.utcoffset() is None:
@@ -20,6 +20,17 @@ def validate_kernel_segments(kernel, moment: datetime, *, tdb_jd: float | None =
             kernel[name]
         except (KeyError, ValueError):
             missing.append(name)
+    # DE421 includes a Mars planet center; DE440s can contain only the
+    # Mars system barycenter. Never silently label the barycenter as Mars.
+    try:
+        kernel["mars"]
+        mars_center = True
+    except (KeyError, ValueError):
+        mars_center = False
+        try:
+            kernel["mars barycenter"]
+        except (KeyError, ValueError):
+            missing.append("mars or mars barycenter")
     if missing:
         raise ValueError("JPL ephemeris missing required objects: " + ", ".join(sorted(missing)))
     # A kernel may include each body but not the requested time. Intersect
@@ -63,7 +74,7 @@ def validate_kernel_segments(kernel, moment: datetime, *, tdb_jd: float | None =
             if node not in reachable:
                 reachable.add(node)
                 frontier.append(node)
-    required_codes = {10, 301, 399, 199, 299, 499, 5, 6, 7, 8, 9}
+    required_codes = {10, 301, 399, 199, 299, 5, 6, 7, 8, 9, 499 if mars_center else 4}
     missing_codes = required_codes - reachable
     if missing_codes:
         raise ValueError(
@@ -71,7 +82,8 @@ def validate_kernel_segments(kernel, moment: datetime, *, tdb_jd: float | None =
             ", ".join(str(code) for code in sorted(missing_codes))
         )
     return {
-        "target_count": len(REQUIRED_TARGETS),
+        "target_count": len(REQUIRED_TARGETS) + 1,
+        "mars_center_available": mars_center,
         "birth_jd": round(jd, 8),
         "epoch_timescale": "TDB" if tdb_jd is not None else "UTC approximate preflight",
         "valid": True,
