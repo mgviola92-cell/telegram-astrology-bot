@@ -72,10 +72,16 @@ def geocentric_chart(birth_utc: datetime, ephemeris_path: str) -> dict:
     t=ts.from_datetime(utc)
     with closing(load_file(str(Path(ephemeris_path).resolve()))) as kernel:
         from jpl_kernel_audit import validate_kernel_segments
-        validate_kernel_segments(kernel, utc, tdb_jd=float(t.tdb))
+        kernel_audit=validate_kernel_segments(kernel, utc, tdb_jd=float(t.tdb))
         earth=kernel["earth"]
+        # The DE440s truncated kernel may omit Mars' center (499). In that
+        # case use the available Mars-system barycenter (4), explicitly named.
+        selected_targets=dict(TARGETS)
+        if not kernel_audit["mars_center_available"]:
+            selected_targets.pop("Mars")
+            selected_targets["Mars barycenter"]="mars barycenter"
         values={}
-        for label,target in TARGETS.items():
+        for label,target in selected_targets.items():
             try:
                 pos=earth.at(t).observe(kernel[target]).apparent()
             except KeyError:
@@ -88,4 +94,5 @@ def geocentric_chart(birth_utc: datetime, ephemeris_path: str) -> dict:
     out["evidence"]["input_assumptions"]["observer"]="geocentric"
     out["evidence"]["input_assumptions"]["apparent_positions"]=True
     out["evidence"]["input_assumptions"]["ephemeris_kernel"]=Path(ephemeris_path).name
+    out["evidence"]["input_assumptions"]["mars_center_available"]=kernel_audit["mars_center_available"]
     return out
