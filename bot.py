@@ -137,7 +137,7 @@ async def native_navigation(cb: CallbackQuery):
         await cb.answer("ကိုယ်ပိုင်ဇာတာကို Private Chat မှာသာ ကြည့်ပါ။",show_alert=True)
         return
     if data=="ui:library":
-        text="<b>ကျမ်းကိုးမှတ်တမ်းများ</b>\n━━━━━━━━━━━━━━\nလေ့လာလိုသည့် ရိုးရာတွက်ချက်နည်းကို ရွေးပါ။"
+        text="<b>ကျမ်းကိုးမှတ်တမ်းများ</b>\\n━━━━━━━━━━━━━━\\nလေ့လာလိုသည့် ရိုးရာတွက်ချက်နည်းကို ရွေးပါ။"
         markup=reference_category_keyboard()
     elif data=="ui:home":
         text,markup=home_text(),home_keyboard()
