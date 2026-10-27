@@ -49,7 +49,13 @@ def assemble_natal(
         raise ValueError("Evaluation date cannot precede local birth date")
     house_data = calculate_whole_sign_chart(utc, lon, lat)
     provider = geocentric_chart if position_provider is None else position_provider
-    positions = provider(utc, ephemeris_path)
+    # Actual Skyfield natal calculations use mean ecliptic coordinates to
+    # match the mean-equinoctial Ascendant convention. Test providers retain
+    # their explicit fixture interface; they are never silently validated.
+    if position_provider is None:
+        positions = provider(utc, ephemeris_path, coordinate_frame="mean_ecliptic_of_date")
+    else:
+        positions = provider(utc, ephemeris_path)
     if not isinstance(positions, dict) or not positions.get("points") or not isinstance(positions.get("aspects"), list):
         raise ValueError("Invalid position provider result")
     if len(house_data["whole_sign_houses"]) != 12 or house_data["rising_sign"] not in SIGNS:
@@ -89,10 +95,10 @@ def assemble_natal(
         },
         "rising": house_data,
         "coordinate_conventions": {
-            "planetary_longitudes": "apparent geocentric true ecliptic and equinox of date",
-            "ascendant": "mean equinox mean sidereal and mean obliquity approximation",
-            "mixed_true_mean_frames": True,
-            "cross_frame_alignment_verified": False,
+            "planetary_longitudes": "apparent geocentric mean ecliptic and equinox of date (Meeus mean obliquity)" if position_provider is None else "test-supplied longitudes, reference frame unverified",
+            "ascendant": "mean equinox mean sidereal and Meeus mean obliquity approximation",
+            "mixed_true_mean_frames": position_provider is not None,
+            "cross_frame_alignment_verified": position_provider is None,
             "planet_house_assignments_provisional": True,
             "rising_horizon_vector_checked": True,
         },
