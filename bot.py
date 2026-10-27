@@ -14,6 +14,9 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from astro_core import life_path
 from profection_reading import profection_reading
+from natal_pipeline import assemble_natal
+from natal_render import render_natal_preview
+from zoneinfo import ZoneInfo
 from reading_facts import reading_facts
 from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
@@ -335,6 +338,63 @@ async def numerology(message: Message):
         'ဟောကိန်းအနက်ဖွင့်ဆိုချက်များကို ကျမ်းကိုးစစ်ဆေးပြီးမှ ဖြည့်သွင်းမည်။',
         parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id']),
     )
+
+@dp.message(Command('natal'))
+async def natal_preview_command(message: Message):
+    """Optional operator-gated actual JPL natal calculation, never a fake chart."""
+    if not private_only(message):
+        await message.answer('Western မွေးဇာတာကို Private Chat မှာသာ တွက်နိုင်ပါတယ်။')
+        return
+    if os.environ.get('ENABLE_WESTERN_NATAL','').strip()!='1':
+        await message.answer(
+            'Western Natal Chart ကို Astronomical Benchmark စစ်ဆေးနေဆဲဖြစ်လို့ မဖွင့်ရသေးပါ။ '
+            'Annual Profection ကိုတော့ သီးခြား Rising Sign နဲ့တွက်နိုင်ပါတယ်။ '
+            '<code>/profection 2005-12-23 2026-10-27 Aries</code>',
+            parse_mode='HTML'
+        )
+        return
+    kernel=os.environ.get('JPL_EPHEMERIS_PATH','').strip()
+    if not kernel or not os.path.isfile(kernel) or not kernel.lower().endswith('.bsp'):
+        await message.answer('Western Natal အတွက် JPL Ephemeris မပြည့်စုံသေးပါ။ ဒီဇာတာကို အမှားသတင်းမပေးဘဲ ယာယီပိတ်ထားပါတယ်။')
+        return
+    args=(message.text or '').split()
+    if len(args) not in (6,7) or (len(args)==7 and args[6] not in ("0","1")):
+        await message.answer(
+            '<b>Western Natal Development Preview</b>\n'
+            '<code>/natal 2005-12-23 08:37 Asia/Yangon 16.85 96.15</code>\n'
+            'မွေးရပ်ဒေသ၏ Timezone၊ Latitude၊ East-Positive Longitude ကို '
+            'ကိုယ်တိုင် အတည်ပြုဖြည့်ပါ။ DST နှစ်ကြိမ်ဖြစ်သော နာရီအတွက် '
+            'နောက်ဆုံး 0/1 Fold ကို ထပ်ထည့်ရမယ်။',
+            parse_mode='HTML'
+        )
+        return
+    try:
+        birth=datetime.strptime(args[1]+' '+args[2],'%Y-%m-%d %H:%M')
+        if birth.date()>date.today():
+            raise ValueError('Future birth date')
+        lat=float(args[4])
+        lon=float(args[5])
+        fold=int(args[6]) if len(args)==7 else None
+        local_today=datetime.now(ZoneInfo(args[3])).date()
+        record=assemble_natal(
+            birth,args[3],lat,lon,kernel,evaluation_date=local_today,fold=fold
+        )
+        summary=render_natal_preview(record)
+    except (ValueError,TypeError,KeyError,OSError,RuntimeError):
+        await message.answer('Natal Preview ကို မတွက်နိုင်ပါ။ မွေးချိန်၊ Timezone၊ Coordinates နဲ့ Ephemeris ကို ပြန်စစ်ပါ။ မမှန်တဲ့ဇာတာ မပြပါ။')
+        return
+    methods=(
+        ("Planetary Positions","WEST-TROPICAL-LONGITUDES-001"),
+        ("Ascendant & Houses","WEST-ASC-WHOLE-SIGN-001"),
+    )
+    for _,key in methods:
+        get_rule(key)
+    markup=InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text=label,callback_data='evidence:'+key)
+        for label,key in methods
+    ]])
+    await message.answer(summary,parse_mode='HTML',reply_markup=markup)
+
 
 @dp.message(Command('profection'))
 async def profection_command(message: Message):
