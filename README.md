@@ -151,3 +151,29 @@ The public `More` menu no longer exposes the unimplemented `Owner Controls` item
 **New test modules**: `tests/test_mahabote_core.py`, `tests/test_myanmar_day_signals.py`, `tests/test_myanmar_signal_reading.py`. They check fixed source vectors, all seven-house positions, Rahu noon boundaries, multi-year weekday tables and forged result/evidence rejection.
 
 **Status**: Development only. Tests have been committed, but the latest full GitHub Actions green state and Telegram live tests remain unconfirmed; no Render deployment or claim of scientifically reliable future prediction.
+
+## 2026-10-27 implementation sprint — newly usable methods and gated Western Natal
+
+**New private commands**
+- `/dayun 2005-12-23 08:37 Asia/Yangon 1` — 8 upstream lunar-python BaZi ten-year cycles with explicit required method code 0/1, optional Yun sect 1/2. Years are East Asian nominal ages, NOT guaranteed predictions. Does not infer the code from profile data.
+- `/profection 2005-12-23 2026-10-27 Aries` — independently checked classical Hellenistic annual time lord, Whole Sign house, sign and traditional ruling planet from a **separately known** Ascendant sign. The bot does NOT calculate/verify the Ascendant for this command.
+- `/natal 2005-12-23 08:37 Asia/Yangon 16.85 96.15` — **disabled by default**. Only available when an operator explicitly sets `ENABLE_WESTERN_NATAL=1` and points `JPL_EPHEMERIS_PATH` to an already available .bsp ephemeris. The command accepts no guessed location or default timezone, rejects invalid coordinates and ambiguous DST wall-times without an explicit fold argument, never downloads a kernel, and labels results as an unverified *development preview* until independent chart comparisons are complete. It is not promoted on the main menu.
+
+**Better BaZi natal details**
+- `bazi_seasons.py`: verifies the Jie solar-term Month Branch, identifies all 12 branch-to-season associations, checks strictly complete three-branch `sanhui` seasonal memberships, and explicitly does **not** claim transformation, Day Master Strength, favorable element, or future outcomes.
+- `dayun_reading.py`: recalculates upstream decade years and verifies direction independently from the birth-year stem polarity and the user-supplied method code before displaying any periods.
+- `bot.py`: presents seasonal groups in the native `/bazi` result and gives each calculation its own evidence button, without bringing other bots or Mini Apps into the UI.
+
+**Western validation**
+- `tests/test_western_astronomy_benchmarks.py`: NASA/JPL / US Naval Observatory Meeus J2000 GMST (280.46061837°), mean obliquity, equatorial ascendant quadrants, twelve whole-sign houses and annual-profection 12-year repetition.
+- `profection_reading.py` and tests check all twelve Ascendants across two full cycles, birthday transitions, and seven classical rulers.
+- `natal_render.py` produces escaped bounded Telegram HTML for already assembled charts with strong provisional status and calculation provenance requirements.
+- `tests/test_bot_natal_command.py` uses a **mock-only** ephemeris fixture; this never claims that a genuine NASA JPL .bsp file has been independently validated.
+
+**References**
+- 6tail, `lunar-python` Yun and DaYun source: https://github.com/6tail/lunar-python/blob/master/lunar_python/eightchar/Yun.py and https://github.com/6tail/lunar-python/blob/master/lunar_python/eightchar/DaYun.py .
+- Four BaZi seasons / branches: https://www.amfengshui.com/wp-content/uploads/2014/09/as101.pdf and https://clarifyhk.com/learn/bazi/stem-branch-relations/directional-meeting-conditions .
+- Hellenistic Annual Profections: Chris Brennan at https://www.astro.com/astrology/tma_article190314_e.htm .
+- USNO approximate sidereal time: https://aa.usno.navy.mil/faq/GAST ; NASA JPL GMST: https://spsweb.fltops.jpl.nasa.gov/portaldataops/mpg/MPG_Docs/MPG%20Book/Release/Chapter2-TimeScales.pdf .
+
+**Validation and release**: After the larger sprint, GitHub Actions run https://github.com/mgviola92-cell/telegram-astrology-bot/actions/runs/40447759422 reported **300 Python tests passed**, including offline command smoke tests. Live Telegram and authentic JPL full-chart benchmark tests remain outstanding. No Render deployment was performed.
