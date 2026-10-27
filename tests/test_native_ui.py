@@ -38,7 +38,8 @@ class NativeUiTests(unittest.TestCase):
                     else:
                         self.fail("Unknown navigation type")
     def test_unfinished_feature_not_claimed_ready(self):
-        self.assertFalse(FEATURES["western"][2])
+        self.assertIn(("Annual Profection","profection"),FEATURES["western"][2])
+        self.assertNotIn("natal",COMMAND_GUIDES)
         self.assertFalse(FEATURES["daily"][2])
         self.assertFalse(FEATURES["compatibility"][2])
     def test_guides_do_not_embed_user_data(self):
