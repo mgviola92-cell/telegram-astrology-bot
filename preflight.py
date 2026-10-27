@@ -54,8 +54,8 @@ def inspect_environment(*, mode="ci", environ=None):
             parent=Path(path).expanduser().parent
             add("database_directory",parent.is_dir() and os.access(parent,os.W_OK),
                 "Persistent SQLite destination parent must already exist and be writable")
-        # Western natal is not exposed by the bot yet. Its kernel is optional
-        # unless an operator explicitly enables that calculation feature.
+        # Western natal is an opt-in, unpublished development preview.
+        # Its JPL kernel is mandatory only if the operator enables the feature.
         kernel=env.get("JPL_EPHEMERIS_PATH","").strip()
         if env.get("ENABLE_WESTERN_NATAL","").strip()=="1":
             add("jpl_kernel_present",bool(kernel and Path(kernel).is_file()),
