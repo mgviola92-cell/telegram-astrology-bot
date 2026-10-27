@@ -34,8 +34,8 @@ def validate_kernel_segments(kernel, moment: datetime) -> dict:
     # For each supported target chain, verify at least a segment exists whose
     # validity span includes the birth date. Final chained evaluation remains
     # Skyfield's responsibility.
-    if not all(any(getattr(segment, "start_jd", float("inf")) <= jd <=
-                   getattr(segment, "end_jd", float("-inf"))
+    if not all(any(getattr(getattr(segment, "spk_segment", segment), "start_jd", float("inf")) <= jd <=
+                   getattr(getattr(segment, "spk_segment", segment), "end_jd", float("-inf"))
                    and getattr(segment, "target", None) == target
                    for segment in segments)
                for target in (10, 301, 399, 1, 2, 3, 4, 5, 6, 7, 8, 9, 199, 299, 499)):
