@@ -25,7 +25,7 @@ jobs:
         run: python -m pip install 'skyfield>=1.50,<2'
       - name: Retrieve authentic JPL DE421 ephemeris into temporary CI workspace
         env:
-          JPL_URL: https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de421.bsp
+          JPL_URL: https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de421.bsp
         run: |
           curl --fail --location --silent --show-error --retry 3 --connect-timeout 20 \
             --max-time 240 "$JPL_URL" --output "$RUNNER_TEMP/de421.bsp"
