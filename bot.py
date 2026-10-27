@@ -18,6 +18,7 @@ from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
 from bazi_element_reading import bazi_element_reading
 from bazi_growth_stages import calculate_growth_stages
+from bazi_seasons import calculate_bazi_seasons
 from bazi_luck import calculate_bazi_luck
 from dayun_reading import verified_dayun_reading
 from birth_time import normalize_birth_wall_time
@@ -410,6 +411,7 @@ async def bazi(message: Message):
         reading_facts('bazi',result)
         element_reading=bazi_element_reading(result)
         growth_reading=calculate_growth_stages(result)
+        seasonal_reading=calculate_bazi_seasons(result)
     except (ValueError,RuntimeError):
         await message.answer('🌫️ မွေးချိန်ကို မတွက်နိုင်သေးပါ။ YYYY-MM-DD HH:MM Asia/Yangon ပုံစံနဲ့ မွေးရပ်ဒေသရဲ့ Timezone ကို စစ်ဆေးပါ။ DST နာရီနှစ်ခါဖြစ်တဲ့ ရက်တွေမှာ မွေးချိန်အတည်ပြုဖို့ လိုပါတယ်။')
         return
@@ -425,6 +427,7 @@ async def bazi(message: Message):
         ("Hidden Stems","CHN-BAZI-HIDDEN-STEMS-001"),
         ("Ten Gods","CHN-BAZI-TENGODS-001"),
         ("Twelve Stages","CHN-BAZI-CHANGSHENG-001"),
+        ("Seasons","CHN-BAZI-SEASON-MONTH-001"),
     )
     # The card uses distinct, compact native inline labels rather than five
     # identical "Calculation Method" buttons.
@@ -435,11 +438,13 @@ async def bazi(message: Message):
         for label,rule_id in methods
     ]
     bazi_markup=InlineKeyboardMarkup(inline_keyboard=[
-        buttons[0:2],buttons[2:4],buttons[4:5]
+        buttons[0:2],buttons[2:4],buttons[4:6]
     ])
     balance=' · '.join(f'{name}: {count}' for name,count in visible['visible_counts'].items())
     growth_summary=' · '.join(f'{name}: {growth_reading["stages"][name]} ({growth_reading["burmese_stage_names"][name]})' for name in ('year','month','day','hour'))
     relations='\n'.join(f'{g["burmese_element"]} ({g["visible_count"]}) — {g["relationship_label"]}' for g in element_reading['groups'])
+    season=seasonal_reading['month']
+    meetings=', '.join(x['season'] for x in seasonal_reading['memberships']) or 'သီးခြား Branch သုံးလုံးပြည့် အုပ်စုမတွေ့ပါ'
     await message.answer(
         '🐉 <b>တရုတ်ဇာတာလေးတိုင်</b>\n━━━━━━━━━━━━━━\n'
         f'နှစ်တိုင် — <b>{html.escape(p["year"])}</b>\n'
@@ -452,6 +457,10 @@ async def bazi(message: Message):
         '<b>ဓာတ်ငါးပါး ဆက်နွယ်မှု</b>\n'
         f'{html.escape(relations)}\n'
         'ဤဆက်နွယ်မှုများသည် ရိုးရာအမျိုးအစားခွဲခြားချက်များသာဖြစ်ပြီး ကံကြမ္မာခန့်မှန်းချက် မဟုတ်ပါ။\n\n'
+        '<b>Solar-Term လတိုင်ရာသီ</b>\n'
+        f'{html.escape(season["month_branch"])} — {html.escape(season["burmese"])} / {html.escape(season["name"])} ({html.escape(season["phase"])})\n'
+        f'ရာသီ Branch သုံးလုံးအုပ်စု — {html.escape(meetings)}\n'
+        'အုပ်စုဝင်ခြင်းသာဖြစ်ပြီး ဓာတ်အသွင်ပြောင်းခြင်းနှင့် Day Master အင်အားကို မဆုံးဖြတ်ပါ။\n\n'
         f'🍃 Hidden Stems — {html.escape(hidden_summary)}\n'
         'အဓိက/အရံဓာတ်အစဉ်သာ ဖြစ်ပြီး ရာသီအင်အား မတွက်ရသေးပါ။\n\n'
         f'☯️ Ten Gods — {html.escape(gods_summary)}\n'
