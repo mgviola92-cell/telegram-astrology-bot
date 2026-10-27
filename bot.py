@@ -18,6 +18,8 @@ from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
 from bazi_element_reading import bazi_element_reading
 from bazi_growth_stages import calculate_growth_stages
+from bazi_luck import calculate_bazi_luck
+from dayun_reading import verified_dayun_reading
 from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
 from tarot_meanings import interpret_tarot_card
@@ -331,6 +333,65 @@ async def numerology(message: Message):
         'ဟောကိန်းအနက်ဖွင့်ဆိုချက်များကို ကျမ်းကိုးစစ်ဆေးပြီးမှ ဖြည့်သွင်းမည်။',
         parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id']),
     )
+
+@dp.message(Command('dayun'))
+async def dayun_command(message: Message):
+    """Source-calculated optional ten-year BaZi cycles; private birth input."""
+    if not private_only(message):
+        await message.answer('Da Yun မွေးချိန်တွက်ချက်မှုကို Private Chat မှာသာ ဖွင့်နိုင်ပါတယ်။')
+        return
+    parts=(message.text or '').split()
+    if len(parts) not in (5,6) or parts[4] not in ("0","1") or (len(parts)==6 and parts[5] not in ("1","2")):
+        await message.answer(
+            '<b>BaZi Da Yun — ၁၀ နှစ်စက်ဝန်း</b>\n'
+            '<code>/dayun 2005-12-23 08:37 Asia/Yangon 1</code>\n\n'
+            'မွေးရက်၊ မွေးချိန်၊ မွေးရပ်ဒေသ Timezone နဲ့ မူရင်းစနစ် Code ကို ရွေးပါ။\n'
+            'Code 1 = ရိုးရာအမျိုးသားနည်း၊ Code 0 = ရိုးရာအမျိုးသမီးနည်း။ '
+            'ဒီ Code သည် lunar-python ၏တွက်ချက်မှုရွေးချယ်စရာသာဖြစ်ပြီး '
+            'သင့်ကိုယ်ပိုင်အမှတ်အသားကို အလိုအလျောက် မသတ်မှတ်ပါ။\n'
+            'နောက်ဆုံးတွင် 1/2 ထည့်ပြီး Yun Sect ကို ရွေးနိုင်ပါတယ်။',
+            parse_mode='HTML'
+        )
+        return
+    try:
+        birth=datetime.strptime(parts[1]+' '+parts[2],'%Y-%m-%d %H:%M')
+        if birth.date()>date.today():
+            raise ValueError('Future birth time')
+        normalized=normalize_birth_wall_time(birth,parts[3])
+        method_code=int(parts[4])
+        yun_sect=int(parts[5]) if len(parts)==6 else 1
+        result=calculate_bazi_luck(
+            normalized['wall_time'],
+            gender=method_code,
+            yun_sect=yun_sect,
+            day_sect=2,
+            cycles=8,
+            timezone_verified=normalized['timezone'],
+        )
+        reading=verified_dayun_reading(result)
+    except (ValueError, TypeError, RuntimeError):
+        await message.answer('မွေးရက်/မွေးချိန်၊ Timezone နဲ့ Code ကို ပြန်စစ်ပါ။ DST နာရီထပ်တဲ့ မွေးချိန်အတွက် အတည်ပြုချက် လိုအပ်ပါတယ်။')
+        return
+    decades='\n'.join(
+        f'{p["index"]}. {p["gan_zhi"]} — {p["start_year"]}–{p["end_year"]} '
+        f'(ရိုးရာအသက် {p["start_age_nominal"]}–{p["end_age_nominal"]})'
+        for p in reading["periods"]
+    )
+    await message.answer(
+        '<b>BaZi 大运 — ၁၀ နှစ်စက်ဝန်း</b>\n'
+        '━━━━━━━━━━━━━━\n'
+        f'စဉ်သွားပုံ — <b>{reading["direction"]} ({reading["direction_burmese"]})</b>\n'
+        f'ပထမစတင်ရက် — <b>{reading["first_start_date_local"]}</b>\n'
+        f'လက်ခံထားသော Timezone — <code>{html.escape(normalized["timezone"])}</code>\n'
+        f'Yun Sect — {reading["yun_sect"]}\n\n'
+        f'{html.escape(decades)}\n\n'
+        'ဖော်ပြထားသောအသက်သည် East Asian nominal age ဖြစ်ပြီး '
+        'မွေးနေ့ကျော်ပြီးသော အသက်အမှန်နှင့် မတူနိုင်ပါ။\n'
+        f'{html.escape(reading["caution"])}',
+        parse_mode='HTML',
+        reply_markup=evidence_button(reading["rule_id"]),
+    )
+
 
 @dp.message(Command('bazi'))
 async def bazi(message: Message):
