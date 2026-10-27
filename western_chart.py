@@ -8,6 +8,7 @@ houses or topocentric correction is claimed.
 from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
+import math
 from astro_core import Evidence, SIGNS
 from western_aspects import calculate_aspects, validate_longitude
 
@@ -51,12 +52,14 @@ def chart_from_longitudes(longitudes: dict[str,float], *, verified_source: str) 
     )
     return {"points":points,"aspects":angles["aspects"],"evidence":asdict(evidence)}
 
-def geocentric_chart(birth_utc: datetime, ephemeris_path: str) -> dict:
+def geocentric_chart(birth_utc: datetime, ephemeris_path: str, *, coordinate_frame: str = 'true_ecliptic_of_date') -> dict:
     """Compute selected apparent coordinates with local JPL ephemeris.
 
     The requested time must be timezone aware; converted to UTC explicitly.
     Kernel is never downloaded or stored in the database.
     """
+    if coordinate_frame not in ("true_ecliptic_of_date", "mean_ecliptic_of_date"):
+        raise ValueError("Explicit supported planetary coordinate frame required")
     if birth_utc.tzinfo is None or birth_utc.utcoffset() is None:
         raise ValueError("An aware birth datetime is required")
     if not ephemeris_path or not Path(ephemeris_path).is_file():
@@ -64,7 +67,8 @@ def geocentric_chart(birth_utc: datetime, ephemeris_path: str) -> dict:
     try:
         from contextlib import closing
         from skyfield.api import load, load_file
-        from skyfield.framelib import ecliptic_frame
+        from skyfield.framelib import ecliptic_frame, mean_equator_and_equinox_of_date
+        from western_houses import mean_obliquity
     except ImportError as exc:
         raise RuntimeError("Install skyfield to compute astronomical positions") from exc
     utc=birth_utc.astimezone(timezone.utc)
@@ -87,12 +91,25 @@ def geocentric_chart(birth_utc: datetime, ephemeris_path: str) -> dict:
             except KeyError:
                 # Explicitly report a missing SPK object, not silent partial chart.
                 raise ValueError(f"Ephemeris has no target: {target}")
-            _,lon,_=pos.frame_latlon(ecliptic_frame)
-            values[label]=float(lon.degrees)%360
+            if coordinate_frame == "true_ecliptic_of_date":
+                _,lon,_=pos.frame_latlon(ecliptic_frame)
+                longitude=float(lon.degrees)%360
+            else:
+                # Skyfield's mean equator/equinox uses precession but no
+                # nutation. Rotate its vector around the mean equinox X
+                # axis into an ecliptic using the same Meeus mean-obliquity
+                # convention as western_houses.calculate_whole_sign_chart.
+                x,y,z=(float(v) for v in pos.frame_xyz(mean_equator_and_equinox_of_date).au)
+                epsilon=math.radians(mean_obliquity(float(t.ut1)))
+                longitude=math.degrees(math.atan2(
+                    y*math.cos(epsilon)+z*math.sin(epsilon),x))%360
+            values[label]=longitude
     out=chart_from_longitudes(values, verified_source=f"Skyfield; {Path(ephemeris_path).name}; {utc.isoformat()}")
     out["evidence"]["input_assumptions"]["birth_time_and_ephemeris_verified_by_caller"]=True
     out["evidence"]["input_assumptions"]["observer"]="geocentric"
     out["evidence"]["input_assumptions"]["apparent_positions"]=True
     out["evidence"]["input_assumptions"]["ephemeris_kernel"]=Path(ephemeris_path).name
     out["evidence"]["input_assumptions"]["mars_center_available"]=kernel_audit["mars_center_available"]
+    out["evidence"]["input_assumptions"]["coordinate_frame"]=coordinate_frame
+    out["evidence"]["input_assumptions"]["mean_obliquity_model"]="Meeus / IAU 1976 approximation" if coordinate_frame=="mean_ecliptic_of_date" else None
     return out
