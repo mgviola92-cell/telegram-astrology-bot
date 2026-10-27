@@ -41,13 +41,13 @@ class NatalPreviewRendererTests(unittest.TestCase):
     def test_missing_mixed_frame_disclosure_rejected(self):
         chart=self.make_chart()
         chart.pop("coordinate_conventions")
-        with self.assertRaisesRegex(ValueError,"coordinate-frame"):
+        with self.assertRaisesRegex(ValueError,"Coordinate-frame"):
             render_natal_preview(chart)
 
     def test_false_claim_of_frame_alignment_rejected(self):
         chart=self.make_chart()
         chart["coordinate_conventions"]["cross_frame_alignment_verified"]=True
-        with self.assertRaisesRegex(ValueError,"coordinate-frame"):
+        with self.assertRaisesRegex(ValueError,"Coordinate-frame"):
             render_natal_preview(chart)
 
     def test_missing_provenance_fails_closed(self):
