@@ -6,6 +6,8 @@ new astronomical numbers are invented here.
 """
 from html import escape
 from math import isfinite
+from western_aspects import calculate_aspects
+from western_houses import whole_sign_houses
 from astro_core import SIGNS
 
 MAX_TELEGRAM_CHARS=4096
@@ -26,6 +28,15 @@ def render_natal_preview(chart: dict) -> str:
         raise ValueError("Unknown birth instant")
     if not isinstance(chart.get("position_evidence"),dict):
         raise ValueError("Planetary calculation provenance required")
+    ascendant = rising.get("ascendant_longitude")
+    if (isinstance(ascendant,bool) or not isinstance(ascendant,(int,float))
+            or not isfinite(ascendant) or not 0 <= ascendant < 360):
+        raise ValueError("Invalid ascendant longitude")
+    expected_houses = whole_sign_houses(ascendant)
+    if rising["whole_sign_houses"] != expected_houses:
+        raise ValueError("Houses do not match the ascendant")
+    if rising["rising_sign"] != expected_houses[0]["sign"]:
+        raise ValueError("Rising sign does not match the ascendant")
     if not 1<=len(planets)<=20:
         raise ValueError("Planetary positions missing or excessive")
     lines=[
@@ -46,8 +57,19 @@ def render_natal_preview(chart: dict) -> str:
         if type(house) is not int or not 1<=house<=12 or not isinstance(longitude,(int,float)) or not isfinite(longitude) or not 0<=longitude<360:
             raise ValueError("Invalid celestial position")
         # Calculate display degree directly from the checked numeric longitude.
+        if SIGNS[int(longitude//30)] != body["sign"]:
+            raise ValueError("Planet sign differs from longitude")
+        expected_house=(SIGNS.index(body["sign"])-SIGNS.index(rising["rising_sign"]))%12+1
+        if house != expected_house:
+            raise ValueError("Planet house differs from rising sign")
         position=round(float(longitude)%30,2)
         lines.append(f'{escape(str(name))}: {escape(body["sign"])} {position:.2f}° — House {house}')
+    # Reject altered display results even when the caller changes a planet
+    # position but leaves the other derived fields plausible.
+    verified_degrees = {name:body["longitude"] for name,body in planets.items()}
+    expected_aspects = calculate_aspects(verified_degrees)["aspects"]
+    if aspects != expected_aspects:
+        raise ValueError("Aspects differ from supplied planetary longitudes")
     lines += ["", "<b>Whole Sign Houses</b>"]
     houses=rising["whole_sign_houses"]
     if {h.get("house") for h in houses}!=set(range(1,13)):
