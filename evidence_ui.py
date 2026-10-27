@@ -4,6 +4,18 @@ A method's rationale is not scientific proof that divination predicts the future
 Every listed ID must correspond to a real calculation or explicitly random draw.
 """
 RULES = {
+    'WEST-TROPICAL-LONGITUDES-001': {
+        'heading': 'Western Tropical Astronomy — ဂြိုဟ်တည်နေရာ',
+        'method': 'Skyfield နှင့် စက်အတွင်း အသင့်ရှိပြီးသော JPL .bsp Ephemeris ကို သုံး၍ မွေးချိန်၏ UTC Instant မှ ကမ္ဘာဗဟို Apparent Ecliptic Longitude တွက်ပြီး Tropical Zodiac ၃၀ ဒီဂရီအပိုင်းအလိုက် ခွဲခြားသည်။ Outer Planet Barycenters ကို Planet Centers ဟု မမှားဖော်ပြပါ။',
+        'source': 'Skyfield Coordinates: https://rhodesmill.org/skyfield/coordinates.html ; JPL DE Ephemerides, https://ssd.jpl.nasa.gov/planets/eph_export.html',
+        'limits': 'JPL Kernel ကို Bot မှ အလိုအလျောက် မဒေါင်းလုဒ်လုပ်ပါ။ Kernel ရှိမှသာ Preview အဖြစ် တွက်နိုင်ပြီး Planet Positions အတွက် Independent Cross-Ephemeris Benchmarks မပြီးသေးပါ။'
+    },
+    'WEST-ASC-WHOLE-SIGN-001': {
+        'heading': 'Western Ascendant — Mean Sidereal & Whole Sign',
+        'method': 'UTC Julian Day ကို Meeus Greenwich Mean Sidereal formula နှင့် Mean Obliquity သုံးပြီး Local Sidereal Time မှ အရှေ့မိုးကုတ် Ecliptic Ascendant ဆုံချက်တွက်သည်။ ရာသီ ၃၀ ဒီဂရီအပြည့် တစ်ခုကို Whole Sign House တစ်အိမ်အဖြစ် ရေတွက်သည်။',
+        'source': 'USNO Sidereal Time https://aa.usno.navy.mil/faq/GAST ; NASA/JPL GMST (ESAA) https://spsweb.fltops.jpl.nasa.gov/portaldataops/mpg/MPG_Docs/MPG%20Book/Release/Chapter2-TimeScales.pdf ; Meeus Astronomical Algorithms',
+        'limits': 'Mean Sidereal/Mean Obliquity သုံးထားသော Conventional Approximation ဖြစ်ပြီး UT1-UTC၊ Nutation၊ Polar Latitudes နှင့် Other House Systems ကို မစစ်ရသေးပါ။ Independent Commercial Natal Benchmark မပြီးသေးသဖြင့် Development Preview သာဖြစ်သည်။'
+    },
     'WEST-HEL-ANNUAL-PROFECTION-001': {
         'heading': 'Western Annual Profection — ရိုးရာနှစ်တိုင်',
         'method': 'အတည်ပြုထားသည့် Natal Ascendant Sign အပေါ် အခြေခံပြီး မွေးနေ့ကျော်ပြီးသော အသက် n အတွက် (n mod 12)+1 အိမ်ကို ရွေးသည်။ Rising Sign မှ နက္ခတ်ရာသီ n ခု ရှေ့တိုး၍ ထိုရာသီ၏ ရိုးရာဂြိုဟ်အုပ်စိုးသူကို Lord of the Year အဖြစ် သတ်မှတ်သည်။',
