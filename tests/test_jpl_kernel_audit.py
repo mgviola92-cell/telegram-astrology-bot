@@ -50,6 +50,29 @@ class KernelAuditTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     validate_kernel_segments(kernel,instant,tdb_jd=bad)
 
+    def test_mars_barycenter_supported_without_mars_center(self):
+        class BarycenterOnly(FakeKernel):
+            def __getitem__(self,key):
+                if key=="mars":
+                    raise KeyError(key)
+                if key=="mars barycenter":
+                    return key
+                return super().__getitem__(key)
+        kernel=BarycenterOnly()
+        kernel.segments=[x for x in kernel.segments if x.target!=499]
+        result=validate_kernel_segments(kernel,datetime(2024,1,1,tzinfo=timezone.utc))
+        self.assertFalse(result["mars_center_available"])
+        self.assertTrue(result["valid"])
+
+    def test_reject_mars_barycenter_missing_if_center_absent(self):
+        class BothAbsent(FakeKernel):
+            def __getitem__(self,key):
+                if key in ("mars","mars barycenter"):
+                    raise KeyError(key)
+                return super().__getitem__(key)
+        with self.assertRaisesRegex(ValueError,"mars or mars barycenter"):
+            validate_kernel_segments(BothAbsent(),datetime(2024,1,1,tzinfo=timezone.utc))
+
     def test_missing_named_target(self):
         with self.assertRaisesRegex(ValueError,"missing required objects"):
             validate_kernel_segments(
