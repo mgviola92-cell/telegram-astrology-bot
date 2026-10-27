@@ -37,6 +37,7 @@ from mahabote_reading import interpret_mahabote
 from myanmar_day_signals import calculate_day_signals
 from myanmar_signal_reading import describe_day_signals
 from evidence_ui import evidence_button, get_rule
+from reference_library import library_page, render_library, CATEGORY_LABELS
 from profile_commands import router as profile_router
 from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
                        feature_keyboard, feature_text, guide_keyboard, guide_text,
@@ -63,6 +64,62 @@ async def welcome(message: Message):
 async def help_message(message: Message):
     await welcome(message)
 
+def reference_category_keyboard():
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=CATEGORY_LABELS[c],callback_data="library:"+c+":0")]
+        for c in CATEGORY_LABELS
+    ] + [[InlineKeyboardButton(text="Back",callback_data="ui:feature:library"),
+          InlineKeyboardButton(text="Home",callback_data="ui:home")]])
+
+
+def reference_page_keyboard(info):
+    buttons=[
+        [InlineKeyboardButton(text=item["heading"][:45],
+                              callback_data="evidence:"+item["id"])]
+        for item in info["items"]
+    ]
+    nav=[]
+    if info["page"]>0:
+        nav.append(InlineKeyboardButton(text="Previous",
+                   callback_data=f'library:{info["category"]}:{info["page"]-1}'))
+    if info["page"]+1<info["page_count"]:
+        nav.append(InlineKeyboardButton(text="Next",
+                   callback_data=f'library:{info["category"]}:{info["page"]+1}'))
+    if nav:
+        buttons.append(nav)
+    buttons.append([InlineKeyboardButton(text="Back",callback_data="ui:library"),
+                    InlineKeyboardButton(text="Home",callback_data="ui:home")])
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+
+@dp.callback_query(F.data.startswith("library:"))
+async def reference_library_navigation(cb:CallbackQuery):
+    if not isinstance(cb.message,Message):
+        await cb.answer("မှတ်တမ်းကို ဖွင့်မရတော့ပါ။",show_alert=True)
+        return
+    if cb.message.chat.type!="private":
+        await cb.answer("Private Chat မှာသာ ဖတ်ရှုနိုင်ပါတယ်။",show_alert=True)
+        return
+    parts=(cb.data or "").split(":")
+    try:
+        if len(parts)!=3 or not parts[2].isdigit() or len(parts[2])>2:
+            raise ValueError("Malformed page")
+        info=library_page(parts[1],int(parts[2]))
+    except ValueError:
+        await cb.answer("ဤစာမျက်နှာ မရှိတော့ပါ။",show_alert=True)
+        return
+    await cb.answer()
+    try:
+        await cb.message.edit_text(render_library(info),
+                                   reply_markup=reference_page_keyboard(info),
+                                   parse_mode="HTML")
+    except Exception:
+        logging.warning("Reference library message edit unavailable; using private fallback")
+        await cb.message.answer(render_library(info),
+                                reply_markup=reference_page_keyboard(info),
+                                parse_mode="HTML")
+
+
 @dp.callback_query(F.data.startswith("ui:"))
 async def native_navigation(cb: CallbackQuery):
     # Callback identifiers contain no birth data and are checked against
@@ -79,7 +136,10 @@ async def native_navigation(cb: CallbackQuery):
     if cb.message.chat.type != "private":
         await cb.answer("ကိုယ်ပိုင်ဇာတာကို Private Chat မှာသာ ကြည့်ပါ။",show_alert=True)
         return
-    if data=="ui:home":
+    if data=="ui:library":
+        text="<b>ကျမ်းကိုးမှတ်တမ်းများ</b>\n━━━━━━━━━━━━━━\nလေ့လာလိုသည့် ရိုးရာတွက်ချက်နည်းကို ရွေးပါ။"
+        markup=reference_category_keyboard()
+    elif data=="ui:home":
         text,markup=home_text(),home_keyboard()
     elif len(parts)==3 and parts[0]=="ui" and parts[1]=="category" and parts[2] in SECTIONS:
         text,markup=section_text(parts[2]),section_keyboard(parts[2])
