@@ -12,8 +12,9 @@ class FakeKernel:
     def __init__(self, *, missing=None, year_coverage=(1900,2100)):
         self.missing=missing
         self.segments=[
-            SimpleNamespace(target=x,start_jd=2415020.5 if year_coverage[0]==1900 else 2460000.5,
-                            end_jd=2488069.5 if year_coverage[1]==2100 else 2460500.5)
+            SimpleNamespace(target=x,spk_segment=SimpleNamespace(
+                start_jd=2415020.5 if year_coverage[0]==1900 else 2460000.5,
+                end_jd=2488069.5 if year_coverage[1]==2100 else 2460500.5))
             for x in TARGET_CODES
         ]
     def __getitem__(self,key):
