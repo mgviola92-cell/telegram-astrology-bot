@@ -31,6 +31,25 @@ class NatalPreviewRendererTests(unittest.TestCase):
         self.assertNotIn(chr(92)+"n",rendered)
         self.assertLess(len(rendered),MAX_TELEGRAM_CHARS)
 
+    def test_true_vs_mean_frame_caveat_is_visible(self):
+        chart=self.make_chart()
+        result=render_natal_preview(chart)
+        self.assertIn("True Ecliptic",result)
+        self.assertIn("Mean Sidereal",result)
+        self.assertIn("ယာယီ",result)
+
+    def test_missing_mixed_frame_disclosure_rejected(self):
+        chart=self.make_chart()
+        chart.pop("coordinate_conventions")
+        with self.assertRaisesRegex(ValueError,"coordinate-frame"):
+            render_natal_preview(chart)
+
+    def test_false_claim_of_frame_alignment_rejected(self):
+        chart=self.make_chart()
+        chart["coordinate_conventions"]["cross_frame_alignment_verified"]=True
+        with self.assertRaisesRegex(ValueError,"coordinate-frame"):
+            render_natal_preview(chart)
+
     def test_missing_provenance_fails_closed(self):
         record=self.make_chart()
         record["position_evidence"]=None
