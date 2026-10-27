@@ -48,6 +48,40 @@ class RealJplIntegrationTests(unittest.TestCase):
                 expected=calculate_aspects({k:v["longitude"] for k,v in actual["points"].items()})
                 self.assertEqual(actual["aspects"],expected["aspects"])
 
+    def test_real_mean_ecliptic_matches_independent_vector_rotation(self):
+        import math
+        from skyfield.api import load, load_file
+        from skyfield.framelib import mean_equator_and_equinox_of_date
+        from western_houses import mean_obliquity
+        from contextlib import closing
+        ts=load.timescale()
+        for utc in (
+            datetime(2000,1,1,12,tzinfo=timezone.utc),
+            datetime(2005,12,23,2,7,tzinfo=timezone.utc),
+            datetime(2024,10,27,6,tzinfo=timezone.utc),
+        ):
+            with self.subTest(utc=utc):
+                result=geocentric_chart(
+                    utc,self.path,coordinate_frame="mean_ecliptic_of_date"
+                )
+                self.assertEqual(
+                    result["evidence"]["input_assumptions"]["coordinate_frame"],
+                    "mean_ecliptic_of_date"
+                )
+                t=ts.from_datetime(utc)
+                e=math.radians(mean_obliquity(float(t.ut1)))
+                with closing(load_file(self.path)) as kernel:
+                    earth=kernel["earth"]
+                    for label,body in TARGETS.items():
+                        position=earth.at(t).observe(kernel[body]).apparent()
+                        xyz=position.frame_xyz(mean_equator_and_equinox_of_date).au
+                        expected=math.degrees(
+                            math.atan2(xyz[1]*math.cos(e)+xyz[2]*math.sin(e),
+                                       xyz[0])
+                        )%360
+                        self.assertAlmostEqual(result["points"][label]["longitude"],
+                                               expected,places=7)
+
     def test_date_outside_real_de421_refused(self):
         with self.assertRaises(ValueError):
             geocentric_chart(datetime(2080,1,1,tzinfo=timezone.utc),self.path)
