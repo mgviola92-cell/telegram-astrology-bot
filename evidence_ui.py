@@ -58,6 +58,12 @@ RULES = {
         'source': '6tail/lunar-python: lunar_python/util/LunarUtil.py ZHI_HIDE_GAN; https://github.com/6tail/lunar-python',
         'limits': 'ဤဇယားမှာ အလေးချိန် သတ်မှတ်ခြင်း၊ ရာသီအင်အားအချိုးတွက်ခြင်း၊ Day Master Strength သတ်မှတ်ခြင်း မပါသေးပါ။'
     },
+    'CHN-BAZI-SEASON-MONTH-001': {
+        'heading': 'BaZi ရာသီလနှင့် 三会 အုပ်စုများ',
+        'method': 'lunar-python ၏ Jie Solar-Term ဖြင့်တွက်ထားသော လတိုင်အောက်ကိုင်းကို နွေဦး 寅卯辰၊ နွေ 巳午未၊ ဆောင်းဦး 申酉戌၊ ဆောင်း 亥子丑 အုပ်စုလေးမျိုးနှင့် တိုက်စစ်သည်။ တိုင်လေးတိုင်တွင် အုပ်စုတစ်ခု၏ သီးခြား Branch သုံးမျိုးလုံး ပါဝင်မှ Full Membership ဟု သတ်မှတ်သည်။',
+        'source': '6tail/lunar-python Lunar.py Jie exact Month; American Feng Shui Institute Stems & Branches, p.42, https://www.amfengshui.com/wp-content/uploads/2014/09/as101.pdf ; Four seasonal meeting rules and formation caveats: https://clarifyhk.com/learn/bazi/stem-branch-relations/directional-meeting-conditions',
+        'limits': 'အုပ်စုအစိတ်အပိုင်းပြည့်ခြင်းသာဖြစ်ပြီး Combination Transformation၊ Day Master Strength၊ Favorable Elements သို့မဟုတ် ကံကြမ္မာဟောကိန်းကို မဆုံးဖြတ်ပါ။'
+    },
     'CHN-BAZI-DAYUN-001': {
         'heading': 'BaZi 大运 — ရိုးရာ ၁၀ နှစ်စက်ဝန်း',
         'method': 'မွေးရပ်ဒေသ၏ အတည်ပြုထားသော civil time ကို lunar-python EightChar.getYun(0/1,sect) နှင့် DaYun.getDaYun() ထဲ ဖြတ်တွက်သည်။ နှစ်တိုင်ကောင်းကင်ပင်စည်၏ ယင်/ယန်နဲ့ အသုံးပြုသူရွေးထားသည့် စနစ်ရိုးရာ 0/1 ကုတ်ပေါ်မူတည်၍ အစဉ်ရှေ့/နောက် သတ်မှတ်သည်။ Solar-Term Jie နီးစပ်မှုမှ စတင်ချိန်နှင့် ၁၀ နှစ်စက်ဝန်းတိုင်များတွက်သည်။',
