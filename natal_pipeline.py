@@ -13,6 +13,7 @@ from astro_core import SIGNS, annual_profection
 from birth_time import normalize_birth_wall_time
 from western_houses import calculate_whole_sign_chart, _finite
 from western_chart import geocentric_chart, tropical_sign
+from western_aspects import calculate_aspects
 
 
 def assemble_natal(
@@ -66,6 +67,14 @@ def assemble_natal(
         sign_index = SIGNS.index(entry["sign"])
         house = (sign_index - rising_index) % 12 + 1
         enriched[key] = dict(entry, whole_sign_house=house)
+    # Never trust caller-provided aspects when planetary degrees are available.
+    # Recompute the published five geometric aspects with the single shared
+    # orb policy and reject contradictory rows instead of printing them.
+    expected_aspects=calculate_aspects({
+        name:entry["longitude"] for name,entry in enriched.items()
+    })["aspects"]
+    if positions["aspects"] != expected_aspects:
+        raise ValueError("Position provider aspects disagree with computed tropical geometry")
     profection = annual_profection(wall_clock.date(), date_for_profection, house_data["rising_sign"])
     profection["evidence"]["input_assumptions"]["ascendant_verified_external"] = False
     return {
