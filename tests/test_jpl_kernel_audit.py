@@ -33,6 +33,23 @@ class KernelAuditTests(unittest.TestCase):
         self.assertTrue(result["planet_centers_and_barycenters_distinguished"])
         self.assertGreater(result["target_count"],5)
 
+    def test_exact_tdb_julian_day_boundary_is_enforced(self):
+        kernel=FakeKernel()
+        instant=datetime(2024,1,1,tzinfo=timezone.utc)
+        valid=validate_kernel_segments(kernel,instant,tdb_jd=2460310.5)
+        self.assertEqual(valid["epoch_timescale"],"TDB")
+        self.assertEqual(valid["birth_jd"],2460310.5)
+        with self.assertRaisesRegex(ValueError,"lacks an active barycentric path"):
+            validate_kernel_segments(kernel,instant,tdb_jd=2500000.0)
+
+    def test_bad_tdb_date_rejected(self):
+        kernel=FakeKernel()
+        instant=datetime(2024,1,1,tzinfo=timezone.utc)
+        for bad in (float("nan"),float("inf"),True,"2460000"):
+            with self.subTest(bad=bad):
+                with self.assertRaises(ValueError):
+                    validate_kernel_segments(kernel,instant,tdb_jd=bad)
+
     def test_missing_named_target(self):
         with self.assertRaisesRegex(ValueError,"missing required objects"):
             validate_kernel_segments(
