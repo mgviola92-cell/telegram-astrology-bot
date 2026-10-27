@@ -62,7 +62,7 @@ class KernelAuditTests(unittest.TestCase):
 
     def test_kernel_out_of_range_date(self):
         kernel=FakeKernel(year_coverage=(2023,2024))
-        with self.assertRaisesRegex(ValueError,"does not cover"):
+        with self.assertRaisesRegex(ValueError,"lacks an active barycentric path"):
             validate_kernel_segments(kernel,datetime(2040,1,1,tzinfo=timezone.utc))
 
     def test_refuses_naive_birth_instant(self):
