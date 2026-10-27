@@ -8,6 +8,20 @@ from datetime import date, datetime
 from astro_core import SIGNS, TRADITIONAL_RULERS, annual_profection
 
 RULE_ID="WEST-HEL-ANNUAL-PROFECTION-001"
+HOUSE_TOPICS_BURMESE=(
+    "ကိုယ်ပိုင်အစပြုမှုနှင့် အတ္တရပ်တည်မှု",
+    "အရင်းအမြစ်နှင့် တန်ဖိုးထားမှု",
+    "ဆက်သွယ်ရေးနှင့် သင်ယူမှု",
+    "အိမ်နှင့် မိသားစုဆက်နွယ်မှု",
+    "ဖန်တီးမှုနှင့် ပျော်ရွှင်မှု",
+    "အလုပ်နှင့် နေ့စဉ်လုပ်ရိုးလုပ်စဉ်",
+    "မိတ်ဖက်ဆက်ဆံရေး",
+    "မျှဝေထားသော အရင်းအမြစ်",
+    "ပညာရှာဖွေမှုနှင့် ခရီးသွားခြင်း",
+    "အလုပ်အကိုင်နှင့် လူမှုတာဝန်",
+    "မိတ်ဆွေများနှင့် လူမှုအသိုင်းအဝိုင်း",
+    "အတွင်းစိတ်နှင့် တစ်ယောက်တည်းနေချိန်",
+)
 
 def profection_reading(born: date, evaluation_date: date, rising_sign: str) -> dict:
     if not isinstance(born,date) or isinstance(born, datetime):
@@ -31,6 +45,7 @@ def profection_reading(born: date, evaluation_date: date, rising_sign: str) -> d
         "sign":result["sign"],
         "lord_of_year":result["lord_of_year"],
         "house_topic":result["house_topic"],
+        "house_topic_burmese":HOUSE_TOPICS_BURMESE[result["house"]-1],
         "rising_sign_input":rising_sign,
         "rising_sign_source":"user-provided, not calculated or verified here",
         "calculation_rule_id":RULE_ID,
