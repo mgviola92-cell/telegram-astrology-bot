@@ -82,6 +82,27 @@ class RealJplIntegrationTests(unittest.TestCase):
                         self.assertAlmostEqual(result["points"][label]["longitude"],
                                                expected,places=7)
 
+    def test_full_natal_pipeline_uses_real_mean_frame_consistently(self):
+        from natal_pipeline import assemble_natal
+        from natal_render import render_natal_preview
+        from datetime import date
+        result=assemble_natal(
+            datetime(2005,12,23,8,37),
+            "Asia/Yangon",16.85,96.15,self.path,
+            evaluation_date=date(2026,10,27)
+        )
+        flags=result["coordinate_conventions"]
+        self.assertFalse(flags["mixed_true_mean_frames"])
+        self.assertTrue(flags["cross_frame_alignment_verified"])
+        self.assertTrue(flags["planet_house_assignments_provisional"])
+        self.assertEqual(
+            result["position_evidence"]["input_assumptions"]["coordinate_frame"],
+            "mean_ecliptic_of_date"
+        )
+        html=render_natal_preview(result)
+        self.assertIn("Mean Equinox",html)
+        self.assertIn("Development Preview",html)
+
     def test_date_outside_real_de421_refused(self):
         with self.assertRaises(ValueError):
             geocentric_chart(datetime(2080,1,1,tzinfo=timezone.utc),self.path)
