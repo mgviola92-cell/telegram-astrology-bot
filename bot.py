@@ -13,6 +13,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from astro_core import life_path
+from profection_reading import profection_reading
 from reading_facts import reading_facts
 from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
@@ -334,6 +335,48 @@ async def numerology(message: Message):
         'ဟောကိန်းအနက်ဖွင့်ဆိုချက်များကို ကျမ်းကိုးစစ်ဆေးပြီးမှ ဖြည့်သွင်းမည်။',
         parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id']),
     )
+
+@dp.message(Command('profection'))
+async def profection_command(message: Message):
+    if not private_only(message):
+        await message.answer('Annual Profection မွေးရက်တွက်ချက်မှုကို Private Chat မှာသာ ဖွင့်နိုင်ပါတယ်။')
+        return
+    fields=(message.text or '').split()
+    if len(fields)!=4:
+        await message.answer(
+            '<b>Western Annual Profection</b>\n'
+            '<code>/profection 2005-12-23 2026-10-27 Aries</code>\n\n'
+            'မွေးနေ့၊ စစ်ဆေးလိုသည့်ရက်စွဲနဲ့ သီးခြား Natal Chart မှ '
+            'အတည်ပြုထားသော Rising Sign ကို ဖြည့်ပါ။ '
+            'ဤ Command က Ascendant ကို ကိုယ်တိုင်မတွက်ပါ။',
+            parse_mode='HTML'
+        )
+        return
+    try:
+        born=date.fromisoformat(fields[1])
+        target=date.fromisoformat(fields[2])
+        if born>date.today():
+            raise ValueError('Future birth date')
+        rising=fields[3].strip().capitalize()
+        result=profection_reading(born,target,rising)
+    except (ValueError,TypeError):
+        await message.answer('မွေးနေ့၊ စစ်ဆေးရက်နဲ့ Rising Sign (Aries ... Pisces) ကို ပြန်စစ်ပါ။')
+        return
+    await message.answer(
+        '<b>Western Annual Profection</b>\n'
+        '━━━━━━━━━━━━━━\n'
+        f'အသက်ပြည့်နှစ် — <b>{result["age_completed"]}</b>\n'
+        f'နှစ်တိုင်အိမ် — <b>{result["house"]}</b>\n'
+        f'အသက်ဝင်ရာသီ — <b>{html.escape(result["sign"])}</b>\n'
+        f'Lord of the Year — <b>{html.escape(result["lord_of_year"])}</b>\n'
+        f'ရိုးရာအိမ်ဆိုင်ရာ သင်္ကေတ — {html.escape(result["house_topic_burmese"])}\n\n'
+        f'Rising Sign: <code>{html.escape(result["rising_sign_input"])}</code> '
+        '(အသုံးပြုသူပေးထားသည်၊ ဤနေရာတွင် မတွက်/မစစ်ရသေးပါ)\n'
+        'ဤနှစ်တိုင်သည် ရိုးရာ အမျိုးအစားခွဲခြားချက်သာဖြစ်ပြီး '
+        'အနာဂတ်ဖြစ်ရပ် အာမခံချက် မဟုတ်ပါ။',
+        parse_mode='HTML',reply_markup=evidence_button(result['calculation_rule_id'])
+    )
+
 
 @dp.message(Command('dayun'))
 async def dayun_command(message: Message):
