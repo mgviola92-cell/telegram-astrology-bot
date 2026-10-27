@@ -40,7 +40,7 @@ FEATURES = {
         ("မွေးနေ့နံ", "myday"), ("မဟာဘုတ်ဇာတာ", "mahabote"), ("မြန်မာပြက္ခဒိန်", "mmcal"))),
     "western": ("Western Astrology", "Western natal chart ကို Reference နဲ့ စစ်ဆေးနေဆဲဖြစ်လို့ မဖွင့်ရသေးပါ။", ()),
     "bazi": ("BaZi", "Four Pillars ကို တွက်နိုင်ပါတယ်။ True Solar Time နဲ့ seasonal validation မပြီးသေးပါ။", (
-        ("Four Pillars", "bazi"),)),
+        ("Four Pillars", "bazi"), ("Da Yun Cycles", "dayun"),)),
     "number": ("Numerology", "Life Path ကို တွက်ချက်နိုင်ပါတယ်။ အသေးစိတ်ဟောစာတမ်း မပြီးသေးပါ။", (
         ("Life Path", "number"),)),
     "tarot": ("Tarot", "78-card Tarot ဆွဲနိုင်ပါတယ်။ ကတ်ပုံအစုံနဲ့ Animation မပြီးသေးပါ။", (
@@ -65,6 +65,7 @@ COMMAND_GUIDES = {
     "mmcal": "/mmcal 2024-01-01",
     "days": "/days 2024-01-01",
     "bazi": "/bazi 2005-12-23 08:37 Asia/Yangon",
+    "dayun": "/dayun 2005-12-23 08:37 Asia/Yangon 1",
     "number": "/number 1999-12-31",
     "savebirth": "/savebirth 2005-12-23 အတည်ပြု",
     "mybirth": "/mybirth",
