@@ -13,8 +13,6 @@ REQUIRED_TARGETS.update({v:v for v in TARGETS.values()})
 def validate_kernel_segments(kernel, moment: datetime) -> dict:
     if not isinstance(moment, datetime) or moment.tzinfo is None or moment.utcoffset() is None:
         raise ValueError("Timezone-aware astronomical instant required")
-    names = kernel.names()
-    available = set(names)
     missing = []
     for name in REQUIRED_TARGETS:
         try:
@@ -40,7 +38,7 @@ def validate_kernel_segments(kernel, moment: datetime) -> dict:
                    getattr(segment, "end_jd", float("-inf"))
                    and getattr(segment, "target", None) == target
                    for segment in segments)
-               for target in (10, 301, 399, 1, 2, 4, 5, 6, 7, 8, 9)):
+               for target in (10, 301, 399, 1, 2, 3, 4, 5, 6, 7, 8, 9, 199, 299, 499)):
         raise ValueError("JPL ephemeris does not cover the requested date and planetary targets")
     return {
         "target_count": len(REQUIRED_TARGETS),
@@ -54,5 +52,6 @@ def audit_kernel_file(path: str, moment: datetime) -> dict:
     if source.suffix.lower() != ".bsp" or not source.is_file():
         raise ValueError("Existing local JPL .bsp file required")
     from skyfield.api import load_file
-    with load_file(str(source.resolve())) as kernel:
+    from contextlib import closing
+    with closing(load_file(str(source.resolve()))) as kernel:
         return validate_kernel_segments(kernel, moment)
