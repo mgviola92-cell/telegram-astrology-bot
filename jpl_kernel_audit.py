@@ -5,12 +5,13 @@ Skyfield's documented segment map, not a filename-based claim of coverage.
 """
 from datetime import datetime, timezone
 from pathlib import Path
+import math
 from western_chart import TARGETS
 
 REQUIRED_TARGETS = {"earth":399}
 REQUIRED_TARGETS.update({v:v for v in TARGETS.values()})
 
-def validate_kernel_segments(kernel, moment: datetime) -> dict:
+def validate_kernel_segments(kernel, moment: datetime, *, tdb_jd: float | None = None) -> dict:
     if not isinstance(moment, datetime) or moment.tzinfo is None or moment.utcoffset() is None:
         raise ValueError("Timezone-aware astronomical instant required")
     missing = []
@@ -31,6 +32,10 @@ def validate_kernel_segments(kernel, moment: datetime) -> dict:
     utc = moment.astimezone(timezone.utc)
     jd += (utc.hour * 3600 + utc.minute * 60 + utc.second
            + utc.microsecond / 1000000) / 86400
+    if tdb_jd is not None:
+        if isinstance(tdb_jd, bool) or not isinstance(tdb_jd, (int, float)) or not math.isfinite(tdb_jd):
+            raise ValueError("Valid finite TDB Julian day required")
+        jd = float(tdb_jd)
     # JPL SPK segments describe center -> target links. A target may exist
     # without an Earth-connected chain. Check reachability from Solar-System
     # barycenter (0) through only segments covering the requested epoch.
@@ -48,7 +53,7 @@ def validate_kernel_segments(kernel, moment: datetime) -> dict:
             raise ValueError("Unrecognized JPL SPK segment metadata")
         # UTC can differ from TDB by tens of seconds; retain an adequate
         # preflight margin, with the actual evaluation authoritative.
-        margin_days = 120 / 86400
+        margin_days = 0 if tdb_jd is not None else 120 / 86400
         if start - margin_days <= jd <= end + margin_days:
             active_edges.setdefault(center, set()).add(target)
     reachable = {0}
@@ -68,6 +73,7 @@ def validate_kernel_segments(kernel, moment: datetime) -> dict:
     return {
         "target_count": len(REQUIRED_TARGETS),
         "birth_jd": round(jd, 8),
+        "epoch_timescale": "TDB" if tdb_jd is not None else "UTC approximate preflight",
         "valid": True,
         "planet_centers_and_barycenters_distinguished": True,
     }
