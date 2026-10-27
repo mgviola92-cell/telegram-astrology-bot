@@ -71,6 +71,8 @@ def geocentric_chart(birth_utc: datetime, ephemeris_path: str) -> dict:
     ts=load.timescale()
     t=ts.from_datetime(utc)
     with closing(load_file(str(Path(ephemeris_path).resolve()))) as kernel:
+        from jpl_kernel_audit import validate_kernel_segments
+        validate_kernel_segments(kernel, utc)
         earth=kernel["earth"]
         values={}
         for label,target in TARGETS.items():
