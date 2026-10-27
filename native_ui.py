@@ -54,7 +54,7 @@ FEATURES = {
     "timing": ("Timing Cycles", "Timing backend အချို့ရှိပေမဲ့ လုံလောက်စွာ မစမ်းသပ်ရသေးပါ။", ()),
     "mmcal": ("မြန်မာပြက္ခဒိန်", "မြန်မာရက်စွဲ၊ လဆန်းလဆုတ်၊ ရက်ရာဇာနှင့် ပြဿဒါးတို့ကို တွက်နိုင်ပါတယ်။", (
         ("ရက်စွဲတွက်မယ်", "mmcal"), ("အခါပေးရက်များ", "days"),)),
-    "library": ("Reference Library", "တွက်ချက်နည်းကို ရှင်းပြနိုင်တဲ့ Evidence Buttons ရှိပြီးသားပါ။ စာကြည့်တိုက်အပြည့် မပြီးသေးပါ။", ()),
+    "library": ("Reference Library", "တွက်ချက်နည်း၊ မူရင်းကိုးကားချက်နှင့် ကန့်သတ်ချက်များကို ဘာသာရပ်အလိုက် ဖတ်ရှုနိုင်ပါတယ်။", (("ကျမ်းကိုးမှတ်တမ်းများ", "library"),)),
     "study": ("Astrology Study", "သီးခြားလေ့လာခန်း မပြီးသေးပါ။", ()),
     "group": ("Group Settings", "Group Management UI မပြီးသေးပါ။ ကိုယ်ရေးအချက်အလက်ကို Private Chat မှာသာ ဖြည့်ပါ။", ()),
 
@@ -98,7 +98,7 @@ def section_keyboard(section: str):
 def feature_keyboard(feature: str):
     if feature not in FEATURES:
         raise KeyError(feature)
-    rows=[[button(label,("ui:tarot" if cmd=="tarot" else "ui:guide:"+cmd))]
+    rows=[[button(label,("ui:tarot" if cmd=="tarot" else "ui:library" if cmd=="library" else "ui:guide:"+cmd))]
           for label,cmd in FEATURES[feature][2]]
     group=next((key for key,(_,items) in SECTIONS.items()
                 if any(name==feature for _,name in items)), "charts")
