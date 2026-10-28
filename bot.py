@@ -318,18 +318,18 @@ async def personal_reading_command(message: Message):
             callback_data='evidence:'+reading['evidence_rule_ids'][2])],
     ])
     await message.answer(
-        '<b>ကိုယ်ပိုင်ရိုးရာဇာတာအနှစ်ချုပ်</b>\\n'
-        '━━━━━━━━━━━━━━\\n'
-        f'မွေးရက် — <b>{html.escape(reading["birth_date"])}</b>\\n'
-        f'မွေးနေ့နံ — <b>{html.escape(reading["weekday"])}</b>\\n'
-        f'မြန်မာသက္ကရာဇ် — <b>{reading["myanmar_year"]}</b>\\n\\n'
-        '<b>မဟာဘုတ် ၇ အိမ်စနစ်</b>\\n'
-        f'ဖွားအိမ် — <b>{html.escape(reading["house"])}</b>\\n'
-        f'<b>{html.escape(reading["mahabote_theme"])}</b>\\n'
-        f'{html.escape(reading["mahabote_interpretation"])}\\n\\n'
-        '<b>Numerology — Life Path</b>\\n'
-        f'သတ်မှတ်ထားသော ကိန်းလျှော့နည်းအရ — <b>{reading["life_path"]}</b>\\n'
-        'ဤနံပါတ်အတွက် ကျမ်းကိုးအပြည့် အနက်ဖွင့်မှု မဖြည့်ရသေးသဖြင့် အဓိပ္ပာယ်အသစ် မတီထွင်ထားပါ။\\n\\n'
+        '<b>ကိုယ်ပိုင်ရိုးရာဇာတာအနှစ်ချုပ်</b>\n'
+        '━━━━━━━━━━━━━━\n'
+        f'မွေးရက် — <b>{html.escape(reading["birth_date"])}</b>\n'
+        f'မွေးနေ့နံ — <b>{html.escape(reading["weekday"])}</b>\n'
+        f'မြန်မာသက္ကရာဇ် — <b>{reading["myanmar_year"]}</b>\n\n'
+        '<b>မဟာဘုတ် ၇ အိမ်စနစ်</b>\n'
+        f'ဖွားအိမ် — <b>{html.escape(reading["house"])}</b>\n'
+        f'<b>{html.escape(reading["mahabote_theme"])}</b>\n'
+        f'{html.escape(reading["mahabote_interpretation"])}\n\n'
+        '<b>Numerology — Life Path</b>\n'
+        f'သတ်မှတ်ထားသော ကိန်းလျှော့နည်းအရ — <b>{reading["life_path"]}</b>\n'
+        'ဤနံပါတ်အတွက် ကျမ်းကိုးအပြည့် အနက်ဖွင့်မှု မဖြည့်ရသေးသဖြင့် အဓိပ္ပာယ်အသစ် မတီထွင်ထားပါ။\n\n'
         'ရိုးရာစနစ်နှစ်ခုကို သီးခြားဖော်ပြထားခြင်းသာဖြစ်သည်။ '
         'အနာဂတ်ဖြစ်ရပ်ကို အာမခံမဟုတ်ပါ။ ဤ Command က မွေးအချက်အလက်ကို မသိမ်းပါ။',
         parse_mode='HTML', reply_markup=rule_buttons
