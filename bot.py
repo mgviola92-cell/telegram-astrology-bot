@@ -36,6 +36,7 @@ from mahabote_core import calculate_mahabote, BURMESE_HOUSES
 from mahabote_reading import interpret_mahabote
 from myanmar_day_signals import calculate_day_signals
 from myanmar_signal_reading import describe_day_signals
+from daily_calendar_reading import daily_calendar_reading
 from evidence_ui import evidence_button, get_rule
 from reference_library import library_page, render_library, CATEGORY_LABELS
 from profile_commands import router as profile_router
@@ -205,6 +206,51 @@ async def show_evidence(cb: CallbackQuery):
         '<b>သိထားရန်</b>\n'+html.escape(record['limits']),
         parse_mode='HTML'
     )
+
+@dp.message(Command('daily'))
+async def daily_command(message: Message):
+    """Myanmar local calendar-day cultural reading, no birth data required."""
+    if not private_only(message):
+        await message.answer('နေ့စဉ်ပြက္ခဒိန်ကို Private Chat မှာသာ ကြည့်နိုင်ပါတယ်။')
+        return
+    args=(message.text or '').split()
+    if len(args)>2:
+        await message.answer('နေ့စဉ်ပြက္ခဒိန်ကြည့်ရန် <code>/daily</code> သို့မဟုတ် <code>/daily 2026-10-28</code> လို့ ဖြည့်ပါ။',parse_mode='HTML')
+        return
+    try:
+        if len(args)==2:
+            day=date.fromisoformat(args[1])
+            if day.isoformat()!=args[1]:
+                raise ValueError('Date format must be ISO')
+        else:
+            day=datetime.now(ZoneInfo('Asia/Yangon')).date()
+        daily=daily_calendar_reading(day)
+    except (ValueError, TypeError):
+        await message.answer('ရက်စွဲကို YYYY-MM-DD ပုံစံဖြင့် 1900–2100 အတွင်း ပြန်စစ်ပါ။')
+        return
+    markers='၊ '.join(daily['active_labels']) if daily['active_labels'] else 'သီးခြားရိုးရာအမှတ်အသား မတွေ့ပါ။'
+    observations='\\n'.join(daily['observations'])
+    await message.answer(
+        '<b>မြန်မာရိုးရာ နေ့စဉ်ပြက္ခဒိန်</b>\\n'
+        '━━━━━━━━━━━━━━\\n'
+        f'ရက်စွဲ — <b>{html.escape(daily["date"])}</b> (မြန်မာစံတော်ချိန်အခြေခံ)\\n'
+        f'မြန်မာလ — <b>{html.escape(daily["myanmar_month"])}</b>\\n'
+        f'လ၏အဆင့် — <b>{html.escape(str(daily["moon_phase"]))}</b>\\n\\n'
+        '<b>ရိုးရာနေ့အမှတ်အသားများ</b>\\n'
+        f'{html.escape(markers)}\\n\\n'
+        f'{html.escape(observations)}\\n\\n'
+        f'နဂါးခေါင်းလှည့်ရာ — {html.escape(daily["nagahle_direction"])}\\n'
+        f'နက္ခတ် — {html.escape(daily["nakhat_name"])}\\n\\n'
+        f'{html.escape(daily["note"])}',
+        parse_mode='HTML',
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text='ပြက္ခဒိန်တွက်ချက်နည်း',
+                  callback_data='evidence:'+daily['calculation_rule_id'])],
+            [InlineKeyboardButton(text='နေ့စဉ်ဖော်ပြချက်နည်း',
+                  callback_data='evidence:'+daily['interpretation_rule_id'])],
+        ])
+    )
+
 
 @dp.message(Command('days'))
 async def myanmar_day_signals_command(message: Message):
