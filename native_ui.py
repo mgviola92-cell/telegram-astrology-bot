@@ -48,7 +48,7 @@ FEATURES = {
     "profile": ("My Profile", "မွေးနေ့ကို သဘောတူမှသာ သိမ်းနိုင်ပြီး Private Chat မှာသာ ကြည့်နိုင်ပါတယ်။", (
         ("Save Birth Date", "savebirth"), ("View Birth Date", "mybirth"),
         ("Delete Birth Date", "forgetbirth"))),
-    "reading": ("Personal Reading", "တွက်ချက်မှုနှင့် ရိုးရာဟောစာတမ်းစည်းမျဉ်းများ မပြီးသေးပါ။", ()),
+    "reading": ("Personal Reading", "မဟာဘုတ်ရိုးရာအိမ်အနက်နှင့် Numerology Life Path ကို သီးခြားနည်းလမ်းအဖြစ် ဖတ်နိုင်ပါတယ်။", (("ကိုယ်ပိုင်အနှစ်ချုပ်", "reading"),)),
     "compatibility": ("Compatibility", "နှစ်ဦးဇာတာ တွက်ချက်မှုနှင့် ရိုးရာနည်းလမ်းစစ်ဆေးခြင်း မပြီးသေးပါ။", ()),
     "daily": ("Daily Reading", "မြန်မာပြက္ခဒိန်အခြေခံ နေ့စဉ်ရိုးရာအမှတ်အသားများကို ဖတ်နိုင်ပါတယ်။ ကိုယ်ပိုင်အနာဂတ်ဟောစာတမ်းမဟုတ်ပါ။", (("နေ့စဉ်ပြက္ခဒိန်", "daily"),)),
     "timing": ("Timing Cycles", "Timing backend အချို့ရှိပေမဲ့ လုံလောက်စွာ မစမ်းသပ်ရသေးပါ။", ()),
@@ -65,6 +65,7 @@ COMMAND_GUIDES = {
     "mmcal": "/mmcal 2024-01-01",
     "days": "/days 2024-01-01",
     "daily": "/daily",
+    "reading": "/reading 2005-12-23",
     "bazi": "/bazi 2005-12-23 08:37 Asia/Yangon",
     "dayun": "/dayun 2005-12-23 08:37 Asia/Yangon 1",
     "profection": "/profection 2005-12-23 2026-10-27 Aries",
