@@ -37,3 +37,11 @@ This is a development audit, not a claim that divination can scientifically pred
 ## Last confirmed automated checks
 
 Calculation GitHub Actions on the reference-library batch: **342 tests passed**, with tests for evidence browse callbacks, no-birth-data identifiers and pagination. Independent authentic DE421/DE440s workflow passed earlier; no real Telegram user-flow test or deployment has happened.
+
+## 2026-10-28 update — native Daily Reading calendar mode
+
+- Added `daily_calendar_reading.py`: deterministic cultural daily calendar descriptions based solely on `calculate_day_signals` with strict re-verification by `describe_day_signals`. This is not birth-specific personal fortune telling and does not generate claims about future events. Its interpretations distinguish full/partial-day Pyathada, Sabbath, Sabbath Eve and Yatyaza; other labels are surfaced unchanged from the documented calendar calculation.
+- The private Telegram `/daily` command uses the current `Asia/Yangon` calendar day, and `/daily YYYY-MM-DD` permits explicit local-date research within 1900–2100. No birth date, profile, or user media data is stored. Daily Reading is now a functional, clearly scoped native menu item; it does not mean the originally planned full personal daily forecasting/synthesis is complete.
+- Evidence registry has separate keys for source arithmetic `MM-CALENDAR-DAY-SIGNALS-001` and original daily narration `MM-DAILY-CALENDAR-REFLECTION-001`. Research checked Yan Naing Aye's original Burmese/English day-marker formulas and the 2026 Thadingyut 27/28/29 Oct reference vectors. Sources: https://cool-emerald.blogspot.com/2013/12/myanmar-astrological-calendar-days.html and https://yan9a.github.io/mmcal/m.htm .
+- GitHub Actions **351 automated and offline handler tests passed** on code commit `2d78c3a7d307`, run `40702230570`. Real Telegram integration remains untested; no Render deployment.
+- Approximate **full-project completion stays around 50–55%**. One useful calendar-only subfeature is now complete, but Personal Reading, Compatibility, broader daily traditions and native end-to-end smoke are still major release blockers. Do not treat the arithmetic test count as the completion percentage.
