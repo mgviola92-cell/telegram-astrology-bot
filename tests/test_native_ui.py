@@ -40,7 +40,7 @@ class NativeUiTests(unittest.TestCase):
     def test_unfinished_feature_not_claimed_ready(self):
         self.assertIn(("Annual Profection","profection"),FEATURES["western"][2])
         self.assertNotIn("natal",COMMAND_GUIDES)
-        self.assertFalse(FEATURES["daily"][2])
+        self.assertIn(("နေ့စဉ်ပြက္ခဒိန်","daily"),FEATURES["daily"][2])
         self.assertFalse(FEATURES["compatibility"][2])
     def test_guides_do_not_embed_user_data(self):
         for command in COMMAND_GUIDES:
