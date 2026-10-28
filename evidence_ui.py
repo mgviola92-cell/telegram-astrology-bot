@@ -28,6 +28,12 @@ RULES = {
         'source': 'Astrodienst Aspects: https://www.astro.com/astrology/in_aspect_e.htm ; orb sizes depend on a documented convention',
         'limits': 'အခြား Ephemeris မှ သီးခြားအတည်ပြုထားသော ဂြိုဟ်တည်နေရာကိုသာ ထည့်သွင်းရမည်။ ဤ Engine က မွေးဇာတာနှင့် ဂြိုဟ်တည်နေရာကို ကိုယ်တိုင်မတွက်သေးပါ။'
     },
+    'MM-DAILY-CALENDAR-REFLECTION-001': {
+        'heading': 'နေ့စဉ် မြန်မာရိုးရာပြက္ခဒိန် အညွှန်း',
+        'method': 'အထူးသတ်မှတ်ထားသည့် မြန်မာစံတော်ချိန်ဒေသ၏ Gregorian Local Date မှ mmcal ကိုတွက်ပြီး Yan Naing Aye ၏ ပြက္ခဒိန်အမှတ်အသားများကို ပြန်စစ်၍ ဥပုသ်၊ အဖိတ်၊ ရက်ရာဇာနှင့် ပြဿဒါးအမည်များကို ရက်စွဲအခြေခံ ဖော်ပြသည်။ Personal Profile၊ Random Draw သို့မဟုတ် နက္ခတ္တအနာဂတ်ခန့်မှန်းမှုကို မသုံးပါ။',
+        'source': 'Yan Naing Aye, Myanmar Astrological Calendar Days (2013), https://cool-emerald.blogspot.com/2013/12/myanmar-astrological-calendar-days.html ; original Burmese https://coolemerald.blogspot.com/2013/12/blog-post.html ; mmcal https://yan9a.github.io/mmcal/',
+        'limits': 'ရိုးရာပြက္ခဒိန်၏ နေ့အမျိုးအစားသာဖြစ်ပြီး အသုံးပြုသူတစ်ဦးချင်း ကံကြမ္မာ၊ ကျန်းမာရေး၊ ချစ်ရေး၊ ငွေကြေး သို့မဟုတ် အနာဂတ်ဖြစ်ရပ်ကို မခန့်မှန်းပါ။ ကျောင်းအလိုက် မူကွဲများရှိနိုင်သည်။'
+    },
     'MM-CALENDAR-DAY-SIGNALS-001': {
         'heading': 'မြန်မာပြက္ခဒိန် အခါပေးရက်များ',
         'method': 'mmcal မှ မြန်မာလ၊ လရက်၊ ဝါထပ်နှစ်နှင့် စနေ=၀ မှ သောကြာ=၆ နေ့နံဖြင့် ဥပုသ်/အဖိတ်၊ ရက်ရာဇာ/ပြဿဒါး၊ သမားညို၊ အမြိတ္တစုတ်၊ ဝါရမိတ္တုကြီး/ငယ်၊ ရက်ပုပ်၊ သမားဖြူ၊ နဂါးပေါ်၊ ရက်ယုတ်မာ၊ မဟာရက်ကြမ်း၊ ရှမ်းရက်၊ နဂါးခေါင်းလှည့်ရာအရပ်နှင့် နက္ခတ်အမျိုးအစားကို သက်ဆိုင်ရာ Formula အလိုက်တွက်သည်။ ပထမဝါဆိုကို ဝါဆို၊ နှောင်းတန်ခူး/ကဆုန်ကို သက်ဆိုင်ရာပုံမှန်လအဖြစ် ယူသော convention ကို မှတ်တမ်းတင်ထားသည်။',
