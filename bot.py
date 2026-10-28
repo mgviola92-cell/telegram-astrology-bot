@@ -34,6 +34,7 @@ from myanmar_core import myanmar_birth_day
 from myanmar_calendar import calculate_myanmar_calendar
 from mahabote_core import calculate_mahabote, BURMESE_HOUSES
 from mahabote_reading import interpret_mahabote
+from personal_reading import personal_reading
 from myanmar_day_signals import calculate_day_signals
 from myanmar_signal_reading import describe_day_signals
 from daily_calendar_reading import daily_calendar_reading
@@ -282,6 +283,56 @@ async def myanmar_day_signals_command(message: Message):
         f'{html.escape(description["note"])}',
         parse_mode='HTML',
         reply_markup=evidence_button(description['rule_id'])
+    )
+
+
+@dp.message(Command('reading'))
+async def personal_reading_command(message: Message):
+    if not private_only(message):
+        await message.answer('ကိုယ်ပိုင်ဇာတာကို Private Chat မှာသာ ဖတ်နိုင်ပါတယ်။')
+        return
+    fields=(message.text or '').split()
+    if len(fields) not in (2,3):
+        await message.answer(
+            'ရိုးရာမွေးဇာတာအနှစ်ချုပ်အတွက် <code>/reading 2005-12-23</code> '
+            'သို့မဟုတ် <code>/reading 2005-12-23 08:37</code> လို့ ဖြည့်ပါ။',
+            parse_mode='HTML')
+        return
+    try:
+        day=date.fromisoformat(fields[1])
+        if day.isoformat()!=fields[1] or day>datetime.now(ZoneInfo('Asia/Yangon')).date():
+            raise ValueError('Invalid birth day')
+        clock=time.fromisoformat(fields[2]) if len(fields)==3 else None
+        if clock and (clock.tzinfo is not None or len(fields[2])!=5):
+            raise ValueError('Invalid local time')
+        reading=personal_reading(day,clock)
+    except (ValueError,TypeError):
+        await message.answer('မွေးရက်စွဲကို 1900–2100 အတွင်း YYYY-MM-DD၊ မွေးချိန်ကို HH:MM ပုံစံဖြင့် ပြန်ဖြည့်ပါ။')
+        return
+    rule_buttons=InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text='မဟာဘုတ်တွက်ချက်နည်း',
+            callback_data='evidence:'+reading['evidence_rule_ids'][0])],
+        [InlineKeyboardButton(text='ရိုးရာအိမ်အနက်',
+            callback_data='evidence:'+reading['evidence_rule_ids'][1])],
+        [InlineKeyboardButton(text='Life Path တွက်ချက်နည်း',
+            callback_data='evidence:'+reading['evidence_rule_ids'][2])],
+    ])
+    await message.answer(
+        '<b>ကိုယ်ပိုင်ရိုးရာဇာတာအနှစ်ချုပ်</b>\\n'
+        '━━━━━━━━━━━━━━\\n'
+        f'မွေးရက် — <b>{html.escape(reading["birth_date"])}</b>\\n'
+        f'မွေးနေ့နံ — <b>{html.escape(reading["weekday"])}</b>\\n'
+        f'မြန်မာသက္ကရာဇ် — <b>{reading["myanmar_year"]}</b>\\n\\n'
+        '<b>မဟာဘုတ် ၇ အိမ်စနစ်</b>\\n'
+        f'ဖွားအိမ် — <b>{html.escape(reading["house"])}</b>\\n'
+        f'<b>{html.escape(reading["mahabote_theme"])}</b>\\n'
+        f'{html.escape(reading["mahabote_interpretation"])}\\n\\n'
+        '<b>Numerology — Life Path</b>\\n'
+        f'သတ်မှတ်ထားသော ကိန်းလျှော့နည်းအရ — <b>{reading["life_path"]}</b>\\n'
+        'ဤနံပါတ်အတွက် ကျမ်းကိုးအပြည့် အနက်ဖွင့်မှု မဖြည့်ရသေးသဖြင့် အဓိပ္ပာယ်အသစ် မတီထွင်ထားပါ။\\n\\n'
+        'ရိုးရာစနစ်နှစ်ခုကို သီးခြားဖော်ပြထားခြင်းသာဖြစ်သည်။ '
+        'အနာဂတ်ဖြစ်ရပ်ကို အာမခံမဟုတ်ပါ။ ဤ Command က မွေးအချက်အလက်ကို မသိမ်းပါ။',
+        parse_mode='HTML', reply_markup=rule_buttons
     )
 
 
