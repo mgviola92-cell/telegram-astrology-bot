@@ -58,6 +58,18 @@ def inspect_environment(*, mode="ci", environ=None):
             parent=Path(path).expanduser().parent
             add("database_directory",parent.is_dir() and os.access(parent,os.W_OK),
                 "Persistent SQLite destination parent must already exist and be writable")
+        group_db=env.get("GROUP_SETTINGS_DB_PATH","").strip()
+        if group_db:
+            if env.get("RENDER"):
+                add("render_group_settings_disk_confirmed",
+                    env.get("GROUP_SETTINGS_PERSISTENT_DISK_CONFIRMED")=="1",
+                    "Render group settings require a verified paid persistent disk")
+            add("group_settings_db_directory",
+                Path(group_db).expanduser().parent.is_dir()
+                and os.access(Path(group_db).expanduser().parent,os.W_OK),
+                "Group settings SQLite directory must exist and be writable")
+            add("group_settings_db_not_memory",group_db!=":memory:",
+                "Group settings durable DB cannot be :memory:")
         # Western natal is an opt-in, unpublished development preview.
         # Its JPL kernel is mandatory only if the operator enables the feature.
         kernel=env.get("JPL_EPHEMERIS_PATH","").strip()

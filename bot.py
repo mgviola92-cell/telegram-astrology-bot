@@ -45,6 +45,8 @@ from evidence_ui import evidence_button, get_rule
 from reference_library import library_page, render_library, CATEGORY_LABELS
 from study_library import CHAPTERS, study_index_text, study_chapter_text
 from native_message_edit import edit_or_reply
+from group_calendar_settings import GroupCalendarSettings
+from group_admin import is_verified_group_admin
 from public_calendar import (
     GroupCalendarGate, day_actions, myanmar_today,
     parse_day_callback, public_calendar_text,
@@ -54,7 +56,8 @@ from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
                        feature_keyboard, feature_text, guide_keyboard, guide_text,
                        SECTIONS, FEATURES, COMMAND_GUIDES,
                        study_index_keyboard, study_chapter_keyboard,
-                       group_home_keyboard, group_home_text)
+                       group_home_keyboard, group_home_text,
+                       group_settings_text, group_settings_keyboard)
 
 dp=Dispatcher()
 dp.include_router(profile_router)
@@ -64,6 +67,7 @@ tarot_cooldown = CooldownBudget(seconds=3.0,capacity=1000)
 reading_inputs = ReadingInputSessions(ttl=300)
 group_calendar_gate = GroupCalendarGate(seconds=20,capacity=1024)
 group_welcome_gate = GroupCalendarGate(seconds=15,capacity=1024)
+group_settings = GroupCalendarSettings.from_environment()
 
 def menu():
     return home_keyboard()
@@ -79,7 +83,9 @@ async def welcome(message: Message):
     if message.chat.type in ("group","supergroup"):
         if not group_welcome_gate.allow(message.chat.id):
             return
-        await message.answer(group_home_text(),reply_markup=group_home_keyboard(),
+        enabled=group_settings.enabled(message.chat.id)
+        await message.answer(group_home_text(enabled),
+                             reply_markup=group_home_keyboard(enabled),
                              parse_mode="HTML")
         return
     if message.chat.type!="private":
@@ -274,11 +280,69 @@ def public_calendar_keyboard(day, *, today):
     ]])
 
 
+@dp.message(Command("settings"))
+async def group_settings_command(message: Message):
+    if message.chat.type not in ("group","supergroup"):
+        return
+    if not await is_verified_group_admin(
+            message.bot,message.chat.id,message.from_user,
+            sender_chat=getattr(message,"sender_chat",None)):
+        return
+    enabled=group_settings.enabled(message.chat.id)
+    await message.answer(group_settings_text(enabled,group_settings.persistent),
+                         reply_markup=group_settings_keyboard(enabled),
+                         parse_mode="HTML")
+
+
+@dp.callback_query(F.data=="group:settings")
+@dp.callback_query(F.data.startswith("groupcfg:"))
+async def group_settings_navigation(cb: CallbackQuery):
+    if not isinstance(cb.message,Message) or cb.message.chat.type not in ("group","supergroup"):
+        await cb.answer("ဤခလုတ်ကို အဖွဲ့ထဲမှာသာ သုံးနိုင်ပါတယ်။",show_alert=True)
+        return
+    if not await is_verified_group_admin(cb.bot,cb.message.chat.id,cb.from_user):
+        await cb.answer("အဖွဲ့ Admin များသာ စည်းမျဉ်းပြောင်းနိုင်ပါတယ်။",show_alert=True)
+        return
+    data=cb.data or ""
+    if data=="groupcfg:home":
+        enabled=group_settings.enabled(cb.message.chat.id)
+        text=group_home_text(enabled)
+        markup=group_home_keyboard(enabled)
+    elif data in ("groupcfg:on","groupcfg:off"):
+        enabled=data=="groupcfg:on"
+        try:
+            changed=group_settings.set_enabled(cb.message.chat.id,enabled,expected=not enabled)
+        except (ValueError,OverflowError,OSError):
+            await cb.answer("စည်းမျဉ်း မပြောင်းနိုင်သေးပါ။",show_alert=True)
+            return
+        if not changed:
+            await cb.answer("ဒီခလုတ်က ဟောင်းနေပြီ။ လက်ရှိအခြေအနေကို ပြန်ပြထားပါတယ်။")
+        else:
+            await cb.answer("အဖွဲ့ပြက္ခဒိန် စည်းမျဉ်းပြောင်းပြီးပါပြီ။")
+        actual=group_settings.enabled(cb.message.chat.id)
+        text=group_settings_text(actual,group_settings.persistent)
+        markup=group_settings_keyboard(actual)
+        await edit_or_reply(cb.message,text,markup)
+        return
+    elif data=="group:settings":
+        enabled=group_settings.enabled(cb.message.chat.id)
+        text=group_settings_text(enabled,group_settings.persistent)
+        markup=group_settings_keyboard(enabled)
+    else:
+        await cb.answer("ဤစည်းမျဉ်းခလုတ် မရှိတော့ပါ။",show_alert=True)
+        return
+    await cb.answer()
+    await edit_or_reply(cb.message,text,markup)
+
+
 @dp.callback_query(F.data=="group:today")
 async def group_home_calendar(cb: CallbackQuery):
     """Public on-demand calendar from group landing card, no natal details."""
     if not isinstance(cb.message,Message) or cb.message.chat.type not in ("group","supergroup"):
         await cb.answer("အဖွဲ့ရိုးရာပြက္ခဒိန်ကို အဖွဲ့ထဲမှာပဲ ဖွင့်ပါ။",show_alert=True)
+        return
+    if not group_settings.enabled(cb.message.chat.id):
+        await cb.answer("ဤအဖွဲ့မှာ ပြက္ခဒိန်ကို Admin က ပိတ်ထားပါတယ်။",show_alert=True)
         return
     today=myanmar_today()
     await cb.answer()
@@ -294,8 +358,11 @@ async def public_today_command(message: Message):
     if len((message.text or "").split()) != 1:
         await message.answer("ရိုးရာနေ့စဉ်ပြက္ခဒိန်ကို ကြည့်ရန် /today လို့ ရိုက်ပါ။")
         return
-    if message.chat.type != "private" and not group_calendar_gate.allow(message.chat.id):
-        return
+    if message.chat.type != "private":
+        if not group_settings.enabled(message.chat.id):
+            return
+        if not group_calendar_gate.allow(message.chat.id):
+            return
     today=myanmar_today()
     await message.answer(public_calendar_text(today),
                          parse_mode="HTML",
@@ -307,6 +374,9 @@ async def public_calendar_navigation(cb: CallbackQuery):
     """Stateless public calendar navigation; validates all untrusted dates."""
     if not isinstance(cb.message,Message) or cb.message.chat.type not in ("private","group","supergroup"):
         await cb.answer("ရိုးရာပြက္ခဒိန်ကို ဤနေရာတွင် ဖွင့်မရပါ။",show_alert=True)
+        return
+    if cb.message.chat.type!="private" and not group_settings.enabled(cb.message.chat.id):
+        await cb.answer("ဤအဖွဲ့မှာ ပြက္ခဒိန်ကို Admin က ပိတ်ထားပါတယ်။",show_alert=True)
         return
     today=myanmar_today()
     try:

@@ -159,16 +159,37 @@ def study_chapter_keyboard(key: str):
     return keyboard(rows)
 
 
-def group_home_keyboard():
+def group_home_keyboard(enabled=True):
     """No private birth/profile controls in group menus."""
-    return keyboard([[button("ယနေ့ ရိုးရာပြက္ခဒိန်","group:today")]])
+    rows=[]
+    if enabled:
+        rows.append([button("ယနေ့ ရိုးရာပြက္ခဒိန်","group:today")])
+    rows.append([button("အဖွဲ့စည်းမျဉ်း","group:settings")])
+    return keyboard(rows)
 
-def group_home_text():
+def group_home_text(enabled=True):
+    status="" if enabled else "ဤအဖွဲ့မှာ ရိုးရာပြက္ခဒိန်ကို ခေတ္တပိတ်ထားပါတယ်။\n"
     return ("<b>ကြယ်စင်တို့၏ အဖွဲ့ဇာတာခန်း</b>\n"
             "━━━━━━━━━━━━━━\n"
             "ဤအဖွဲ့မှာ မွေးအချက်အလက်မလိုတဲ့ မြန်မာရိုးရာပြက္ခဒိန်ကို "
             "ကြည့်နိုင်ပါတယ်။\n\n"
+            +status+
             "လက်ရှိနေ့ကို ကြည့်ရန် အောက်ပါခလုတ် သို့မဟုတ် "
             "<code>/today</code> ကို သုံးပါ။\n"
             "<i>ကိုယ်ပိုင်မွေးဇာတာနှင့် မွေးအချက်အလက်များကို "
             "Bot ၏ Private Chat တွင်သာ ဖြည့်ပါ။</i>")
+
+
+def group_settings_text(enabled, persistent):
+    status="ဖွင့်ထားပါတယ်" if enabled else "ပိတ်ထားပါတယ်"
+    warning=("" if persistent else
+        "\n\n<i>ယာယီသတ်မှတ်ချက်ပါ။ Bot ပြန်စတင်လျှင် ဖွင့်ထားသည့် မူလအခြေအနေသို့ ပြန်သွားနိုင်ပါတယ်။</i>")
+    return ("<b>အဖွဲ့ရိုးရာပြက္ခဒိန် စည်းမျဉ်း</b>\n"
+            "━━━━━━━━━━━━━━\n"
+            "ယနေ့ပြက္ခဒိန် — <b>"+status+"</b>\n"
+            "အဖွဲ့ Admin များသာ ပြောင်းနိုင်ပါတယ်။"+warning)
+
+def group_settings_keyboard(enabled):
+    action=("ပိတ်မယ်","groupcfg:off") if enabled else ("ပြန်ဖွင့်မယ်","groupcfg:on")
+    return keyboard([[button(*action)],
+                     [button("အဖွဲ့အစ", "groupcfg:home")]])
