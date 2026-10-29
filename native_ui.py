@@ -39,7 +39,7 @@ SECTIONS = {
 FEATURES = {
     "mm": ("မြန်မာဗေဒင်", "မွေးနေ့နံနှင့် မဟာဘုတ်/ပြက္ခဒိန်တွက်ချက်မှုများ", (
         ("မွေးနေ့နံ", "myday"), ("မဟာဘုတ်ဇာတာ", "mahabote"), ("မြန်မာပြက္ခဒိန်", "mmcal"))),
-    "western": ("Western Astrology", "Natal Chart ကို Reference နဲ့ စစ်ဆေးနေဆဲဖြစ်ပါတယ်။ သီးခြားတွက်ထားတဲ့ Rising Sign ရှိရင် ရိုးရာ Annual Profection ကို တွက်နိုင်ပါတယ်။", (("Annual Profection", "profection"),)),
+    "western": ("Western Astrology", "Natal Chart ကို Reference နဲ့ စစ်ဆေးနေဆဲဖြစ်ပါတယ်။ သီးခြားတွက်ထားတဲ့ Rising Sign ရှိရင် ရိုးရာ Annual Profection ကို တွက်နိုင်ပါတယ်။", (("Annual Profection", "profection"),("12 Houses Guide", "profection_houses"))),
     "bazi": ("BaZi", "Four Pillars ကို တွက်နိုင်ပါတယ်။ True Solar Time နဲ့ seasonal validation မပြီးသေးပါ။", (
         ("Four Pillars", "bazi"), ("Da Yun Cycles", "dayun"),)),
     "number": ("Numerology", "Life Path ကိန်းနှင့် မျက်မှောက်ခေတ် ရိုးရာသင်္ကေတအနက်ကို သီးခြားကိုးကား၍ ဖတ်နိုင်ပါတယ်။", (
@@ -70,6 +70,7 @@ COMMAND_GUIDES = {
     "bazi": "/bazi 2005-12-23 08:37 Asia/Yangon",
     "dayun": "/dayun 2005-12-23 08:37 Asia/Yangon 1",
     "profection": "/profection 2005-12-23 2026-10-27 Aries",
+    "profection_houses": "/profection houses",
     "number": "/number 1999-12-31",
     "savebirth": "/savebirth 2005-12-23 အတည်ပြု",
     "mybirth": "/mybirth",

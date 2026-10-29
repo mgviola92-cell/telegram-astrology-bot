@@ -182,3 +182,18 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
   ID and without DOB/time in callbacks; /study Bazi adds same provenance.
 - This does not fabricate Day Master strength, favorable elements or
   fortunes. Offline CI must be checked for final commit.
+
+
+## October 29 Western profection educational expansion
+
+- fedae856: Added 12 distinct Burmese traditional Whole Sign house topic
+  descriptions, all-sign and 12/24-age cycle regressions, strict
+  original birth-date/rising-sign provenance revalidation and compact
+  Telegram-safe source-aware report output.
+- New /profection houses private study mode shows the full unpersonalized
+  12-house vocabulary. Standard /profection adds one selected house's
+  interpretation and next house/sign/ruler cycle reference.
+- Two separate source buttons distinguish mathematical annual profection
+  from educational house-topic symbolism. No natal chart or independent
+  Rising Sign calculation. No storage, media, background traffic or
+  Render deployment. Check final HEAD GitHub Actions results.

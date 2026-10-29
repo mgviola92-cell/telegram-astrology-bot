@@ -324,3 +324,23 @@ favorable/unfavorable elements are not inferred. Roles are not
 literal predictions of money, employment, illness or relationships.
 The verified natal input is recomputed before deriving the labels.
 No new DB, birth-detail callback, media, or external API.
+
+
+## Western Annual Profection 12-house interpretation
+
+Private /profection now shows its verified activated Whole Sign house,
+traditional Lord of the Year and one source-attributed original Burmese
+summary of the house's cultural topic (12 distinct topics). The report
+also displays the *next* house/sign/ruler after the coming birthday as
+an educational 12-year cycle illustration, not a specific future event.
+The rising sign is still **user-provided**; its astronomical validity
+is NOT checked by this command. Birth dates and evaluation dates are
+accepted only in canonical YYYY-MM-DD form within the supported period.
+
+Private /profection houses displays a static 12-house glossary
+without requiring or saving birth details. The Western native menu
+links to that command. Separate evidence buttons cover the calculation
+and the editorial interpretation, with source limits shown.
+Natal planet conditions, sect, transits, solar returns and ephemeris
+are not inferred. /natal stays gated. No database writes or background
+network requests.

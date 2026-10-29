@@ -126,3 +126,12 @@ lru_cache(maxsize=8). In groups /today and /week share one existing
 per-group cooldown; native inline week navigation edits the same card.
 The existing Admin /settings control blocks both. Zero extra DB tables,
 media uploads, scheduled jobs or automatic group messages.
+
+
+## Western traditional house education
+
+/profection now renders a source-rechecked static 12-house topic
+interpretation. /profection houses is a one-message glossary on demand.
+Both use static in-source vocabulary; no JPL kernel access, new cache,
+photo assets, profile writes, group broadcasting or external API.
+The Western natal calculator remains disabled by default.

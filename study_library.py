@@ -32,9 +32,9 @@ CHAPTERS = {
     "western": {
         "title": "Western Profection အခြေခံ",
         "intro": "Hellenistic Annual Profection သည် အသက်နှစ်ပြည့်တိုင်း အိမ်တစ်လုံးရွှေ့သည့် ရိုးရာနှစ်စက်ဝန်း နည်းလမ်းဖြစ်သည်။",
-        "method": "တွက်ချက်ရန် မွေးနေ့၊ စစ်ဆေးမည့်နေ့နှင့် အခြားနေရာမှ သီးခြားစစ်ဆေးထားသော Rising Sign လိုသည်။ မွေးနေ့မရောက်သေးပါက အသက်နှစ်ပြည့် မတိုးသေးသောကြောင့် activated house အမျိုးအစားကွဲနိုင်သည်။",
+        "method": "တွက်ချက်ရန် မွေးနေ့၊ စစ်ဆေးမည့်နေ့နှင့် အခြားနေရာမှ သီးခြားစစ်ဆေးထားသော Rising Sign လိုသည်။ မွေးနေ့မရောက်သေးပါက အသက်နှစ်ပြည့် မတိုးသေးသဖြင့် Activated House ပြောင်းနိုင်သည်။ အိမ် ၁၂ လုံး၏ ရိုးရာခေါင်းစဉ်များနှင့် Lord of the Year ကို သီးခြားအနက်ဖော်ပြသည်။ /profection houses နဲ့ မွေးအချက်အလက်မလိုဘဲ လေ့လာနိုင်သည်။",
         "limits": "ဒီ Command သည် Rising Sign ကို ကိုယ်တိုင်မတွက်ပါ။ Western Natal Preview ကို ပိုမိုစစ်ဆေးနေပြီး ပုံမှန် User များအတွက် ဖွင့်မထားပါ။ ရိုးရာအိမ်ခေါင်းစဉ်များသည် ဖြစ်ရပ်အာမခံချက် မဟုတ်ပါ။",
-        "rules": ("WEST-HEL-ANNUAL-PROFECTION-001",),
+        "rules": ("WEST-HEL-ANNUAL-PROFECTION-001", "WEST-HEL-PROFECTION-HOUSE-TOPICS-001"),
     },
     "numerology": {
         "title": "Life Path ကိန်းနှင့် အနက်",

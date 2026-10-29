@@ -16,6 +16,12 @@ RULES = {
         'source': 'USNO Sidereal Time https://aa.usno.navy.mil/faq/GAST ; NASA/JPL GMST (ESAA) https://spsweb.fltops.jpl.nasa.gov/portaldataops/mpg/MPG_Docs/MPG%20Book/Release/Chapter2-TimeScales.pdf ; Meeus Astronomical Algorithms',
         'limits': 'Mean Sidereal/Mean Obliquity သုံးထားသော Conventional Approximation ဖြစ်ပြီး UT1-UTC၊ Nutation၊ Polar Latitudes နှင့် Other House Systems ကို မစစ်ရသေးပါ။ Independent Commercial Natal Benchmark မပြီးသေးသဖြင့် Development Preview သာဖြစ်သည်။'
     },
+    'WEST-HEL-PROFECTION-HOUSE-TOPICS-001': {
+        'heading': 'Hellenistic Annual Profection — အိမ် ၁၂ လုံး၏ ရိုးရာခေါင်းစဉ်များ',
+        'method': 'တွက်ချက်ထားသည့် Annual Profection ကို မွေးနေ့၊ စစ်ဆေးရက်နှင့် သီးခြားအသုံးပြုသူပေးထားသော Rising Sign မှ ထပ်မံတွက်စစ်သည်။ မွေးနေ့ကျော်ပြီးသောအသက် n အတွက် House = (n mod 12)+1 ဖြစ်၍ Rising Sign မှ n ရာသီရွှေ့ကာ ရိုးရာဂြိုဟ်အုပ်စိုးသူကို Lord of the Year အဖြစ်အမည်ပေးသည်။ အိမ် ၁၂ လုံး၏ ရိုးရာဘဝခေါင်းစဉ်များကို မူရင်းရေးသားထားသော မြန်မာလို သင်္ကေတအနှစ်ချုပ်ဖြင့် ဖော်ပြသည်။',
+        'source': 'Chris Brennan, Hellenistic Astrology (2017), annual profections; The Astrology Podcast episode 153, 2018: https://theastrologypodcast.com/2018/04/26/annual-profections-a-basic-time-lord-technique/ ; Astrodienst: https://www.astro.com/astrology/tma_article190314_e.htm',
+        'limits': 'အိမ်အမည်နှင့် ရိုးရာခေါင်းစဉ်များသည် အနာဂတ်အဖြစ်အပျက်ကို အတည်မပြုပါ။ ဤ Bot က Ascendant, Sect, Natal Planet Conditions, Transits, Solar Returns ကို မတွက်/မစစ်ရသေးပါ။ Hellenistic house topics နှင့် ယနေ့ခေတ် အကြောင်းအရာအနက်ဖွင့်ဆိုချက်များသည် မူကွဲရှိသည်။'
+    },
     'WEST-HEL-ANNUAL-PROFECTION-001': {
         'heading': 'Western Annual Profection — ရိုးရာနှစ်တိုင်',
         'method': 'အတည်ပြုထားသည့် Natal Ascendant Sign အပေါ် အခြေခံပြီး မွေးနေ့ကျော်ပြီးသော အသက် n အတွက် (n mod 12)+1 အိမ်ကို ရွေးသည်။ Rising Sign မှ နက္ခတ်ရာသီ n ခု ရှေ့တိုး၍ ထိုရာသီ၏ ရိုးရာဂြိုဟ်အုပ်စိုးသူကို Lord of the Year အဖြစ် သတ်မှတ်သည်။',

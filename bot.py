@@ -15,6 +15,7 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKe
 from astro_core import life_path
 from numerology_reading import interpret_life_path
 from profection_reading import profection_reading
+from profection_topics import TOPIC_RULE_ID, interpret_profection, render_profection_report, profection_house_glossary
 from natal_pipeline import assemble_natal
 from natal_render import render_natal_preview
 from zoneinfo import ZoneInfo
@@ -844,10 +845,16 @@ async def profection_command(message: Message):
         await message.answer('Annual Profection မွေးရက်တွက်ချက်မှုကို Private Chat မှာသာ ဖွင့်နိုင်ပါတယ်။')
         return
     fields=(message.text or '').split()
+    if len(fields)==2 and fields[1]=="houses":
+        await message.answer(
+            profection_house_glossary(),parse_mode="HTML",
+            reply_markup=evidence_button(TOPIC_RULE_ID))
+        return
     if len(fields)!=4:
         await message.answer(
             '<b>Western Annual Profection</b>\n'
-            '<code>/profection 2005-12-23 2026-10-27 Aries</code>\n\n'
+            '<code>/profection 2005-12-23 2026-10-27 Aries</code>\n'
+            '<code>/profection houses</code> — အိမ် ၁၂ လုံး အနက်အညွှန်း\n\n'
             'မွေးနေ့၊ စစ်ဆေးလိုသည့်ရက်စွဲနဲ့ သီးခြား Natal Chart မှ '
             'အတည်ပြုထားသော Rising Sign ကို ဖြည့်ပါ။ '
             'ဤ Command က Ascendant ကို ကိုယ်တိုင်မတွက်ပါ။',
@@ -855,29 +862,24 @@ async def profection_command(message: Message):
         )
         return
     try:
+        if len(fields[1])!=10 or len(fields[2])!=10:
+            raise ValueError("Dates require canonical ISO")
         born=date.fromisoformat(fields[1])
         target=date.fromisoformat(fields[2])
-        if born>date.today():
-            raise ValueError('Future birth date')
+        if (born.isoformat()!=fields[1] or target.isoformat()!=fields[2]
+                or born.year<1900 or target.year>2100
+                or born>datetime.now(ZoneInfo('Asia/Yangon')).date()):
+            raise ValueError('Unsupported or future birth date')
         rising=fields[3].strip().capitalize()
         result=profection_reading(born,target,rising)
+        reading=interpret_profection(result)
+        text=render_profection_report(result,reading)
     except (ValueError,TypeError):
-        await message.answer('မွေးနေ့၊ စစ်ဆေးရက်နဲ့ Rising Sign (Aries ... Pisces) ကို ပြန်စစ်ပါ။')
+        await message.answer('မွေးနေ့၊ စစ်ဆေးရက်နဲ့ Rising Sign (Aries ... Pisces) ကို ပြန်စစ်ပါ။ YYYY-MM-DD ရက်စွဲ 1900–2100 အတွင်းဖြစ်ရမယ်။')
         return
-    await message.answer(
-        '<b>Western Annual Profection</b>\n'
-        '━━━━━━━━━━━━━━\n'
-        f'အသက်ပြည့်နှစ် — <b>{result["age_completed"]}</b>\n'
-        f'နှစ်တိုင်အိမ် — <b>{result["house"]}</b>\n'
-        f'အသက်ဝင်ရာသီ — <b>{html.escape(result["sign"])}</b>\n'
-        f'Lord of the Year — <b>{html.escape(result["lord_of_year"])}</b>\n'
-        f'ရိုးရာအိမ်ဆိုင်ရာ သင်္ကေတ — {html.escape(result["house_topic_burmese"])}\n\n'
-        f'Rising Sign: <code>{html.escape(result["rising_sign_input"])}</code> '
-        '(အသုံးပြုသူပေးထားသည်၊ ဤနေရာတွင် မတွက်/မစစ်ရသေးပါ)\n'
-        'ဤနှစ်တိုင်သည် ရိုးရာ အမျိုးအစားခွဲခြားချက်သာဖြစ်ပြီး '
-        'အနာဂတ်ဖြစ်ရပ် အာမခံချက် မဟုတ်ပါ။',
-        parse_mode='HTML',reply_markup=evidence_button(result['calculation_rule_id'])
-    )
+    buttons=evidence_button(result['calculation_rule_id'])
+    buttons.inline_keyboard.extend(evidence_button(reading['interpretation_rule_id']).inline_keyboard)
+    await message.answer(text,parse_mode='HTML',reply_markup=buttons)
 
 
 @dp.message(Command('dayun'))

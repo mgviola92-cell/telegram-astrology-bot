@@ -316,3 +316,21 @@ This document tracks actual completed versus pending work. No features added bey
   not original-quote translations or empirically validated predictions.
 - Hidden stem weighting, month-command strength and favorable-element
   recommendations are explicitly out of scope until separately reviewed.
+
+
+## Profection house-topic source review — 2026-10-29
+
+- Existing mathematical rule retained: at age 0, first Whole Sign house;
+  one house/sign per completed year, cycle length 12; traditional ruler
+  of the activated zodiac sign is designated Lord of the Year.
+- Sources: Chris Brennan, Hellenistic Astrology (2017), annual
+  profections; https://theastrologypodcast.com/2018/04/26/annual-profections-a-basic-time-lord-technique/
+  and https://www.astro.com/astrology/tma_article190314_e.htm.
+- Added original Burmese editorial descriptions for all twelve
+  conventional house subject areas. Interpretation is a house-topic
+  glossary, not a classical verbatim text or a guarantee of life events.
+- The basic method does NOT independently verify user-supplied
+  Ascendant, natal planets, sect, transits, solar return charts or
+  historical astrological school disagreements. Natal remains gated.
+- Release still requires independent astronomic and professional
+  interpretive review; offline tests only.
