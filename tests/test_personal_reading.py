@@ -34,7 +34,7 @@ class PersonalReadingTests(unittest.TestCase):
 class PersonalReadingCommandTests(unittest.IsolatedAsyncioTestCase):
     def msg(self,command,chat="private"):
         return SimpleNamespace(text=command,chat=SimpleNamespace(type=chat),answer=AsyncMock())
-    async def test_private_uses_three_provenance_buttons(self):
+    async def test_private_uses_four_provenance_buttons(self):
         m=self.msg("/reading 2005-12-23 08:37")
         await personal_reading_command(m)
         text=m.answer.await_args.args[0]
@@ -46,7 +46,8 @@ class PersonalReadingCommandTests(unittest.IsolatedAsyncioTestCase):
         callbacks=[button.callback_data for row in markup.inline_keyboard for button in row]
         self.assertEqual(len(callbacks),4)
         self.assertIn('evidence:NUM-LIFE-PATH-THEMES-001',callbacks)
-        self.assertIn(reading_text := 'Modern', 'Modern') if False else None
+        self.assertIn('Numerology — Life Path',text)
+        self.assertIn('ရိုးရာစနစ်နှစ်ခု',text)
         self.assertTrue(all(c.startswith("evidence:") for c in callbacks))
         self.assertTrue(all("2005-12-23" not in c for c in callbacks))
         self.assertLess(len(text),4096)

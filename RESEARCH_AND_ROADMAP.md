@@ -1,31 +1,52 @@
-# Astrology Bot — Phase 3: research and executable mini-core
+# Astrology Bot — Updated development roadmap (2026-10-29)
 
-Status: prototype only; NOT a Telegram bot, NOT deployed. Vedic/Jyotish is explicitly excluded.
+An aiogram Telegram bot **exists** in this repo, but is **not deployed**
+or live-tested. This document supersedes the inaccurate October 24
+mini-core status. Vedic/Jyotish systems are excluded. Chinese BaZi
+Da Yun is a distinct, approved tradition.
 
-## Research decisions
-- Myanmar calendar: Yan Naing Aye `mmcal` (MIT). Integrate and test against upstream fixtures rather than approximating Myanmar dates with a fixed Gregorian subtraction. https://github.com/yan9a/mmcal
-- Myanmar interpretive rules: do not treat unverified community summaries as authoritative. Verify original tradition and provenance before adding a rule.
-- Western: whole-sign annual profections are available only after an independently verified ascendant. Traditional sign rulers and the twelve-year cycle must be documented. Chris Brennan, *Hellenistic Astrology* (2017), ch. 17.
-- Swiss Ephemeris/Pyswisseph: AGPL or a separately negotiated commercial license; choose a compliant model before integration. https://www.astro.com/swisseph/
-- Chinese BaZi: `lunar-python` (MIT) supports pillars and solar terms. Sect-dependent luck-start offsets and hour/calendar boundary conventions must be configured explicitly. https://github.com/6tail/lunar-python
-- Numerology: only a declared modern Pythagorean-style reduction convention is prototyped. Exact master-number conventions vary.
-- Tarot: a card draw may be randomized; card meanings and spread interpretations must come from documented curated rules, not fabricated claims.
+## In code now
+- Myanmar mmcal calendar, 16 day markers, eight-day weekday labels,
+  seven-house Mahabote arithmetic and separate Burmese symbolic themes.
+- Private /daily calendar-day readings with HTML linebreak regression.
+- Private /reading with independently revalidated Mahabote and
+  Numerology Life Path calculations, separate Burmese interpretive
+  passages and source buttons; no birth data stored by default.
+- /number has source-attributed 1–9/11/22/33 modern Life Path themes.
+- Chinese BaZi pillars, elements, hidden stems, Ten Gods, Da Yun,
+  growth stages and season tables, with birth timezone validation.
+- Tarot 78-card session and Burmese reflection logic; optional file_id
+  media, missing licensed artwork, text fallback.
+- Western profections; gated Skyfield/JPL natal preview (default OFF).
+- Private inline navigation, source library and explicit encrypted
+  birth profile opt-in with view/delete functionality.
 
-## Current files
-- `astro_core.py`: Western annual profections with a precomputed rising sign; numerology Life Path.
-- `tests/test_astro_core.py`: six regression tests.
+## Research basis
+- Yan Naing Aye mmcal (MIT): https://github.com/yan9a/mmcal
+- 6tail lunar-python (MIT): https://github.com/6tail/lunar-python
+- Modern Pythagorean-style Life Path arithmetic:
+  https://www.worldnumerology.com/numerology-life-path/
+- Modern school-specific symbolic number themes:
+  https://www.numerology.com/articles/about-numerology/what-is-numerology/
+- Verified research caveats and evidence: RESEARCH_VALIDATION_GATE.md
+  and NUMEROLOGY_INTERPRETATION_SOURCES.md.
 
-## Limitations
-- No birth-chart or rising-sign computation yet; need ephemeris and verified birth time/timezone.
-- No Myanmar calendar or Chinese BaZi integration yet.
-- No verified complete interpretation rule corpus.
-- Traditional divination is not empirically validated as predicting future events.
-- No Telegram bot, database, hosting or deployment yet.
+Traditional readings are culturally attributed, **not** empirically
+verified event forecasts or diagnostic claims; schools disagree.
 
-## Milestones
-1. Integrate `mmcal`, include MIT attribution and conversion tests across New Year, leap months and historical dates.
-2. Test `lunar-python` for Li Chun, Jie Qi, hour boundaries and timezone/DST behavior.
-3. Choose compliant ephemeris and cross-check ascendants, longitude and houses.
-4. Build reviewable rule registry with references, source passage locations, tradition labels, applicability and exceptions.
-5. Build privacy-first private/group Telegram flows in natural astrology-themed Burmese with opt-in and birth-data deletion.
-6. Add database, caching, coverage tests, quality gates; postpone Render until project is nearly complete.
+## Next batches
+1. Implement privacy-safe native step-by-step birth inputs, cancellation,
+   short TTL, group restrictions and tests; never save without opt-in.
+2. Author-review full BaZi/Western/Myanmar interpretation material
+   with sources, boundary conditions and separate arithmetic evidence.
+3. Complete independent natal reference checks, legal/license review,
+   card artwork manifest and optional native animations.
+4. Add group and owner settings, operational controls, safety,
+   backups, logging, security preflight and consent-aware compatibility.
+5. Controlled owner-approved live Telegram smoke testing; explicit
+   authorization required before any Render deployment.
+
+Tests: Python 3.12+, install requirements, run python -m unittest
+discover -s tests -v and python preflight.py --mode ci.
+GitHub Actions run must be inspected per commit; it does not prove
+live availability.

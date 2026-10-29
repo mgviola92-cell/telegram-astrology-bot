@@ -485,7 +485,8 @@ async def numerology(message: Message):
         return
     try:
         born=date.fromisoformat(parts[1])
-        if born > date.today(): raise ValueError('future date')
+        if born.isoformat()!=parts[1] or not 1900<=born.year<=2100 or born>datetime.now(ZoneInfo('Asia/Yangon')).date():
+            raise ValueError('invalid birth date')
         result=life_path(born)
         reading_facts('numerology',result)
         number_meaning=interpret_life_path(result)

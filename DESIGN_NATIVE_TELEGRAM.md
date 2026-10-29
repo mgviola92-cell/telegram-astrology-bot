@@ -31,5 +31,16 @@ All public interactions occur inside regular Telegram messages, inline keyboards
 - Chinese BaZi pillars with engraved-style card graphics.
 - Short reveal sequences, light touch on emoji and no visual clutter.
 
-## State
-Specification only; animation files and stateful card reveal are not yet implemented.
+## State — 2026-10-29
+
+Native Telegram keyboards and single-use Tarot session validation exist
+in development code. Tarot session binds to one user/chat/message,
+expires after 10 minutes, and reveals the matching 78-card result.
+Optional Telegram file_id media supports shuffle/reveal and card photos;
+real assets are not supplied. Text-only fallback is implemented.
+Live Telegram verification and multi-worker state are pending.
+
+Private /daily, /reading and /number also exist. Personal Reading
+displays separate Mahabote and sourced Life Path symbolism, not a
+cross-system event prediction. Full private step-by-step birth input,
+complete media and group/owner controls remain future work.

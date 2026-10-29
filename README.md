@@ -1,14 +1,47 @@
-# 🌙 All-in-One Astrology Bot (Early Development)
+# All-in-One Telegram Astrology Bot — Development
 
 Myanmar-first Telegram bot, with traditional-source-aware calculations and natural Burmese UI. **Vedic/Jyotish is excluded.**
 
-## Currently implemented
-- `astro_core.py`: Hellenistic whole-sign Annual Profections (requires a separately calculated rising sign), Pythagorean-style Life Path number with method evidence.
-- `myanmar_calendar.py`: Python adaptation of Yan Naing Aye's MIT-licensed mmcal formulas for Gregorian→Myanmar month/day/year, leap-year type, Mahabote, Yatyaza and Pyathada, with date regression coverage.\n- `myanmar_core.py`: eight-day weekday from birth-location civil time, Wednesday morning vs afternoon (not a full Myanmar lunar calendar or Mahabote).\n- `evidence_ui.py`: stateless, button-driven method explanations; no user's birth data is embedded in callback payloads.\n- `bazi_core.py`: actual Four Pillars, five elements and Ten Gods via `lunar-python`. Requires birth-location civil time; IANA civil-time validation is integrated for `/bazi`; true-solar-time correction and independent seasonal chart benchmarks remain pending.
-- `tarot_core.py`: authentic 78-card structure with secure random draws without replacement; no fabricated traditional card interpretations.
-- `bot.py`: early aiogram Telegram interface with Burmese `/start`, `/help`, `/number`, `/myday`, `/mmcal`, `/mahabote`, `/days`, `/bazi` and `/tarot` plus inline navigation. Group birth data redirected to private chat.
-- `tests/`: test suites including upstream BaZi reference vector; CI configured at `.github/workflows/tests.yml`.
-- `rules/README.md`: editorial evidence policy for future interpretations.
+## Current status — 2026-10-29
+
+This is a working **development-stage aiogram Telegram bot**, with native
+message and inline-keyboard handlers. It is **not deployed**, has no real
+Telegram smoke test yet, and must not be represented as production-ready.
+Older dated research milestones below are historical notes, not the current
+deployment or implementation status.
+
+### Implemented with offline tests
+- Myanmar calendar based on Yan Naing Aye's MIT mmcal formulas; 16
+  traditional calendar-day markers; weekday and Wednesday Rahu labels;
+  seven-house Mahabote with separate Burmese symbolic interpretation.
+- Private /daily, using Myanmar local date or explicit date, with
+  genuinely rendered newlines (not backslash-n text).
+- Private /reading: distinct Mahabote and Life Path sections; no
+  invented cross-tradition synthesis or implicit birth-data storage.
+- Numerology /number: Life Path arithmetic plus 12 sourced modern
+  school-specific Burmese symbolic themes (1–9, 11, 22, 33).
+  Details: NUMEROLOGY_INTERPRETATION_SOURCES.md.
+- BaZi Four Pillars, Five Elements, hidden stems, Ten Gods, growth stages,
+  seasonal information and configurable Chinese Da Yun cycles.
+- Western whole-sign Annual Profections with supplied Rising Sign;
+  Skyfield/JPL natal preview exists but is OFF by default and not
+  independently release-validated.
+- 78 Tarot cards, Burmese short reflections, user/message-bound
+  single-use private sessions, optional Telegram file_id animations
+  and per-card photo mapping; full art assets are not configured.
+- Native Reference Library and source callbacks, encrypted opt-in
+  SQLite birth profiles; no automatic profile saving and no birth data
+  in callback payloads.
+
+### Not yet complete
+Deep multi-tradition personal readings, consent-respecting compatibility,
+full Study content, group and owner settings, complete Tarot art,
+production privacy/backup/operational hardening, independent natal
+benchmark acceptance, and explicit-authorized Render deployment.
+
+**Exclusions:** Vedic/Jyotish/Kundli/Dasha, Mini Apps, database image
+blobs, deterministic guarantees of future outcomes, production deployment
+without owner permission.
 
 ## Run locally (not deployed)
 Use Python 3.12+.
@@ -27,11 +60,14 @@ python bot.py
 **Do not paste your token into chat, commit it, or add it to the repository.**
 
 ## Important limitations
-- Myanmar calendar formulas are implemented with smoke fixtures, but independent cross-checks of historical boundary dates remain pending; no full Western natal chart, ascendant/ephemeris, timezone corrections, complete classical predictions, historical birth profile storage, or admin panel yet.
-- This is a development build, not production-ready; do not claim the bot predicts future events with measured accuracy.
-- Traditional astrology forecasts are not scientifically demonstrated to reliably predict future events.
-- No Render deployment yet, by request.
-- Repository is currently public; set Private on GitHub if you want restricted access.
+
+Offline CI success is not equivalent to a verified Telegram or Render
+deployment. Astrology interpretations are school-specific cultural
+symbolism, not validated scientific predictions. Western natal source
+and legal gates, historical timezone edge cases, complete media
+licensing, multi-worker Tarot sessions, secret hygiene, backups, logging
+and rate limits still require release work. Do not commit secrets or
+private birth-profile data. No Render deploy without owner approval.
 
 ## Research checkpoint (2026-10-24)
 - Myanmar calendar candidate: [Yan Naing Aye mmcal](https://github.com/yan9a/mmcal), MIT; original implementation primarily JS/C++; the audited Python port is in `myanmar_calendar.py`.
