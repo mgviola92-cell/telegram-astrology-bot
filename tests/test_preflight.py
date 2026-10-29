@@ -82,6 +82,20 @@ class PreflightTests(unittest.TestCase):
                 bad=preflight.inspect_environment(mode="deploy",environ=config)
                 self.assertFalse(next(x for x in bad["checks"] if x["name"]=="group_settings_db_directory")["passed"])
 
+    def test_group_db_cannot_share_profile_store_file(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        from cryptography.fernet import Fernet
+        with TemporaryDirectory() as tmp:
+            shared=str(Path(tmp)/"private.sqlite3")
+            config={"TELEGRAM_BOT_TOKEN":"333:test",
+                    "GROUP_SETTINGS_DB_PATH":shared,
+                    "PROFILE_DB_PATH":shared,
+                    "PROFILE_ENCRYPTION_KEY":Fernet.generate_key().decode("ascii")}
+            with patch.object(preflight.importlib,"import_module",return_value=object()):
+                report=preflight.inspect_environment(mode="deploy",environ=config)
+            self.assertFalse(next(x for x in report["checks"] if x["name"]=="group_db_separate_from_birth_profiles")["passed"])
+
     def test_optional_jpl_path_must_exist_if_configured(self):
         with patch.object(preflight.importlib,"import_module",return_value=object()):
             r=preflight.inspect_environment(mode="deploy",environ={

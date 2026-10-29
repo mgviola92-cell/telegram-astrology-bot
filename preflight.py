@@ -59,6 +59,11 @@ def inspect_environment(*, mode="ci", environ=None):
             add("database_directory",parent.is_dir() and os.access(parent,os.W_OK),
                 "Persistent SQLite destination parent must already exist and be writable")
         group_db=env.get("GROUP_SETTINGS_DB_PATH","").strip()
+        if group_db and path:
+            add("group_db_separate_from_birth_profiles",
+                Path(group_db).expanduser().resolve()
+                !=Path(path).expanduser().resolve(),
+                "Group settings SQLite must not reuse the birth-profile database file")
         if group_db:
             if env.get("RENDER"):
                 add("render_group_settings_disk_confirmed",

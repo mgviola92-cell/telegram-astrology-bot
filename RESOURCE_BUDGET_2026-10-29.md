@@ -101,3 +101,17 @@ Group /start and /help use a distinct 15-second, per-group RAM-only
 cooldown, max 1024 entries. The one public calendar action edits the
 welcome card rather than sending a new birth/profile UI. There is no
 member tracking, automatic daily cron, recurring traffic or group DB.
+
+
+## Group admin settings (opt-in tiny DB)
+
+Group Admin /settings now supports per-group on/off preferences.
+Without GROUP_SETTINGS_DB_PATH, overrides are RAM-only, bounded at
+1024 disabled groups, with an explicit visible reboot warning.
+A production-quality durable preference requires a paid persistent
+SQLite mount (a different DB file from consented birth profiles);
+only disabled overrides are saved in 2 columns, with cache max 1024.
+Admin rights are verified by Telegram only on settings requests;
+normal /today reads only an in-process flag on default RAM mode.
+Disabling prevents stale group-card callbacks and /today messages.
+No background group polling, bulk admin enumeration or automatic posts.

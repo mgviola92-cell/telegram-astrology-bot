@@ -102,3 +102,24 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
   preserved. No automatic group posts and no database/media persistence.
 - The latest documentation-only commit should also pass CI; inspect its
   own Actions run before treating these figures as latest HEAD status.
+
+
+## October 29 group-admin implementation
+
+- 3f7e1ef3: Low-write group setting registry; RAM-only mode supports
+  a bounded temporary disabled-set and cannot silently evict disabled
+  groups. Optional separate SQLite DB persists only the disabled
+  group ID and state (no user/member or birth data). CI success.
+- d422d400: /settings and group:settings inline controls; current
+  Telegram creator/admin verification, strict per-group isolation and
+  old callback denial. Disabled groups are blocked from all /today
+  and older calendar card paths. Live group admin checks still untested.
+- e111287a: Added offline end-to-end authorization, old-button,
+  group-disable and persistence preflight regression tests, plus
+  current aiogram enum compatibility. GitHub Actions 40849268832:
+  SUCCESS, 441 tests run, 5 skipped.
+- This documentation update also isolates group SQLite from profile
+  SQLite using a deploy-preflight check. Use the *final* GitHub Actions
+  run for the definitive latest test count. No Render deploy, no live
+  Telegram API test. Admin rights checks are not supported in offline
+  CI without mocks.

@@ -65,3 +65,16 @@ Complete media and group/owner controls remain future work.
 - Evidence source buttons are private-only to avoid filling group chats
   with personal-reading method messages. No personal data appears in
   study/source callback identifiers.
+
+
+## Native group admin settings, storage boundaries
+
+- Group /settings requires a Telegram creator/admin status, checked
+  each time through getChatMember. Non-admin callback receives a short
+  alert and cannot mutate any group.
+- Group home now includes an Admin Settings entry. When the public
+  calendar is disabled, the public calendar entry is hidden.
+- On/off switch uses one inline card and stale-toggle protection.
+- Each group's switch is independent. Temporary RAM mode is explicitly
+  labeled as RESET ON RESTART. Optional separate persistent SQLite path
+  has explicit Render durability guard and stores no media/birth data.

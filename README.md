@@ -38,6 +38,17 @@ deployment or implementation status.
   SQLite birth profiles; no automatic profile saving and no birth data
   in callback payloads.
 
+### Group calendar settings (administrators)
+
+Group /settings shows the current on/off state of the public Myanmar
+calendar. Only verified Telegram group admins may change it. When
+disabled, /today and previously published group calendar buttons are
+blocked; private /today is unchanged. Settings default to temporary
+RAM (restart can reset them); optional tiny durable SQLite is separate
+from birth profiles and needs a genuinely persistent disk. No automatic
+group announcements, media storage or background DB polling. See
+[group settings design](GROUP_CALENDAR_2026-10-29.md).
+
 ### Group-safe /start and /today
 
 Group /start and /help now present a public-only group menu with a

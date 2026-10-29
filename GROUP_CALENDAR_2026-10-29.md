@@ -56,3 +56,44 @@ https://core.telegram.org/bots/api
   broadcast, store member identities or create a new DB.
 - Channels receive no group landing. All Group Settings/admin policy
   toggles remain unimplemented and are not implied by this UI.
+
+
+## Admin controls and storage (source commit e111287a)
+
+- Group /settings opens an admin-only card, showing whether /today is
+  available in THAT group. Group /start includes an admin-settings entry,
+  but an ordinary member who presses it receives a callback denial.
+- Permission is checked from Telegram getChatMember on EVERY settings
+  action, not a cached role. Allowed statuses are creator/administrator.
+  Failed API checks and anonymous sender messages are denied. For
+  reliable checks, make the bot an admin as recommended by Telegram API.
+- Admin may turn the on-demand calendar off or back on with native inline
+  buttons. A stale toggle button cannot accidentally reverse the newer
+  choice: expected-state compare-and-set handles that.
+- Disabled groups: /today is silent, the public group calendar button
+  refuses access, and callbacks on OLD public calendar cards are denied;
+  private /today stays available. Group welcome hides its calendar entry.
+- No auto-announcements, group-member collection, media or birth profiles.
+  There is exactly one optional integer per-group override (only
+  explicitly disabled groups require a persisted DB row).
+- Default settings are stored in small process RAM and reset at restart.
+  The group admin UI explicitly states this caveat. A disabled group may
+  become enabled again after a reboot in memory-only mode. The memory
+  storage has a fixed 1024-group cap and refuses new disables rather than
+  silently discarding previously disabled groups.
+- Opt-in durable storage: set GROUP_SETTINGS_DB_PATH on a genuine
+  persistent filesystem. This is a SEPARATE tiny SQLite database from
+  PROFILE_DB_PATH. Group settings rows store only chat ID and enabled
+  bit, not names, individual members, private birth data or media.
+  Updates write only on a real state change; default enabled costs
+  no DB row. A 1024-entry RAM cache avoids repeated disk reads.
+- On Render Free: NEVER configure SQLite durable settings on ephemeral
+  local storage; GROUP_SETTINGS_PERSISTENT_DISK_CONFIRMED=1 requires
+  a verified paid Render disk/mount, not a guess. This flag alone cannot
+  prove that an actual disk is attached.
+- One process only for now: multiple workers would need shared atomic
+  compare-and-set storage and cache invalidation. No production deploy
+  or real Telegram verification has occurred.
+- Bot administration docs:
+  https://core.telegram.org/bots/api#getchatmember
+  https://docs.aiogram.dev/en/latest/api/methods/get_chat_member.html
