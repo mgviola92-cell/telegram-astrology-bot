@@ -36,6 +36,7 @@ from myanmar_calendar import calculate_myanmar_calendar
 from mahabote_core import calculate_mahabote, BURMESE_HOUSES
 from mahabote_reading import interpret_mahabote
 from personal_reading import personal_reading
+from reading_input import ReadingInputSessions
 from myanmar_day_signals import calculate_day_signals
 from myanmar_signal_reading import describe_day_signals
 from daily_calendar_reading import daily_calendar_reading
@@ -49,6 +50,7 @@ from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
 dp=Dispatcher()
 dp.include_router(profile_router)
 tarot_sessions = TarotSessions()
+reading_inputs = ReadingInputSessions(ttl=300)
 
 def menu():
     return home_keyboard()
@@ -139,7 +141,22 @@ async def native_navigation(cb: CallbackQuery):
     if cb.message.chat.type != "private":
         await cb.answer("ကိုယ်ပိုင်ဇာတာကို Private Chat မှာသာ ကြည့်ပါ။",show_alert=True)
         return
-    if data=="ui:library":
+    if data=="ui:reading:start":
+        if cb.from_user is None:
+            await cb.answer("ဒီခလုတ်ကို ဖွင့်မရပါ။",show_alert=True)
+            return
+        await cb.answer()
+        await start_private_reading_input(cb.message,cb.from_user.id)
+        return
+    elif data=="ui:reading:skip":
+        if cb.from_user is None or reading_inputs.step(cb.message.chat.id,cb.from_user.id)!="time":
+            await cb.answer("ဒီအဆင့် သက်တမ်းကုန်သွားပါပြီ။",show_alert=True)
+            return
+        born,clock=reading_inputs.finish(cb.message.chat.id,cb.from_user.id,"မသိပါ")
+        await cb.answer()
+        await post_personal_reading(cb.message,personal_reading(born,clock))
+        return
+    elif data=="ui:library":
         text="<b>ကျမ်းကိုးမှတ်တမ်းများ</b>\n━━━━━━━━━━━━━━\nလေ့လာလိုသည့် ရိုးရာတွက်ချက်နည်းကို ရွေးပါ။"
         markup=reference_category_keyboard()
     elif data=="ui:home":
@@ -287,29 +304,19 @@ async def myanmar_day_signals_command(message: Message):
     )
 
 
-@dp.message(Command('reading'))
-async def personal_reading_command(message: Message):
-    if not private_only(message):
-        await message.answer('ကိုယ်ပိုင်ဇာတာကို Private Chat မှာသာ ဖတ်နိုင်ပါတယ်။')
-        return
-    fields=(message.text or '').split()
-    if len(fields) not in (2,3):
-        await message.answer(
-            'ရိုးရာမွေးဇာတာအနှစ်ချုပ်အတွက် <code>/reading 2005-12-23</code> '
-            'သို့မဟုတ် <code>/reading 2005-12-23 08:37</code> လို့ ဖြည့်ပါ။',
-            parse_mode='HTML')
-        return
-    try:
-        day=date.fromisoformat(fields[1])
-        if day.isoformat()!=fields[1] or day>datetime.now(ZoneInfo('Asia/Yangon')).date():
-            raise ValueError('Invalid birth day')
-        clock=time.fromisoformat(fields[2]) if len(fields)==3 else None
-        if clock and (clock.tzinfo is not None or len(fields[2])!=5):
-            raise ValueError('Invalid local time')
-        reading=personal_reading(day,clock)
-    except (ValueError,TypeError):
-        await message.answer('မွေးရက်စွဲကို 1900–2100 အတွင်း YYYY-MM-DD၊ မွေးချိန်ကို HH:MM ပုံစံဖြင့် ပြန်ဖြည့်ပါ။')
-        return
+async def start_private_reading_input(message: Message, user_id: int):
+    reading_inputs.start(message.chat.id,user_id)
+    await message.answer(
+        '<b>မွေးဇာတာ အဆင့်ဆင့်ဖြည့်မယ်</b>\n'
+        'မွေးရက်ကို YYYY-MM-DD ပုံစံဖြင့် ပို့ပါ။\n'
+        'ဥပမာ <code>2005-12-23</code>\n\n'
+        '၅ မိနစ်အတွင်း မဖြည့်ရင် အလိုအလျောက် ပိတ်မယ်။ '
+        'ဖျက်ချင်ရင် /cancel လို့ ပို့ပါ။ '
+        'မွေးအချက်အလက်ကို Database ထဲ မသိမ်းပါ။',
+        parse_mode='HTML'
+    )
+
+async def post_personal_reading(message: Message, reading: dict):
     rule_buttons=InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text='မဟာဘုတ်တွက်ချက်နည်း',
             callback_data='evidence:'+reading['evidence_rule_ids'][0])],
@@ -338,6 +345,40 @@ async def personal_reading_command(message: Message):
         'အနာဂတ်ဖြစ်ရပ်ကို အာမခံမဟုတ်ပါ။ ဤ Command က မွေးအချက်အလက်ကို မသိမ်းပါ။',
         parse_mode='HTML', reply_markup=rule_buttons
     )
+
+
+@dp.message(Command('reading'))
+async def personal_reading_command(message: Message):
+    if not private_only(message):
+        await message.answer('ကိုယ်ပိုင်ဇာတာကို Private Chat မှာသာ ဖတ်နိုင်ပါတယ်။')
+        return
+    fields=(message.text or '').split()
+    if len(fields)==1:
+        if message.from_user is None:
+            await message.answer("ကိုယ်ပိုင်ဇာတာ ဖြည့်စွက်မှုကို ဖွင့်မရပါ။")
+            return
+        await start_private_reading_input(message,message.from_user.id)
+        return
+    if len(fields) not in (2,3):
+        await message.answer(
+            'အဆင့်ဆင့်ဖြည့်ရန် /reading လို့ ရိုက်ပါ။ '
+            'သို့မဟုတ် <code>/reading 2005-12-23 08:37</code> လို့ ဖြည့်နိုင်ပါတယ်။',
+            parse_mode='HTML')
+        return
+    try:
+        day=date.fromisoformat(fields[1])
+        if day.isoformat()!=fields[1] or day>datetime.now(ZoneInfo('Asia/Yangon')).date():
+            raise ValueError('Invalid birth day')
+        clock=time.fromisoformat(fields[2]) if len(fields)==3 else None
+        if clock and (clock.tzinfo is not None or len(fields[2])!=5):
+            raise ValueError('Invalid local time')
+        reading=personal_reading(day,clock)
+    except (ValueError,TypeError):
+        await message.answer('မွေးရက်စွဲကို 1900–2100 အတွင်း YYYY-MM-DD၊ မွေးချိန်ကို HH:MM ပုံစံဖြင့် ပြန်ဖြည့်ပါ။')
+        return
+    if message.from_user is not None:
+        reading_inputs.cancel(message.chat.id,message.from_user.id)
+    await post_personal_reading(message,reading)
 
 
 @dp.message(Command('mahabote'))
@@ -869,6 +910,52 @@ async def tarot_pick(cb: CallbackQuery):
                 logging.warning('Tarot card photo unavailable; sending text-only result')
         await cb.message.answer(result_text, parse_mode='HTML',
             reply_markup=tarot_markup)
+
+
+@dp.message(Command('cancel'))
+async def cancel_private_reading(message: Message):
+    if not private_only(message) or message.from_user is None:
+        return
+    if reading_inputs.cancel(message.chat.id,message.from_user.id):
+        await message.answer("မွေးဇာတာဖြည့်စွက်မှုကို ပိတ်လိုက်ပါပြီ။ အချက်အလက် မသိမ်းထားပါ။")
+    else:
+        await message.answer("လက်ရှိဖွင့်ထားတဲ့ မွေးဇာတာဖြည့်စွက်မှု မရှိပါ။")
+
+@dp.message(F.text)
+async def private_reading_input_message(message: Message):
+    if not private_only(message) or message.from_user is None:
+        return
+    if not message.text or message.text.startswith("/"):
+        return
+    user_id,chat_id=message.from_user.id,message.chat.id
+    stage=reading_inputs.step(chat_id,user_id)
+    if stage=="date":
+        try:
+            reading_inputs.set_date(chat_id,user_id,message.text,
+                datetime.now(ZoneInfo("Asia/Yangon")).date())
+        except ValueError:
+            await message.answer("မွေးရက်ကို 1900–2100 အတွင်း YYYY-MM-DD ပုံစံဖြင့် ပြန်ဖြည့်ပါ။")
+            return
+        await message.answer(
+            "<b>မွေးချိန် ထည့်ပါ</b>\n"
+            "မွေးရပ်ဒေသ နာရီကို HH:MM ပုံစံဖြင့် ပို့ပါ။ "
+            "ဥပမာ <code>08:37</code>\n"
+            "မသိရင် အောက်ကခလုတ်ကို နှိပ်ပါ။\n"
+            "၅ မိနစ်အတွင်း မဖြည့်ရင် ပိတ်သွားမယ်။",
+            parse_mode="HTML",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
+                InlineKeyboardButton(text="မွေးချိန် မသိပါ",
+                                     callback_data="ui:reading:skip")
+            ]])
+        )
+    elif stage=="time":
+        try:
+            day,clock=reading_inputs.finish(chat_id,user_id,message.text)
+            reading=personal_reading(day,clock)
+        except (ValueError,TypeError):
+            await message.answer("မွေးချိန်ကို HH:MM ပုံစံဖြင့် ဖြည့်ပါ၊ မသိရင် ခလုတ်နှိပ်ပါ။")
+            return
+        await post_personal_reading(message,reading)
 
 
 async def main():
