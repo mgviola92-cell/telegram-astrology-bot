@@ -44,6 +44,7 @@ from daily_calendar_reading import daily_calendar_reading
 from evidence_ui import evidence_button, get_rule
 from reference_library import library_page, render_library, CATEGORY_LABELS
 from study_library import CHAPTERS, study_index_text, study_chapter_text
+from native_message_edit import edit_or_reply
 from profile_commands import router as profile_router
 from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
                        feature_keyboard, feature_text, guide_keyboard, guide_text,
@@ -119,15 +120,7 @@ async def reference_library_navigation(cb:CallbackQuery):
         await cb.answer("ဤစာမျက်နှာ မရှိတော့ပါ။",show_alert=True)
         return
     await cb.answer()
-    try:
-        await cb.message.edit_text(render_library(info),
-                                   reply_markup=reference_page_keyboard(info),
-                                   parse_mode="HTML")
-    except Exception:
-        logging.warning("Reference library message edit unavailable; using private fallback")
-        await cb.message.answer(render_library(info),
-                                reply_markup=reference_page_keyboard(info),
-                                parse_mode="HTML")
+    await edit_or_reply(cb.message,render_library(info),reference_page_keyboard(info))
 
 
 
@@ -151,11 +144,7 @@ async def study_navigation(cb: CallbackQuery):
     text=study_chapter_text(key)
     markup=study_chapter_keyboard(key)
     await cb.answer()
-    try:
-        await cb.message.edit_text(text,reply_markup=markup,parse_mode="HTML")
-    except Exception:
-        logging.warning("Study chapter edit unavailable; using text fallback")
-        await cb.message.answer(text,reply_markup=markup,parse_mode="HTML")
+    await edit_or_reply(cb.message,text,markup)
 
 
 @dp.callback_query(F.data.startswith("ui:"))
@@ -221,13 +210,7 @@ async def native_navigation(cb: CallbackQuery):
         await cb.answer("ဤစာမျက်နှာ မရှိတော့ပါ။",show_alert=True)
         return
     await cb.answer()
-    if cb.message is None:
-        return
-    try:
-        await cb.message.edit_text(text,reply_markup=markup,parse_mode="HTML")
-    except Exception:
-        logging.warning("Cannot edit native navigation message; sending text fallback")
-        await cb.message.answer(text,reply_markup=markup,parse_mode="HTML")
+    await edit_or_reply(cb.message,text,markup)
 
 
 @dp.callback_query(F.data == 'section:charts')
@@ -255,6 +238,9 @@ async def show_evidence(cb: CallbackQuery):
         return
     if not isinstance(cb.message, Message):
         await cb.answer("တွက်ချက်မှုမှတ်တမ်း မရနိုင်တော့ပါ။",show_alert=True)
+        return
+    if cb.message.chat.type!="private":
+        await cb.answer("ကျမ်းကိုးမှတ်တမ်းကို Private Chat မှာသာ ဖတ်ပါ။",show_alert=True)
         return
     await cb.answer()
     await cb.message.answer(
