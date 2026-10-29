@@ -254,3 +254,20 @@ The public `More` menu no longer exposes the unimplemented `Owner Controls` item
 - USNO approximate sidereal time: https://aa.usno.navy.mil/faq/GAST ; NASA JPL GMST: https://spsweb.fltops.jpl.nasa.gov/portaldataops/mpg/MPG_Docs/MPG%20Book/Release/Chapter2-TimeScales.pdf .
 
 **Validation and release**: After the larger sprint, GitHub Actions run https://github.com/mgviola92-cell/telegram-astrology-bot/actions/runs/40447759422 reported **300 Python tests passed**, including offline command smoke tests. Live Telegram and authentic JPL full-chart benchmark tests remain outstanding. No Render deployment was performed.
+
+
+## Seven-day Myanmar calendar (/week, development)
+
+Private chats and enabled groups can request /week to view
+Monday–Sunday Myanmar traditional lunar/date markers. The output is
+generated from the same documented daily_calendar_reading algorithm
+as /today, with no new astrological rules or fabricated lucky/unlucky
+day rankings. Groups have a separate native "တစ်ပတ်စာ ပြက္ခဒိန်"
+button. Inline controls navigate current/previous/next week; callbacks
+expire outside the current ±1 week window.
+
+The weekly text is limited to 4096 characters and cached in a tiny
+8-entry in-process LRU. A group /week shares the existing per-group
+20-second command cooldown with /today. It also obeys the existing
+group admin /settings toggle, including old inline callbacks.
+No new DB tables, auto-posts, image downloads or per-user state.

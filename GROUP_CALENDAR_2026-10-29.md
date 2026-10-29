@@ -97,3 +97,21 @@ https://core.telegram.org/bots/api
 - Bot administration docs:
   https://core.telegram.org/bots/api#getchatmember
   https://docs.aiogram.dev/en/latest/api/methods/get_chat_member.html
+
+
+## Seven-day public weekly calendar (/week)
+
+- /week displays Monday through Sunday for the current Myanmar
+  local week (Asia/Yangon), with each day's traditional labels,
+  Myanmar month and moon phase from the already-verified day calculator.
+- "ရှေ့တစ်ပတ်", "ဒီတစ်ပတ်", "နောက်တစ်ပတ်" native inline controls
+  navigate only previous/current/next local week. An old callback is
+  revalidated relative to the current date; no user input, birth date
+  or group identifier is embedded in it.
+- Existing /today and /week share the same 20-second per-group rate
+  budget, rather than doubling the allowed traffic. Weekly reads are
+  cached in eight short in-memory week cards (not an external DB).
+- Disabled groups cannot use /week or reopen old week cards.
+  Private /week remains available even if a group disabled its calendar.
+- No auto-announcement, bulk horoscope, ranking, photo generation,
+  extra dependency or persistent state is created by this feature.

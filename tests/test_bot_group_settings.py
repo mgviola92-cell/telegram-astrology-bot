@@ -120,6 +120,7 @@ class GroupSettingsIntegrationTests(unittest.IsolatedAsyncioTestCase):
             await bot.welcome(m)
             callbacks=[b.callback_data for row in m.answer.await_args.kwargs["reply_markup"].inline_keyboard for b in row]
             self.assertEqual(callbacks,["group:settings"])
+            self.assertNotIn("group:week",callbacks)
             self.assertIn("ပိတ်",m.answer.await_args.args[0])
         finally:
             bot.group_welcome_gate._seen.pop(A,None)

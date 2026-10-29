@@ -20,7 +20,7 @@ class GroupWelcomeTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("အဖွဲ့ဇာတာခန်း",body)
         self.assertIn("/today",body)
         cb=[b.callback_data for row in m.answer.await_args.kwargs["reply_markup"].inline_keyboard for b in row]
-        self.assertEqual(cb,["group:today","group:settings"])
+        self.assertEqual(cb,["group:today","group:week","group:settings"])
         self.assertNotIn("ui:feature:profile",str(m.answer.await_args))
         self.assertNotIn("2005-12-23",body)
         await welcome(m)

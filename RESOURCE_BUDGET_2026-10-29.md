@@ -115,3 +115,14 @@ Admin rights are verified by Telegram only on settings requests;
 normal /today reads only an in-process flag on default RAM mode.
 Disabling prevents stale group-card callbacks and /today messages.
 No background group polling, bulk admin enumeration or automatic posts.
+
+
+## Weekly public calendar efficiency
+
+/week produces exactly one text card on demand, not seven separate
+Telegram messages. Its static seven-day facts share the original
+documented daily-calendar calculation but are cached with
+lru_cache(maxsize=8). In groups /today and /week share one existing
+per-group cooldown; native inline week navigation edits the same card.
+The existing Admin /settings control blocks both. Zero extra DB tables,
+media uploads, scheduled jobs or automatic group messages.
