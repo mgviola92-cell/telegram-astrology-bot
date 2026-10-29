@@ -29,7 +29,7 @@ from dayun_reading import verified_dayun_reading
 from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
 from tarot_meanings import interpret_tarot_card
-from tarot_media import load_media_registry, card_photo_file_id
+from tarot_delivery import TarotAssetPolicy
 from tarot_sessions import TarotSessions
 from myanmar_core import myanmar_birth_day
 from myanmar_calendar import calculate_myanmar_calendar
@@ -50,6 +50,7 @@ from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
 dp=Dispatcher()
 dp.include_router(profile_router)
 tarot_sessions = TarotSessions()
+tarot_delivery = TarotAssetPolicy()
 reading_inputs = ReadingInputSessions(ttl=300)
 
 def menu():
@@ -804,7 +805,7 @@ async def open_tarot(message: Message, *, user_id: int):
     text = ('🃏 <b>ကတ်သုံးချပ်ထဲက တစ်ချပ်ရွေးပါ</b>\n'
             '━━━━━━━━━━━━━━\n'
             'ကြယ်စင်တို့၏ နိမိတ်ကို ဘယ်ကတ်က ဖော်ပြမလဲ…')
-    media_id = os.getenv('TAROT_SHUFFLE_FILE_ID', '').strip()
+    media_id = tarot_delivery.asset(os.getenv('TAROT_SHUFFLE_FILE_ID', '').strip())
     if media_id:
         try:
             sent = await message.answer_animation(
@@ -812,7 +813,8 @@ async def open_tarot(message: Message, *, user_id: int):
                 reply_markup=tarot_choice_keyboard(token)
             )
         except Exception:
-            logging.exception('Configured Tarot animation unavailable; using text fallback')
+            tarot_delivery.mark_failed(media_id)
+            logging.warning('Configured Tarot animation unavailable; using text fallback')
             sent = await message.answer(text, parse_mode='HTML', reply_markup=tarot_choice_keyboard(token))
     else:
         sent = await message.answer(text, parse_mode='HTML', reply_markup=tarot_choice_keyboard(token))
@@ -870,11 +872,10 @@ async def tarot_pick(cb: CallbackQuery):
     )
     # Reuse one Telegram-hosted asset for every reveal; result name always comes
     # from the previously assigned session, not from media filenames.
-    reveal_id = os.getenv('TAROT_REVEAL_FILE_ID', '').strip()
+    reveal_id = tarot_delivery.asset(os.getenv('TAROT_REVEAL_FILE_ID', '').strip())
     photo_id = None
     try:
-        card_registry=load_media_registry(os.getenv('TAROT_CARD_PHOTOS_JSON','').strip())
-        photo_id=card_photo_file_id(card,card_registry)
+        photo_id=tarot_delivery.photo(card,os.getenv('TAROT_CARD_PHOTOS_JSON','').strip())
     except (OSError,ValueError,UnicodeError):
         logging.warning('Tarot photo registry unavailable; using default reveal fallback')
     try:
@@ -898,7 +899,9 @@ async def tarot_pick(cb: CallbackQuery):
             await cb.message.edit_text(result_text, parse_mode='HTML',
                 reply_markup=tarot_markup)
     except Exception:
-        logging.exception('Cannot edit Tarot card message; using safe reply fallback')
+        if reveal_id and not photo_id:
+            tarot_delivery.mark_failed(reveal_id)
+        logging.warning('Cannot edit Tarot card message; using safe reply fallback')
         if photo_id:
             try:
                 await cb.message.answer_photo(
@@ -907,6 +910,7 @@ async def tarot_pick(cb: CallbackQuery):
                 )
                 return
             except Exception:
+                tarot_delivery.mark_failed(photo_id)
                 logging.warning('Tarot card photo unavailable; sending text-only result')
         await cb.message.answer(result_text, parse_mode='HTML',
             reply_markup=tarot_markup)
