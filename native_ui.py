@@ -163,12 +163,13 @@ def group_home_keyboard(enabled=True):
     """No private birth/profile controls in group menus."""
     rows=[]
     if enabled:
-        rows.append([button("ယနေ့ ရိုးရာပြက္ခဒိန်","group:today")])
+        rows.append([button("ယနေ့ ရိုးရာပြက္ခဒိန်","group:today"),
+                     button("တစ်ပတ်စာ ပြက္ခဒိန်","group:week")])
     rows.append([button("အဖွဲ့စည်းမျဉ်း","group:settings")])
     return keyboard(rows)
 
 def group_home_text(enabled=True):
-    status=("လက်ရှိနေ့ကို ကြည့်ရန် <code>/today</code> ကို သုံးနိုင်ပါတယ်။\n"
+    status=("ယနေ့ /today သို့မဟုတ် တစ်ပတ်စာ /week ကြည့်နိုင်ပါတယ်။\n"
             if enabled else
             "ဤအဖွဲ့မှာ Admin က ရိုးရာပြက္ခဒိန်ကို ပိတ်ထားပါတယ်။\n")
     return ("<b>ကြယ်စင်တို့၏ အဖွဲ့ဇာတာခန်း</b>\n"

@@ -45,6 +45,7 @@ from evidence_ui import evidence_button, get_rule
 from reference_library import library_page, render_library, CATEGORY_LABELS
 from study_library import CHAPTERS, study_index_text, study_chapter_text
 from native_message_edit import edit_or_reply
+from weekly_calendar import week_start, week_text, week_actions, parse_week_callback
 from group_calendar_settings import GroupCalendarSettings
 from group_admin import is_verified_group_admin
 from public_calendar import (
@@ -348,6 +349,66 @@ async def group_home_calendar(cb: CallbackQuery):
     await cb.answer()
     await edit_or_reply(cb.message,public_calendar_text(today),
                         public_calendar_keyboard(today,today=today))
+
+
+def weekly_calendar_keyboard(start, *, today):
+    return InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text=label,callback_data=value)
+        for label,value in week_actions(start,today=today)
+    ]])
+
+
+@dp.message(Command("week"))
+async def public_week_command(message: Message):
+    """One public, on-demand seven-day Myanmar calendar, no birth data."""
+    if message.chat.type not in ("private","group","supergroup"):
+        return
+    if message.chat.type!="private" and not group_settings.enabled(message.chat.id):
+        return
+    if len((message.text or "").split())!=1:
+        await message.answer("တစ်ပတ်စာ မြန်မာပြက္ခဒိန်ကို ကြည့်ရန် /week ကို သုံးပါ။")
+        return
+    if message.chat.type!="private" and not group_calendar_gate.allow(message.chat.id):
+        return
+    today=myanmar_today()
+    start=week_start(today)
+    await message.answer(week_text(start),
+                         parse_mode="HTML",
+                         reply_markup=weekly_calendar_keyboard(start,today=today))
+
+
+@dp.callback_query(F.data=="group:week")
+async def group_home_week(cb: CallbackQuery):
+    if not isinstance(cb.message,Message) or cb.message.chat.type not in ("group","supergroup"):
+        await cb.answer("အဖွဲ့ပြက္ခဒိန်ကို အဖွဲ့ထဲမှာသာ ဖွင့်ပါ။",show_alert=True)
+        return
+    if not group_settings.enabled(cb.message.chat.id):
+        await cb.answer("ဤအဖွဲ့မှာ ပြက္ခဒိန်ကို Admin က ပိတ်ထားပါတယ်။",show_alert=True)
+        return
+    today=myanmar_today()
+    start=week_start(today)
+    await cb.answer()
+    await edit_or_reply(cb.message,week_text(start),
+                        weekly_calendar_keyboard(start,today=today))
+
+
+@dp.callback_query(F.data.startswith("calendarweek:"))
+async def public_week_navigation(cb: CallbackQuery):
+    if not isinstance(cb.message,Message) or cb.message.chat.type not in ("private","group","supergroup"):
+        await cb.answer("တစ်ပတ်စာ ပြက္ခဒိန်ကို ဤနေရာမှာ ဖွင့်မရပါ။",show_alert=True)
+        return
+    if cb.message.chat.type!="private" and not group_settings.enabled(cb.message.chat.id):
+        await cb.answer("ဤအဖွဲ့မှာ ပြက္ခဒိန်ကို Admin က ပိတ်ထားပါတယ်။",show_alert=True)
+        return
+    today=myanmar_today()
+    try:
+        start=parse_week_callback(cb.data,today=today)
+    except (ValueError,TypeError):
+        await cb.answer("ဒီတစ်ပတ်စာ ခလုတ် သက်တမ်းကုန်သွားပါပြီ။ /week နဲ့ ပြန်ကြည့်ပါ။",show_alert=True)
+        return
+    await cb.answer()
+    await edit_or_reply(cb.message,week_text(start),
+                        weekly_calendar_keyboard(start,today=today))
 
 
 @dp.message(Command("today"))
