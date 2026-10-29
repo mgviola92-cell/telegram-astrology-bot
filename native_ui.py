@@ -5,6 +5,7 @@ use established English names. Telegram controls layout and button rendering.
 Navigation is stateless and callback data never includes private birth data.
 """
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from study_library import CHAPTERS, chapter
 
 def button(label: str, callback: str) -> InlineKeyboardButton:
     if len(callback.encode("utf-8")) > 64:
@@ -55,7 +56,7 @@ FEATURES = {
     "mmcal": ("မြန်မာပြက္ခဒိန်", "မြန်မာရက်စွဲ၊ လဆန်းလဆုတ်၊ ရက်ရာဇာနှင့် ပြဿဒါးတို့ကို တွက်နိုင်ပါတယ်။", (
         ("ရက်စွဲတွက်မယ်", "mmcal"), ("အခါပေးရက်များ", "days"),)),
     "library": ("Reference Library", "တွက်ချက်နည်း၊ မူရင်းကိုးကားချက်နှင့် ကန့်သတ်ချက်များကို ဘာသာရပ်အလိုက် ဖတ်ရှုနိုင်ပါတယ်။", (("ကျမ်းကိုးမှတ်တမ်းများ", "library"),)),
-    "study": ("Astrology Study", "သီးခြားလေ့လာခန်း မပြီးသေးပါ။", ()),
+    "study": ("Astrology Study", "တွက်ချက်နည်းနှင့် ရိုးရာကျမ်းကိုးချက်များကို အခန်းအလိုက် ဖတ်ရှုနိုင်ပါတယ်။", (("ကျမ်းလေ့လာခန်း", "study"),)),
     "group": ("Group Settings", "Group Management UI မပြီးသေးပါ။ ကိုယ်ရေးအချက်အလက်ကို Private Chat မှာသာ ဖြည့်ပါ။", ()),
 
 }
@@ -100,7 +101,7 @@ def section_keyboard(section: str):
 def feature_keyboard(feature: str):
     if feature not in FEATURES:
         raise KeyError(feature)
-    rows=[[button(label,("ui:tarot" if cmd=="tarot" else "ui:library" if cmd=="library" else "ui:reading:start" if cmd=="reading_start" else "ui:guide:"+cmd))]
+    rows=[[button(label,("ui:tarot" if cmd=="tarot" else "ui:library" if cmd=="library" else "ui:reading:start" if cmd=="reading_start" else "ui:study" if cmd=="study" else "ui:guide:"+cmd))]
           for label,cmd in FEATURES[feature][2]]
     group=next((key for key,(_,items) in SECTIONS.items()
                 if any(name==feature for _,name in items)), "charts")
@@ -142,3 +143,17 @@ def guide_text(command: str):
             "သီးသန့်စကားဝိုင်းတွင် အောက်ပါ Command ကို ရိုက်ထည့်ပါ။\n\n"
             "<code>"+COMMAND_GUIDES[command]+"</code>\n\n"
             "ဒီခလုတ်က ကိုယ်ရေးအချက်အလက်ကို အလိုအလျောက် မဖြည့်၊ မသိမ်းပါ။")
+
+
+def study_index_keyboard():
+    rows=[[button(data["title"], "study:"+key)]
+          for key,data in CHAPTERS.items()]
+    rows.append([button("Back","ui:feature:study"),button("Home","ui:home")])
+    return keyboard(rows)
+
+def study_chapter_keyboard(key: str):
+    data=chapter(key)
+    rows=[[button("ကျမ်းကိုး — "+str(index), "evidence:"+rule)]
+          for index,rule in enumerate(data["rules"],start=1)]
+    rows.append([button("Back","ui:study"),button("Home","ui:home")])
+    return keyboard(rows)

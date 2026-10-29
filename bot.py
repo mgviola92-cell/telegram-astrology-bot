@@ -43,10 +43,12 @@ from myanmar_signal_reading import describe_day_signals
 from daily_calendar_reading import daily_calendar_reading
 from evidence_ui import evidence_button, get_rule
 from reference_library import library_page, render_library, CATEGORY_LABELS
+from study_library import CHAPTERS, study_index_text, study_chapter_text
 from profile_commands import router as profile_router
 from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
                        feature_keyboard, feature_text, guide_keyboard, guide_text,
-                       SECTIONS, FEATURES, COMMAND_GUIDES)
+                       SECTIONS, FEATURES, COMMAND_GUIDES,
+                       study_index_keyboard, study_chapter_keyboard)
 
 dp=Dispatcher()
 dp.include_router(profile_router)
@@ -128,6 +130,34 @@ async def reference_library_navigation(cb:CallbackQuery):
                                 parse_mode="HTML")
 
 
+
+@dp.message(Command('study'))
+async def study_command(message: Message):
+    if not private_only(message):
+        await message.answer("ကျမ်းလေ့လာခန်းကို Private Chat မှာသာ ဖတ်နိုင်ပါတယ်။")
+        return
+    await message.answer(study_index_text(),reply_markup=study_index_keyboard(),parse_mode="HTML")
+
+
+@dp.callback_query(F.data.startswith("study:"))
+async def study_navigation(cb: CallbackQuery):
+    if not isinstance(cb.message,Message) or cb.message.chat.type!="private":
+        await cb.answer("ကျမ်းလေ့လာခန်းကို Private Chat မှာသာ ဖတ်ပါ။",show_alert=True)
+        return
+    key=(cb.data or "").split(":",1)[1]
+    if key not in CHAPTERS:
+        await cb.answer("ဤအခန်း မရှိတော့ပါ။",show_alert=True)
+        return
+    text=study_chapter_text(key)
+    markup=study_chapter_keyboard(key)
+    await cb.answer()
+    try:
+        await cb.message.edit_text(text,reply_markup=markup,parse_mode="HTML")
+    except Exception:
+        logging.warning("Study chapter edit unavailable; using text fallback")
+        await cb.message.answer(text,reply_markup=markup,parse_mode="HTML")
+
+
 @dp.callback_query(F.data.startswith("ui:"))
 async def native_navigation(cb: CallbackQuery):
     # Callback identifiers contain no birth data and are checked against
@@ -164,6 +194,8 @@ async def native_navigation(cb: CallbackQuery):
         await cb.answer()
         await post_personal_reading(cb.message,personal_reading(born,clock))
         return
+    elif data=="ui:study":
+        text,markup=study_index_text(),study_index_keyboard()
     elif data=="ui:library":
         text="<b>ကျမ်းကိုးမှတ်တမ်းများ</b>\n━━━━━━━━━━━━━━\nလေ့လာလိုသည့် ရိုးရာတွက်ချက်နည်းကို ရွေးပါ။"
         markup=reference_category_keyboard()
