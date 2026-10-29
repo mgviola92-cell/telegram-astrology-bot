@@ -38,6 +38,13 @@ deployment or implementation status.
   SQLite birth profiles; no automatic profile saving and no birth data
   in callback payloads.
 
+### Group-safe /start and /today
+
+Group /start and /help now present a public-only group menu with a
+button to view the non-personal Myanmar calendar. Group landing and
+today command have separate RAM-only command cooldowns. Private /start
+continues to show the personal/astrology navigation.
+
 ### Group-safe daily Myanmar calendar
 
 Group members can request /today to see a short, **public/non-personal**

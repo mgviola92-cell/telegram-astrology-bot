@@ -88,3 +88,17 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
 - Details in GROUP_CALENDAR_2026-10-29.md, including no auto-posts,
   no birth input, and no new database storage.
 - Telegram live behavior remains unverified pending owner approval.
+
+
+## Group-native landing verification
+
+- 0fa40ddc: Group public calendar command/callback offline regression
+  and source-aware documentation; GitHub Actions 40843473146: SUCCESS,
+  414 tests run, five skipped.
+- 409e3326: Group-only /start and /help menu, public calendar inline
+  button, separate bounded RAM welcome throttle, 7 added smoke tests;
+  GitHub Actions 40843708079: SUCCESS, 421 tests run, five skipped.
+- Earlier user-private /start menu and private-only birth commands were
+  preserved. No automatic group posts and no database/media persistence.
+- The latest documentation-only commit should also pass CI; inspect its
+  own Actions run before treating these figures as latest HEAD status.

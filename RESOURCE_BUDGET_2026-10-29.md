@@ -93,3 +93,11 @@ request traffic is throttled by 20 seconds per chat with a bounded
 no group-wide scheduled posts or keepalives. Small stateless day
 buttons edit the same card instead of posting one message per tap.
 See GROUP_CALENDAR_2026-10-29.md.
+
+
+## Extra group welcome traffic protection
+
+Group /start and /help use a distinct 15-second, per-group RAM-only
+cooldown, max 1024 entries. The one public calendar action edits the
+welcome card rather than sending a new birth/profile UI. There is no
+member tracking, automatic daily cron, recurring traffic or group DB.

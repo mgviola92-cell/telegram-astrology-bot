@@ -41,3 +41,18 @@ https://core.telegram.org/bots/api
   library remains unchanged. No natal/reading result is ever shown
   in groups through this command.
 - Not deployed or live tested on Telegram or Render.
+
+
+## Native group landing menu
+
+- /start and /help in group/supergroup now display a brief group-specific
+  Burmese welcome card with **only** a public calendar inline button.
+  The existing private home menu (birth/profile features) is NOT shown
+  in groups; private /start remains unchanged.
+- The group button edits that landing card into the same no-birth-data
+  public Myanmar calendar, with bounded date-navigation callbacks.
+- Group welcome commands use a separate 15-second per-chat, bounded
+  1024-entry RAM gate to reduce repeated greetings. It does not poll,
+  broadcast, store member identities or create a new DB.
+- Channels receive no group landing. All Group Settings/admin policy
+  toggles remain unimplemented and are not implied by this UI.

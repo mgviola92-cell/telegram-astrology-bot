@@ -42,7 +42,7 @@ class GroupTodayCommandTests(unittest.IsolatedAsyncioTestCase):
             await public_today_command(m)
             await public_today_command(m)
         self.assertEqual(m.answer.await_count,1)
-        self.assertEqual(group_calendar_gate._seen.keys(),{-1009876543} | (group_calendar_gate._seen.keys() - {-1009876543}))
+        self.assertIn(-1009876543,group_calendar_gate._seen)
 
     async def test_command_rejects_extra_arguments_and_channel(self):
         m=message("/today 2005-12-23")
