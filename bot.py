@@ -45,6 +45,10 @@ from evidence_ui import evidence_button, get_rule
 from reference_library import library_page, render_library, CATEGORY_LABELS
 from study_library import CHAPTERS, study_index_text, study_chapter_text
 from native_message_edit import edit_or_reply
+from public_calendar import (
+    GroupCalendarGate, day_actions, myanmar_today,
+    parse_day_callback, public_calendar_text,
+)
 from profile_commands import router as profile_router
 from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
                        feature_keyboard, feature_text, guide_keyboard, guide_text,
@@ -57,6 +61,7 @@ tarot_sessions = TarotSessions()
 tarot_delivery = TarotAssetPolicy()
 tarot_cooldown = CooldownBudget(seconds=3.0,capacity=1000)
 reading_inputs = ReadingInputSessions(ttl=300)
+group_calendar_gate = GroupCalendarGate(seconds=20,capacity=1024)
 
 def menu():
     return home_keyboard()
@@ -251,6 +256,46 @@ async def show_evidence(cb: CallbackQuery):
         '<b>သိထားရန်</b>\n'+html.escape(record['limits']),
         parse_mode='HTML'
     )
+
+def public_calendar_keyboard(day, *, today):
+    return InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text=label, callback_data=data)
+        for label,data in day_actions(day,today=today)
+    ]])
+
+
+@dp.message(Command("today"))
+async def public_today_command(message: Message):
+    """Opt-in, non-personal /today for group or private chats; no auto posts."""
+    if message.chat.type not in ("private","group","supergroup"):
+        return
+    if len((message.text or "").split()) != 1:
+        await message.answer("ရိုးရာနေ့စဉ်ပြက္ခဒိန်ကို ကြည့်ရန် /today လို့ ရိုက်ပါ။")
+        return
+    if message.chat.type != "private" and not group_calendar_gate.allow(message.chat.id):
+        return
+    today=myanmar_today()
+    await message.answer(public_calendar_text(today),
+                         parse_mode="HTML",
+                         reply_markup=public_calendar_keyboard(today,today=today))
+
+
+@dp.callback_query(F.data.startswith("calendar:"))
+async def public_calendar_navigation(cb: CallbackQuery):
+    """Stateless public calendar navigation; validates all untrusted dates."""
+    if not isinstance(cb.message,Message) or cb.message.chat.type not in ("private","group","supergroup"):
+        await cb.answer("ရိုးရာပြက္ခဒိန်ကို ဤနေရာတွင် ဖွင့်မရပါ။",show_alert=True)
+        return
+    today=myanmar_today()
+    try:
+        day=parse_day_callback(cb.data,today=today)
+    except (TypeError,ValueError):
+        await cb.answer("နေ့ရက်ရွေးချယ်မှု သက်တမ်းကုန်နေပါပြီ။ /today နဲ့ ပြန်ကြည့်ပါ။",show_alert=True)
+        return
+    await cb.answer()
+    await edit_or_reply(cb.message,public_calendar_text(day),
+                        public_calendar_keyboard(day,today=today))
+
 
 @dp.message(Command('daily'))
 async def daily_command(message: Message):
