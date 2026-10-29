@@ -35,6 +35,8 @@ class NativeUiTests(unittest.TestCase):
                         self.assertIn(parts[2],FEATURES)
                     elif parts[1]=="guide":
                         self.assertIn(parts[2],COMMAND_GUIDES)
+                    elif parts[1]=="reading":
+                        self.assertIn(parts[2],("start","skip"))
                     else:
                         self.fail("Unknown navigation type")
     def test_unfinished_feature_not_claimed_ready(self):

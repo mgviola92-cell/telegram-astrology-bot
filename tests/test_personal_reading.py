@@ -33,7 +33,7 @@ class PersonalReadingTests(unittest.TestCase):
 
 class PersonalReadingCommandTests(unittest.IsolatedAsyncioTestCase):
     def msg(self,command,chat="private"):
-        return SimpleNamespace(text=command,chat=SimpleNamespace(type=chat),answer=AsyncMock())
+        return SimpleNamespace(text=command,chat=SimpleNamespace(type=chat,id=654321),from_user=SimpleNamespace(id=654321),answer=AsyncMock())
     async def test_private_uses_four_provenance_buttons(self):
         m=self.msg("/reading 2005-12-23 08:37")
         await personal_reading_command(m)
