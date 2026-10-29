@@ -96,6 +96,12 @@ class GroupSettingsIntegrationTests(unittest.IsolatedAsyncioTestCase):
             await bot.group_settings_navigation(reenable)
         self.assertTrue(self.settings.enabled(A))
 
+    async def test_disabled_group_silent_even_with_invalid_today_arguments(self):
+        self.settings.set_enabled(A,False)
+        msg=message(cmd="/today 2005-12-23")
+        await bot.public_today_command(msg)
+        msg.answer.assert_not_awaited()
+
     async def test_disabled_group_cannot_use_today_command_or_stale_buttons(self):
         self.settings.set_enabled(A,False)
         m=message(cmd="/today")

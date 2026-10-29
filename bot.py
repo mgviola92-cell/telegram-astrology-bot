@@ -416,14 +416,13 @@ async def public_today_command(message: Message):
     """Opt-in, non-personal /today for group or private chats; no auto posts."""
     if message.chat.type not in ("private","group","supergroup"):
         return
+    if message.chat.type != "private" and not group_settings.enabled(message.chat.id):
+        return
     if len((message.text or "").split()) != 1:
         await message.answer("ရိုးရာနေ့စဉ်ပြက္ခဒိန်ကို ကြည့်ရန် /today လို့ ရိုက်ပါ။")
         return
-    if message.chat.type != "private":
-        if not group_settings.enabled(message.chat.id):
-            return
-        if not group_calendar_gate.allow(message.chat.id):
-            return
+    if message.chat.type != "private" and not group_calendar_gate.allow(message.chat.id):
+        return
     today=myanmar_today()
     await message.answer(public_calendar_text(today),
                          parse_mode="HTML",

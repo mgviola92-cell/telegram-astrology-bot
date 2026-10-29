@@ -33,8 +33,8 @@ https://core.telegram.org/bots/api
 
 ## Deferred / out of scope
 - No auto-daily announcements or invisible group monitoring.
-- No group-specific persisted settings or owner/admin panel yet.
-  Future durable settings require a separately approved storage design.
+- Per-group Admin /settings controls are implemented later in this
+  document. A broader owner/admin dashboard is still unfinished.
 - No promise of no bandwidth: a short Telegram API response is still
   needed when a member intentionally requests the result.
 - No source evidence callback on the group card; private-only evidence
@@ -46,7 +46,8 @@ https://core.telegram.org/bots/api
 ## Native group landing menu
 
 - /start and /help in group/supergroup now display a brief group-specific
-  Burmese welcome card with **only** a public calendar inline button.
+  Burmese welcome card with public today/week buttons and an
+  admin-protected settings entry.
   The existing private home menu (birth/profile features) is NOT shown
   in groups; private /start remains unchanged.
 - The group button edits that landing card into the same no-birth-data
@@ -54,8 +55,8 @@ https://core.telegram.org/bots/api
 - Group welcome commands use a separate 15-second per-chat, bounded
   1024-entry RAM gate to reduce repeated greetings. It does not poll,
   broadcast, store member identities or create a new DB.
-- Channels receive no group landing. All Group Settings/admin policy
-  toggles remain unimplemented and are not implied by this UI.
+- Channels receive no group landing. Admin calendar toggles are
+  implemented later in this document; owner dashboard is unfinished.
 
 
 ## Admin controls and storage (source commit e111287a)

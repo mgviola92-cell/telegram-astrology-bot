@@ -188,7 +188,7 @@ def group_settings_text(enabled, persistent):
         "\n\n<i>ယာယီသတ်မှတ်ချက်ပါ။ Bot ပြန်စတင်လျှင် ဖွင့်ထားသည့် မူလအခြေအနေသို့ ပြန်သွားနိုင်ပါတယ်။</i>")
     return ("<b>အဖွဲ့ရိုးရာပြက္ခဒိန် စည်းမျဉ်း</b>\n"
             "━━━━━━━━━━━━━━\n"
-            "ယနေ့ပြက္ခဒိန် — <b>"+status+"</b>\n"
+            "ရိုးရာပြက္ခဒိန် (/today, /week) — <b>"+status+"</b>\n"
             "အဖွဲ့ Admin များသာ ပြောင်းနိုင်ပါတယ်။"+warning)
 
 def group_settings_keyboard(enabled):

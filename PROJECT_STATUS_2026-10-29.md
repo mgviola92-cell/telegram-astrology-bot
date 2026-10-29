@@ -123,3 +123,21 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
   run for the definitive latest test count. No Render deploy, no live
   Telegram API test. Admin rights checks are not supported in offline
   CI without mocks.
+
+
+## October 29 weekly calendar sprint
+
+- 02a3231b: New non-personal, source-backed Monday–Sunday /week text
+  for private/enabled group chats, seven dates in one Telegram card.
+  Current/previous/next week buttons revalidate local Myanmar time;
+  no calendar lucky-day rankings or invented divination.
+- 7fc13d90: Telegram callback/privacy tests, group default menu
+  week button and updated source/resource documentation. GitHub Actions
+  40850346925: SUCCESS — 458 tests run, 5 skipped.
+- This follow-up: group /today now checks Admin disable before processing
+  invalid arguments; group /settings text explicitly covers both
+  /today and /week, and outdated documentation claims were corrected.
+- Tiny weekly RAM LRU (8 cards) and existing per-group rate budget
+  avoid extra DB writes, seven-message dumps, and redundant group traffic.
+- Verify the final HEAD Actions run separately. No Render deploy or
+  real Telegram live test was authorized or performed.
