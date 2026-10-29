@@ -141,3 +141,21 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
   avoid extra DB writes, seven-message dumps, and redundant group traffic.
 - Verify the final HEAD Actions run separately. No Render deploy or
   real Telegram live test was authorized or performed.
+
+
+## Mahabote seven-house reading expansion
+
+- 02fc9e1a: Added dedicated seven-house Burmese report builder with
+  independent source-evidence/chart revalidation, distinctive Burmese
+  weekday-planet names, one highlighted birth-house interpretation,
+  six house-name/meaning glossary entries, Rahu-vs-7-house caveat,
+  and hard Telegram message-size cap.
+- /mahabote now uses the new renderer and canonical local YYYY-MM-DD
+  / optional HH:MM input validation. Its two source/method buttons
+  are preserved, without storing birth data in callback IDs or DB.
+- Existing numeric house-index and seven planetary placements are
+  unchanged; expanded editorial labels do NOT claim 7 planet forecasts
+  or scientifically verified future outcomes.
+- Offline regression suite plus GitHub Actions are required before
+  considering this implementation validated. No Render deployment or
+  live Telegram API check was performed.

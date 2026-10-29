@@ -271,3 +271,22 @@ The weekly text is limited to 4096 characters and cached in a tiny
 20-second command cooldown with /today. It also obeys the existing
 group admin /settings toggle, including old inline callbacks.
 No new DB tables, auto-posts, image downloads or per-user state.
+
+
+## Seven-house Myanmar Mahabote expanded reading
+
+Native private /mahabote now renders **all seven houses** with their
+verified Gregorian→Myanmar year / weekday placements and Burmese
+weekday-planet labels. The birth house alone receives the complete
+original symbolic interpretation; the other six are explicitly a
+house-name glossary, not personalized predictions inferred from each
+planet. Wednesday afternoon Rahu remains a separate eight-day
+weekday label (never an eighth house). Birth times require canonical
+HH:MM local civil format; date input uses the current Yangon calendar
+date for the future-date guard.
+
+The renderer rechecks source-calculation integrity against the original
+birth-date evidence before emitting the Telegram report (max 4096
+characters). Existing evidence buttons still distinguish mathematical
+house calculation and interpretive school convention. No data storage,
+new API, subscription, file download or background processing.

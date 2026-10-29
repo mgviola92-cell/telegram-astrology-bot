@@ -32,7 +32,11 @@ class MyanmarCommandsTests(unittest.IsolatedAsyncioTestCase):
         text=args[0]
         self.assertIn("ပုတိ",text)
         self.assertIn("အိမ် ၇ လုံး",text)
+        self.assertIn("ဖွားအိမ်၏ ရိုးရာသင်္ကေတအနက်",text)
+        self.assertIn("အခြားအိမ်များ၏ သင်္ကေတအညွှန်း",text)
+        self.assertIn("★ ပုတိ",text)
         self.assertIn("1990",msg.text)
+        self.assertLess(len(text),4096)
         self.assertEqual(kwargs["parse_mode"],"HTML")
         buttons=[b for row in kwargs["reply_markup"].inline_keyboard for b in row]
         self.assertEqual(len(buttons),2)
@@ -73,6 +77,27 @@ class MyanmarCommandsTests(unittest.IsolatedAsyncioTestCase):
         await myanmar_day_signals_command(msg)
         msg.answer.assert_awaited_once()
         self.assertIn("YYYY-MM-DD",msg.answer.await_args.args[0])
+
+    async def test_birth_clock_and_date_must_be_canonical_local_values(self):
+        for invalid in (
+            "/mahabote 2024-01-03 12:30:00",
+            "/mahabote 2024-01-03 12:30Z",
+            "/mahabote 2024-01-03 8:37",
+            "/mahabote 2024-01-03 24:00",
+            "/mahabote 2024-01-03T00:00",
+            "/mahabote 2100-01-01",
+        ):
+            with self.subTest(invalid=invalid):
+                msg=message(invalid)
+                await mahabote_command(msg)
+                self.assertIn("YYYY-MM-DD",msg.answer.await_args.args[0])
+                self.assertNotIn("reply_markup",msg.answer.await_args.kwargs)
+        for valid in ("/mahabote 2024-01-03 11:59",
+                      "/mahabote 2024-01-03 12:00"):
+            with self.subTest(valid=valid):
+                msg=message(valid)
+                await mahabote_command(msg)
+                self.assertIn("ဗုဒ္ဓဟူး",msg.answer.await_args.args[0])
 
     async def test_invalid_mahabote_rejected_without_traceback(self):
         msg=message("/mahabote 1700-01-01")

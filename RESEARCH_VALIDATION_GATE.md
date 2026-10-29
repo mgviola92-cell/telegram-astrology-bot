@@ -257,3 +257,26 @@ This document tracks actual completed versus pending work. No features added bey
 - Genuine downloaded DE421 integration test `tests/test_real_jpl_integration.py` now checks mean-ecliptic longitudes from actual mean equatorial vectors at three epochs plus a full natal pipeline → Telegram HTML preview run. This shares Skyfield's upstream implementation; independent external chart accuracy remains unproven.
 - GitHub Actions for commit `2aa9304a5cbd`: Real JPL workflow `40535332733` succeeded (**4 real-kernel integration tests + cross-ephemeris check**); Calculation workflow `40535332386` succeeded (**334 total unit/offline tests**, some kernel-conditional tests skipped there).
 - No Vedic Jyotish/Dasha, no new data persistence, no Render deployment or live Telegram smoke test. The `/natal` feature remains operator gated/default OFF until full validation and owner approval.
+
+
+## Myanmar seven-house reading verification (2026-10-29)
+
+- Independent external corroboration for Saturday=0...Friday=6
+  and the formula (MyanmarYear-weekdayCode) % 7, with 0..6 mapping
+  Binga, Atun, Yaza, Adipati, Marana, Thike, Puti:
+  https://horo.kesta.store/academy/myanmar/mahabote-calculation?lang=en
+  and original Yan Naing Aye:
+  https://cool-emerald.blogspot.com/2013/12/myanmar-astrological-calendar-days.html
+- English glosses and philosophical connotations of the seven house
+  names differ between sources and teaching lineages; for example,
+  https://horo.kesta.store/academy/myanmar/placements-and-signals?lang=en
+  identifies meanings as interpretive vocabulary, not mathematical
+  rules. Our existing seven THEMES are original Burmese editorial
+  cultural descriptions with this limitation explicitly disclosed.
+- /mahabote now presents one verified full chart and the birth-house
+  interpretation; the other six are school-dependent glossary entries,
+  NOT six personalized fortunes. Birth-time-dependent Wednesday/Rahu
+  changes supplementary weekday labeling only.
+- A production-level professionally reviewed traditional interpretive
+  rule corpus, independent historical calendar cross-validation, and
+  scientifically meaningful predictive validation are NOT claimed.

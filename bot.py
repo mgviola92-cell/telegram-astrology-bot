@@ -36,6 +36,7 @@ from myanmar_core import myanmar_birth_day
 from myanmar_calendar import calculate_myanmar_calendar
 from mahabote_core import calculate_mahabote, BURMESE_HOUSES
 from mahabote_reading import interpret_mahabote
+from mahabote_report import render_mahabote_report
 from personal_reading import personal_reading
 from reading_input import ReadingInputSessions
 from myanmar_day_signals import calculate_day_signals
@@ -620,39 +621,30 @@ async def mahabote_command(message: Message):
         )
         return
     try:
+        if len(parts[1])!=10:
+            raise ValueError("Non-canonical birth date")
         local_date=date.fromisoformat(parts[1])
-        if local_date>date.today():
-            raise ValueError('future birth date')
-        clock=time.fromisoformat(parts[2]) if len(parts)==3 else None
+        if local_date.isoformat()!=parts[1] or local_date>datetime.now(ZoneInfo('Asia/Yangon')).date():
+            raise ValueError("Future or malformed birth date")
+        clock=None
+        if len(parts)==3:
+            if len(parts[2])!=5:
+                raise ValueError("Birth clock requires HH:MM")
+            clock=time.fromisoformat(parts[2])
+            if clock.strftime("%H:%M")!=parts[2] or clock.tzinfo is not None:
+                raise ValueError("Invalid birth clock")
         chart=calculate_mahabote(local_date,clock)
         reading=interpret_mahabote(chart)
+        content=render_mahabote_report(chart,reading)
     except (TypeError,ValueError):
         await message.answer('မွေးရက်/မွေးချိန် မမှန်သေးပါ။ 1900–2100 အတွင်း YYYY-MM-DD နဲ့ HH:MM ပုံစံဖြည့်ပါ။')
         return
-    placements='\n'.join(
-        f'{BURMESE_HOUSES[h]} — {html.escape(info["weekday"])} ({html.escape(info["planet"])})'
-        for h,info in chart['placements'].items()
-    )
     method_markup=evidence_button(chart['evidence']['rule_id'])
     method_markup.inline_keyboard.append([
         InlineKeyboardButton(text='Interpretation Method',
                              callback_data='evidence:'+reading['interpretation_rule_id'])
     ])
-    await message.answer(
-        'မြန်မာမဟာဘုတ် — <b>မွေးဇာတာ ၇ အိမ်</b>\n'
-        '━━━━━━━━━━━━━━\n'
-        f'မြန်မာသက္ကရာဇ် — <b>{chart["myanmar_year"]}</b>\n'
-        f'မွေးနေ့နံ — <b>{html.escape(chart["eight_day_weekday_label"])}</b>\n'
-        f'မဟာဘုတ်အကြွင်း — <b>{chart["house_index"]}</b>\n'
-        f'ဖွားအိမ် — <b>{html.escape(chart["house_burmese"])}</b>\n\n'
-        '<b>အိမ် ၇ လုံး၏ ဂြိုဟ်နေရာချထားမှု</b>\n'
-        f'{placements}\n\n'
-        f'<b>{html.escape(reading["theme"])}</b>\n'
-        f'{html.escape(reading["interpretation"])}\n\n'
-        f'{html.escape(reading["disclaimer"])}',
-        reply_markup=method_markup,
-        parse_mode='HTML'
-    )
+    await message.answer(content,reply_markup=method_markup,parse_mode='HTML')
 
 
 @dp.callback_query(F.data == 'section:mmcal')
