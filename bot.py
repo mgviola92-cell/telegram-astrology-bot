@@ -53,7 +53,8 @@ from profile_commands import router as profile_router
 from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
                        feature_keyboard, feature_text, guide_keyboard, guide_text,
                        SECTIONS, FEATURES, COMMAND_GUIDES,
-                       study_index_keyboard, study_chapter_keyboard)
+                       study_index_keyboard, study_chapter_keyboard,
+                       group_home_keyboard, group_home_text)
 
 dp=Dispatcher()
 dp.include_router(profile_router)
@@ -62,6 +63,7 @@ tarot_delivery = TarotAssetPolicy()
 tarot_cooldown = CooldownBudget(seconds=3.0,capacity=1000)
 reading_inputs = ReadingInputSessions(ttl=300)
 group_calendar_gate = GroupCalendarGate(seconds=20,capacity=1024)
+group_welcome_gate = GroupCalendarGate(seconds=15,capacity=1024)
 
 def menu():
     return home_keyboard()
@@ -74,6 +76,14 @@ def private_only(message: Message) -> bool:
 
 @dp.message(CommandStart())
 async def welcome(message: Message):
+    if message.chat.type in ("group","supergroup"):
+        if not group_welcome_gate.allow(message.chat.id):
+            return
+        await message.answer(group_home_text(),reply_markup=group_home_keyboard(),
+                             parse_mode="HTML")
+        return
+    if message.chat.type!="private":
+        return
     await message.answer(WELCOME, reply_markup=menu(), parse_mode='HTML')
 
 @dp.message(Command('help'))
@@ -262,6 +272,18 @@ def public_calendar_keyboard(day, *, today):
         InlineKeyboardButton(text=label, callback_data=data)
         for label,data in day_actions(day,today=today)
     ]])
+
+
+@dp.callback_query(F.data=="group:today")
+async def group_home_calendar(cb: CallbackQuery):
+    """Public on-demand calendar from group landing card, no natal details."""
+    if not isinstance(cb.message,Message) or cb.message.chat.type not in ("group","supergroup"):
+        await cb.answer("အဖွဲ့ရိုးရာပြက္ခဒိန်ကို အဖွဲ့ထဲမှာပဲ ဖွင့်ပါ။",show_alert=True)
+        return
+    today=myanmar_today()
+    await cb.answer()
+    await edit_or_reply(cb.message,public_calendar_text(today),
+                        public_calendar_keyboard(today,today=today))
 
 
 @dp.message(Command("today"))

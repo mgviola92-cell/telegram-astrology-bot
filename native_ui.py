@@ -157,3 +157,18 @@ def study_chapter_keyboard(key: str):
           for index,rule in enumerate(data["rules"],start=1)]
     rows.append([button("Back","ui:study"),button("Home","ui:home")])
     return keyboard(rows)
+
+
+def group_home_keyboard():
+    """No private birth/profile controls in group menus."""
+    return keyboard([[button("ယနေ့ ရိုးရာပြက္ခဒိန်","group:today")]])
+
+def group_home_text():
+    return ("<b>ကြယ်စင်တို့၏ အဖွဲ့ဇာတာခန်း</b>\n"
+            "━━━━━━━━━━━━━━\n"
+            "ဤအဖွဲ့မှာ မွေးအချက်အလက်မလိုတဲ့ မြန်မာရိုးရာပြက္ခဒိန်ကို "
+            "ကြည့်နိုင်ပါတယ်။\n\n"
+            "လက်ရှိနေ့ကို ကြည့်ရန် အောက်ပါခလုတ် သို့မဟုတ် "
+            "<code>/today</code> ကို သုံးပါ။\n"
+            "<i>ကိုယ်ပိုင်မွေးဇာတာနှင့် မွေးအချက်အလက်များကို "
+            "Bot ၏ Private Chat တွင်သာ ဖြည့်ပါ။</i>")

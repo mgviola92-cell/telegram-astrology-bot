@@ -50,6 +50,14 @@ class NativeUiTests(unittest.TestCase):
                 self.assertIn("<code>",guide_text(command))
                 self.assertIn("မသိမ်း",guide_text(command))
         self.assertNotIn("2005-12-23",home_text())
+    def test_group_home_has_only_public_calendar_action(self):
+        from native_ui import group_home_keyboard,group_home_text
+        buttons=self.all_buttons(group_home_keyboard())
+        self.assertEqual([b.callback_data for b in buttons],["group:today"])
+        self.assertNotIn("2005-12-23",group_home_text())
+        self.assertNotIn("Save Birth Date",group_home_text())
+        self.assertIn("/today",group_home_text())
+
     def test_back_and_home_on_feature(self):
         for feature in FEATURES:
             actions=[b.text for b in self.all_buttons(feature_keyboard(feature))]
