@@ -49,7 +49,11 @@ class ProfectionTopicTests(unittest.TestCase):
             if kind=="house":bogus["house"]=8
             elif kind=="sign":bogus["sign"]="Leo"
             elif kind=="lord":bogus["lord_of_year"]="Mars"
-            elif kind=="source_date":bogus["evidence"]["input_assumptions"]["birth_date"]="2005-12-22"
+            elif kind=="source_date":
+                # Change across the birthday boundary: a date changed within
+                # the same completed age cannot be distinguished without a
+                # separately trusted birth record, which we do not store.
+                bogus["evidence"]["input_assumptions"]["birth_date"]="2005-12-24"
             elif kind=="source_sign":bogus["evidence"]["input_assumptions"]["ascendant_sign"]="Virgo"
             elif kind=="evidence":bogus["evidence"]["rule_id"]="FAKE"
             elif kind=="derived":bogus["evidence"]["derived_facts"]["age"]=99
