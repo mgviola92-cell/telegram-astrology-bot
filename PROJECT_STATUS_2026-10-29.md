@@ -53,3 +53,13 @@ All changes above are in main and ARE NOT DEPLOYED.
 
 README and RESEARCH_VALIDATION_GATE.md contain detailed foundations.
 Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
+
+## Resource controls added on October 29
+
+- c169d9d0: set SQLite WAL mode once and guard unconfirmed ephemeral
+  Render profile storage with runtime and preflight checks.
+- bc31f6c2: cache the Telegram Tarot media manifest in RAM, suppress
+  repeated bad assets, allow text-only mode without media upload.
+- 63e18af0: bound repeated Tarot requests with 3-second RAM cooldown.
+- See RESOURCE_BUDGET_2026-10-29.md. No Render deploy or live Telegram
+  verification; the resource budget is policy, not measured network usage.

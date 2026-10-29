@@ -36,6 +36,15 @@ deployment or implementation status.
   SQLite birth profiles; no automatic profile saving and no birth data
   in callback payloads.
 
+### Resource and database savings
+
+The default calculations do not persist personal data. Optional encrypted
+SQLite birth profiles require opt-in, never run on Render Free's ephemeral
+local filesystem, and use no background polling. Tarot uses reusable
+Telegram file IDs (rather than bot-side uploads), cached media manifest,
+text-only configuration and bounded anti-repeat cooldown. See the
+[resource and hosting guardrails](RESOURCE_BUDGET_2026-10-29.md).
+
 ### Not yet complete
 Deep multi-tradition personal readings, consent-respecting compatibility,
 full Study content, group and owner settings, complete Tarot art,

@@ -16,6 +16,11 @@ class DeliveryTests(unittest.TestCase):
             self.assertEqual(policy.asset("AgACopaque"),"AgACopaque")
             self.assertIsNone(policy.asset("https://example.com/img.jpg"))
             self.assertIsNone(policy.asset("/tmp/image.png"))
+    def test_unknown_mode_fails_closed_to_text(self):
+        p=TarotAssetPolicy()
+        with patch.dict(os.environ,{"TAROT_MEDIA_MODE":"unknown"}):
+            self.assertIsNone(p.asset("AgACopaque"))
+
     def test_text_mode_sends_no_media_even_if_configured(self):
         policy=TarotAssetPolicy()
         with patch.dict(os.environ,{"TAROT_MEDIA_MODE":"text"}):

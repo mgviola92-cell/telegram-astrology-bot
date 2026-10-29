@@ -29,7 +29,7 @@ class TarotAssetPolicy:
         self._bad_ids=set()
 
     def enabled(self):
-        return os.environ.get("TAROT_MEDIA_MODE","telegram").strip().lower() != "text"
+        return os.environ.get("TAROT_MEDIA_MODE","telegram").strip().lower() == "telegram"
 
     def asset(self, file_id):
         """Return a reusable file_id or None, never a binary file or URL."""
