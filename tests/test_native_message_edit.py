@@ -29,6 +29,8 @@ class EditEfficiencyTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(msg.answer.await_count,1)
 
 class EvidencePrivacyTests(unittest.IsolatedAsyncioTestCase):
+    def msg(self):
+        return SimpleNamespace(edit_text=AsyncMock(),answer=AsyncMock())
     def callback(self, kind):
         msg=SimpleNamespace(chat=SimpleNamespace(type=kind),answer=AsyncMock())
         return SimpleNamespace(message=msg,answer=AsyncMock(),

@@ -63,3 +63,18 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
 - 63e18af0: bound repeated Tarot requests with 3-second RAM cooldown.
 - See RESOURCE_BUDGET_2026-10-29.md. No Render deploy or live Telegram
   verification; the resource budget is policy, not measured network usage.
+
+
+## Additional native reading / learning sprint
+
+- 861a9cc1: Bind private birth-time skip callback to its precise
+  Telegram prompt message, rejecting old prompts after a new session.
+- f830d5da: Implement source-checked Burmese Astrology Study chapters
+  for Myanmar calendar, Mahabote, BaZi, Western, Life Path and Tarot.
+  They use in-memory/static text only and are private-only.
+- db481361: Add shared native edit-in-place helper that ignores
+  Telegram's "message is not modified" response, protecting navigation
+  against duplicate fallback messages. Private-only evidence callbacks.
+- Corrected test helper in the following commit; inspect GitHub Actions
+  tied to final HEAD for verified test counts. These are offline tests,
+  not live Telegram API verification. No deployment was performed.

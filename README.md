@@ -32,6 +32,8 @@ deployment or implementation status.
 - 78 Tarot cards, Burmese short reflections, user/message-bound
   single-use private sessions, optional Telegram file_id animations
   and per-card photo mapping; full art assets are not configured.
+- Six short source-linked native Astrology Study chapters, private-only,
+  stateless and text-only; editing existing cards minimizes chat spam.
 - Native Reference Library and source callbacks, encrypted opt-in
   SQLite birth profiles; no automatic profile saving and no birth data
   in callback payloads.

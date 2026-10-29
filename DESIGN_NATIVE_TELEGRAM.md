@@ -47,3 +47,21 @@ in-memory, user-bound 5-minute-per-step session. It accepts birth date,
 then optional local birth time, with a no-clock skip button and /cancel;
 no implicit encrypted-profile writes. Sessions disappear on restart.
 Complete media and group/owner controls remain future work.
+
+
+## Source study and private-navigation hardening (2026-10-29)
+
+- Native /study now offers six actual Burmese introductory chapters:
+  Myanmar calendar, Mahabote, BaZi, Western profections, Numerology and
+  Tarot. Each links to the existing evidence registry for original
+  source/method caveats. No separate user records or image files.
+- A private reading time-skip callback is tied to the exact Telegram
+  prompt message ID, not just the user's current stage. A button from
+  a prior /reading session cannot consume a new session.
+- Native Study, Reference Library and home/feature navigation edit
+  the existing message, without reposting it when Telegram replies
+  "message is not modified". A genuine edit failure can still produce
+  one fallback reply.
+- Evidence source buttons are private-only to avoid filling group chats
+  with personal-reading method messages. No personal data appears in
+  study/source callback identifiers.

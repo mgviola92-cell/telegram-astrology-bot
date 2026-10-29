@@ -68,3 +68,17 @@ Official documentation:
 - Secure deletion guarantees from backups, snapshots, or filesystem copies.
 - Production monitoring, backups, recoverability and measured bandwidth.
 - Render deployment. The owner must explicitly authorize it later.
+
+
+## Native message saving follow-up
+
+- Source-linked /study lessons use only Telegram text and Inline
+  Keyboards; navigation edits the existing message rather than
+  downloading or storing any content.
+- Telegram's normal "message is not modified" response does not create
+  duplicate fallback messages. Other edit failures have one text fallback.
+- Private /reading skip buttons are now bound to their exact prompt
+  message ID, preventing an older button from consuming a new session.
+- Evidence/source callback details are blocked from public groups.
+- None of these changes adds background DB queries, cache databases,
+  scheduled tasks or additional media uploads.
