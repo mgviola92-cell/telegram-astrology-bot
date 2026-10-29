@@ -197,3 +197,12 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
   from educational house-topic symbolism. No natal chart or independent
   Rising Sign calculation. No storage, media, background traffic or
   Render deployment. Check final HEAD GitHub Actions results.
+
+
+## Leap-day annual profection audit
+
+- Completed-year engine retained; February 29 birthdays use March 1 in
+  non-leap evaluation years, and February 29 in leap years.
+- Added calendar-boundary regression tests and an explicit convention
+  disclaimer on applicable private /profection cards. No personal
+  data persistence or natal feature activation.

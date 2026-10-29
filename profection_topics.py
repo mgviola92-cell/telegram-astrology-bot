@@ -65,6 +65,7 @@ def interpret_profection(calculated:dict)->dict:
         "interpretation":description,
         "house_topic_burmese":expected["house_topic_burmese"],
         "age_completed":expected["age_completed"],
+        "leap_day_birthday_march_first":expected["leap_day_birthday_march_first"],
         "next_house":house%12+1,
         "next_sign":next_sign,
         "next_traditional_ruler":TRADITIONAL_RULERS[SIGNS.index(next_sign)],
@@ -97,6 +98,12 @@ def render_profection_report(calculated:dict,read:dict)->str:
         f'လာမည့်မွေးနေ့ပြီးနောက် အိမ် {read["next_house"]} — '
         f'{escape(read["next_sign"])} / {escape(read["next_traditional_ruler"])}',
         "အိမ် ၁၂ လုံးစက်ဝန်းသည် ၁၂ နှစ်တစ်ကြိမ် ပြန်စသည်။",
+        *(
+            ["<i>ဖေဖော်ဝါရီ ၂၉ မွေးသူအတွက် ရက်ထပ်မဟုတ်သောနှစ်တွင် "
+             "နှစ်ပြည့်နေ့ကို မတ်လ ၁ ရက်အဖြစ် သတ်မှတ်ထားသည်။ "
+             "ဤသည် Bot ၏ ထင်ရှားစွာရွေးထားသော ရက်စွဲစည်းမျဉ်းဖြစ်သည်။</i>"]
+            if read["leap_day_birthday_march_first"] else []
+        ),
         "",
         f'Rising Sign: <code>{escape(calculated["rising_sign_input"])}</code> '
         '(အသုံးပြုသူပေးထားသည်၊ ဤနေရာတွင် မတွက်/မစစ်ရသေးပါ)',

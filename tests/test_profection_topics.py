@@ -42,6 +42,17 @@ class ProfectionTopicTests(unittest.TestCase):
         self.assertNotIn("2005-12-23",text)
         self.assertNotIn("\\n",text)
 
+    def test_leap_birthday_convention_is_visible_in_private_report(self):
+        birth=date(2000,2,29)
+        before=profection_reading(birth,date(2023,2,28),"Cancer")
+        after=profection_reading(birth,date(2023,3,1),"Cancer")
+        self.assertNotEqual(before["house"],after["house"])
+        text=render_profection_report(after,interpret_profection(after))
+        self.assertIn("မတ်လ ၁",text)
+        self.assertIn("ဖေဖော်ဝါရီ ၂၉",text)
+        self.assertFalse(interpret_profection(after)["prediction_supported"])
+        self.assertLess(len(text),4096)
+
     def test_calc_tampering_fails_closed(self):
         valid=profection_reading(date(2005,12,23),date(2026,12,23),"Aries")
         for kind in ("house","sign","lord","source_date","source_sign","evidence","derived","rising_checked"):

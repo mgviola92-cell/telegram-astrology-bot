@@ -31,6 +31,17 @@ class TraditionalProfectionTests(unittest.TestCase):
         self.assertEqual(after["house"],10)
         self.assertEqual(profection_reading(birth,date(2017,12,23),"Aries")["house"],1)
 
+    def test_february_29_birth_uses_march_1_in_non_leap_years(self):
+        b=date(2000,2,29)
+        for target,years in ((date(2023,2,28),22),(date(2023,3,1),23),
+                             (date(2024,2,28),23),(date(2024,2,29),24),
+                             (date(2025,2,28),24),(date(2025,3,1),25)):
+            with self.subTest(target=target):
+                value=profection_reading(b,target,"Aries")
+                self.assertEqual(value["age_completed"],years)
+                self.assertEqual(value["house"],years%12+1)
+                self.assertTrue(value["leap_day_birthday_march_first"])
+
     def test_traditional_rulers_not_modern_swaps(self):
         for ascending,ruler in (("Scorpio","Mars"),("Aquarius","Saturn"),
                                 ("Pisces","Jupiter")):

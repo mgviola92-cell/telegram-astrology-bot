@@ -35,12 +35,16 @@ def profection_reading(born: date, evaluation_date: date, rising_sign: str) -> d
     if ev["rule_id"]!=RULE_ID:
         raise ValueError("Unrecognized profection calculation rule")
     age=evaluation_date.year-born.year-((evaluation_date.month,evaluation_date.day)<(born.month,born.day))
+    # Explicit Feb-29 convention in non-leap years: March 1, not Feb 28.
+    # This is the behavior of the underlying age_on() calculation.
+    leap_day_birth=(born.month,born.day)==(2,29)
     expected_index=(SIGNS.index(rising_sign)+age)%12
     if (result["house"]!=age%12+1 or result["sign"]!=SIGNS[expected_index]
             or result["lord_of_year"]!=TRADITIONAL_RULERS[expected_index]):
         raise ValueError("Profection calculation differs from 12-year reference rules")
     return {
         "age_completed":age,
+        "leap_day_birthday_march_first":leap_day_birth,
         "house":result["house"],
         "sign":result["sign"],
         "lord_of_year":result["lord_of_year"],

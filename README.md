@@ -344,3 +344,10 @@ and the editorial interpretation, with source limits shown.
 Natal planet conditions, sect, transits, solar returns and ephemeris
 are not inferred. /natal stays gated. No database writes or background
 network requests.
+
+
+Leap-day profection policy: if born on February 29, a non-leap
+calendar year counts the annual profection birthday on **March 1**.
+This follows the underlying completed-year calendar comparison and is
+explicitly shown on the personal /profection response. The Feb 28
+alternative is a school-specific convention not silently assumed.
