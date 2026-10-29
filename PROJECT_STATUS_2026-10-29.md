@@ -159,3 +159,15 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
 - Offline regression suite plus GitHub Actions are required before
   considering this implementation validated. No Render deployment or
   live Telegram API check was performed.
+
+
+## Eight-weekday cultural reference
+
+- c7805155: A distinct, tested Myanmar 8-day animal/direction
+  correspondence table, cross-checked against existing myanmar_birth_day
+  calculation and researched cultural reference materials.
+- Private /myday now displays its derived symbol and direction, with
+  a second source-method button. Invalid birth clock formats and dates
+  are rejected, and the cutoff/source variation is communicated.
+- This remains a cultural symbolic lookup, NOT eight new personal
+  fate formulas, and no birth data is written to DB.

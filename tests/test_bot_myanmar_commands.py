@@ -21,8 +21,33 @@ class MyanmarCommandsTests(unittest.IsolatedAsyncioTestCase):
         msg.answer.assert_awaited_once()
         args,kwargs=msg.answer.await_args
         self.assertIn("မြန်မာ့မွေးနေ့နံ",args[0])
+        self.assertIn("ရိုးရာသတ္တဝါ",args[0])
+        self.assertIn("ရိုးရာအရပ်မျက်နှာ",args[0])
         self.assertNotIn("十二长生",args[0])
+        callback_ids=[b.callback_data for row in kwargs["reply_markup"].inline_keyboard for b in row]
+        self.assertEqual(len(callback_ids),2)
+        self.assertIn("evidence:MM-8DAY-ANIMAL-DIRECTION-001",callback_ids)
+        self.assertTrue(all("2005-12-23" not in x for x in callback_ids))
         self.assertEqual(kwargs["parse_mode"],"HTML")
+
+    async def test_weekday_animals_follow_noon_split_and_reject_noncanonical_clock(self):
+        early=message("/myday 2024-01-03 11:59")
+        late=message("/myday 2024-01-03 12:00")
+        await myday_command(early)
+        await myday_command(late)
+        self.assertIn("အစွယ်ရှိဆင်",early.answer.await_args.args[0])
+        self.assertIn("အစွယ်မဲ့ဆင်",late.answer.await_args.args[0])
+        self.assertIn("ရာဟု",late.answer.await_args.args[0])
+        for text in ("/myday 2024-01-03 8:37",
+                     "/myday 2024-01-03 12:30:00",
+                     "/myday 2024-01-03 12:30Z",
+                     "/myday 2024-01-03 24:00",
+                     "/myday 1800-01-01 12:30"):
+            with self.subTest(text=text):
+                m=message(text)
+                await myday_command(m)
+                self.assertIn("YYYY-MM-DD HH:MM",m.answer.await_args.args[0])
+                self.assertNotIn("reply_markup",m.answer.await_args.kwargs)
 
     async def test_mahabote_writes_complete_chart(self):
         msg=message("/mahabote 1990-05-14")

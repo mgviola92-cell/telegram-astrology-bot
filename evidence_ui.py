@@ -112,6 +112,12 @@ RULES = {
         'source': '6tail/lunar-python: lunar_python/EightChar.py and test/EightCharTest.py',
         'limits': 'မွေးရပ်ဒေသ၊ သမိုင်းဝင် timezone နှင့် True Solar Time ဆိုင်ရာ အတည်ပြုချက် မပြည့်စုံသေးသော စမ်းသပ်တွက်ချက်မှုဖြစ်သည်။'
     },
+    'MM-8DAY-ANIMAL-DIRECTION-001': {
+        'heading': 'မြန်မာ ၈ နေ့နံ၏ ရိုးရာသတ္တဝါနှင့် အရပ်မျက်နှာ',
+        'method': 'မွေးရပ်ဒေသအချိန်၏ Gregorian နေ့နံကို သတ်မှတ်၍ တနင်္ဂနွေ၊ တနင်္လာ၊ အင်္ဂါ၊ ဗုဒ္ဓဟူးမနက်၊ ရာဟုမွန်းလွဲ၊ ကြာသပတေး၊ သောကြာ၊ စနေ ၈ မျိုးကို ခွဲသည်။ ဤ Bot တွင် ဗုဒ္ဓဟူး 12:00 နာရီမှ Rahu အဖြစ်ခွဲပြီး လူသိများသော သတ္တဝါ/အရပ်မျက်နှာ ရိုးရာဇယားနှင့် တိုက်စစ်သည်။',
+        'source': 'Myanmar cultural awareness, NYU Steinhardt: https://docs.steinhardt.nyu.edu/pdfs/metrocenter/xr1/Language_n_Cultural_Awareness/MYANMAR.pdf ; Myanmar Calendar: https://www.calendarmyanmar.com/zodiac-signs.html ; Maung Htin Aung, historical Burmese astrology: https://www.uclmyanmar.org/wp-content/uploads/2016/02/372001.pdf',
+        'limits': 'သတ္တဝါနှင့် အရပ်မျက်နှာတို့သည် ယဉ်ကျေးမှုဆိုင်ရာ သင်္ကေတအမည်များသာ ဖြစ်ပြီး လူ၏တန်ဖိုးနှင့် အနာဂတ်ဖြစ်ရပ်ကို မဟောနိုင်ပါ။ ရာဟုကို ဘယ်နာရီမှစခွဲမည်ဆိုသော မူကွဲရှိသည် (သမိုင်းဝင်စာပေအချို့တွင် ညနေ 6 နာရီ)။ 7-house Mahabote arithmetic နှင့် မရောထွေးပါ။'
+    },
     'MM-8DAY-WEEKDAY-001': {
         'heading': 'မြန်မာ့ ၈ နေ့နံ',
         'method': 'မွေးရပ်ဒေသ၏ နေ့စွဲကနေ နေ့နံတွက်ပြီး ဗုဒ္ဓဟူးနေ့ကို မွန်းတည့် ၁၂ နာရီတွင် ခွဲသည်။',

@@ -290,3 +290,20 @@ birth-date evidence before emitting the Telegram report (max 4096
 characters). Existing evidence buttons still distinguish mathematical
 house calculation and interpretive school convention. No data storage,
 new API, subscription, file download or background processing.
+
+
+## Myanmar eight-weekday birth-sign reference
+
+Private /myday now includes the traditional eight-category animal
+and pagoda-direction associations alongside the verified weekday/planet
+calculation (Sunday Garuda, Monday tiger, Tuesday lion, Wednesday AM
+tusked elephant, Wednesday PM Rahu/tuskless elephant, Thursday rat,
+Friday guinea pig and Saturday naga). The additional method button
+explains the cultural lookup and references; it is explicitly separate
+from the seven-house Mahabote arithmetic.
+
+This bot chooses noon local civil time as its Wednesday/Rahu boundary.
+Some Burmese historical writings instead describe an evening cutoff,
+so the app states its chosen convention rather than claiming there is
+one indisputable national rule. No birth data is automatically stored
+and no animal symbol is presented as a guaranteed personality or fate.

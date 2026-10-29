@@ -280,3 +280,20 @@ This document tracks actual completed versus pending work. No features added bey
 - A production-level professionally reviewed traditional interpretive
   rule corpus, independent historical calendar cross-validation, and
   scientifically meaningful predictive validation are NOT claimed.
+
+
+## Eight-weekday cultural cross-reference (2026-10-29)
+
+- Weekday animal and shrine-direction associations cross-read against
+  an NYU Steinhardt Myanmar cultural awareness reference:
+  https://docs.steinhardt.nyu.edu/pdfs/metrocenter/xr1/Language_n_Cultural_Awareness/MYANMAR.pdf
+  and an independently published Burmese zodiac overview:
+  https://www.calendarmyanmar.com/zodiac-signs.html
+- Historic research by Maung Htin Aung (hosted at
+  https://www.uclmyanmar.org/wp-content/uploads/2016/02/372001.pdf)
+  describes an evening Wednesday/Rahu division. Thus a 12:00 split
+  is an explicit operational convention used by this bot, NOT a single
+  universally agreed historical boundary.
+- Added a separate evidence record for 8-day animal/direction symbolism,
+  which is NOT the seven-house Mahabote algorithm or any scientific
+  evidence of personality predictions.

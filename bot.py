@@ -33,6 +33,7 @@ from tarot_delivery import TarotAssetPolicy
 from outbound_budget import CooldownBudget
 from tarot_sessions import TarotSessions
 from myanmar_core import myanmar_birth_day
+from weekday_tradition import weekday_animal_info
 from myanmar_calendar import calculate_myanmar_calendar
 from mahabote_core import calculate_mahabote, BURMESE_HOUSES
 from mahabote_reading import interpret_mahabote
@@ -716,18 +717,33 @@ async def myday_command(message: Message):
         return
     try:
         birth=datetime.strptime(parts[1]+' '+parts[2],'%Y-%m-%d %H:%M')
-        if birth.date()>date.today(): raise ValueError('Future date')
+        if (birth.strftime('%Y-%m-%d')!=parts[1]
+                or birth.strftime('%H:%M')!=parts[2]
+                or not 1900<=birth.year<=2100
+                or birth.date()>datetime.now(ZoneInfo('Asia/Yangon')).date()):
+            raise ValueError('Invalid local birth date/time')
         result=myanmar_birth_day(birth)
+        animal=weekday_animal_info(birth)
     except ValueError:
         await message.answer('🌫️ မွေးနေ့နဲ့ မွေးချိန်ကို YYYY-MM-DD HH:MM ပုံစံနဲ့ ပြန်စစ်ပါ။')
         return
     await message.answer(
         '🇲🇲 <b>မြန်မာ့မွေးနေ့နံ</b>\n━━━━━━━━━━━━━━\n'
         f'<b>{html.escape(result["weekday"])}</b>\n'
-        f'ဆက်စပ်ဂြိုဟ် — <b>{html.escape(result["planetary_association"])}</b>\n\n'
-        f'📖 <code>{result["evidence"]["rule_id"]}</code>\n'
-        'ဤရလဒ်မှာ ရိုးရာ ၈ နေ့နံအလိုက် တွက်ချက်ထားခြင်းဖြစ်ပြီး မဟာဘုတ်ဇာတာ မဟုတ်သေးပါ။',
-        parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id'])
+        f'ဆက်စပ်ဂြိုဟ် — <b>{html.escape(result["planetary_association"])}</b>\n'
+        f'ရိုးရာသတ္တဝါ — <b>{html.escape(animal["animal"])}</b>\n'
+        f'ရိုးရာအရပ်မျက်နှာ — <b>{html.escape(animal["direction"])}</b>\n\n'
+        'မွန်းတည့် ၁၂ နာရီကို ဗုဒ္ဓဟူး/ရာဟု ခွဲခြားရာတွင် အသုံးပြုထားသည့် '
+        'ဤ Bot ၏ မူကွဲဖြစ်သည်။ အခြားရိုးရာမူကွဲများရှိသည်။\n'
+        'ဤရလဒ်မှာ ရိုးရာ ၈ နေ့နံ၏ သင်္ကေတအညွှန်းသာဖြစ်ပြီး '
+        'မဟာဘုတ်အိမ်တွက်ချက်မှု၊ ကိုယ်ပိုင်အနာဂတ်ဟောကိန်း မဟုတ်ပါ။ '
+        'မွေးအချက်အလက်ကို Database ထဲ မသိမ်းပါ။',
+        parse_mode='HTML', reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text='နေ့နံတွက်ချက်နည်း',
+                callback_data='evidence:'+result['evidence']['rule_id'])],
+            [InlineKeyboardButton(text='ရိုးရာသတ္တဝါနှင့် အရပ်မျက်နှာ',
+                callback_data='evidence:'+animal['rule_id'])],
+        ])
     )
 
 @dp.message(Command('number'))
