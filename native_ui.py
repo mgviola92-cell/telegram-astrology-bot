@@ -41,7 +41,7 @@ FEATURES = {
     "western": ("Western Astrology", "Natal Chart ကို Reference နဲ့ စစ်ဆေးနေဆဲဖြစ်ပါတယ်။ သီးခြားတွက်ထားတဲ့ Rising Sign ရှိရင် ရိုးရာ Annual Profection ကို တွက်နိုင်ပါတယ်။", (("Annual Profection", "profection"),)),
     "bazi": ("BaZi", "Four Pillars ကို တွက်နိုင်ပါတယ်။ True Solar Time နဲ့ seasonal validation မပြီးသေးပါ။", (
         ("Four Pillars", "bazi"), ("Da Yun Cycles", "dayun"),)),
-    "number": ("Numerology", "Life Path ကို တွက်ချက်နိုင်ပါတယ်။ အသေးစိတ်ဟောစာတမ်း မပြီးသေးပါ။", (
+    "number": ("Numerology", "Life Path ကိန်းနှင့် မျက်မှောက်ခေတ် ရိုးရာသင်္ကေတအနက်ကို သီးခြားကိုးကား၍ ဖတ်နိုင်ပါတယ်။", (
         ("Life Path", "number"),)),
     "tarot": ("Tarot", "78-card Tarot ဆွဲနိုင်ပါတယ်။ ကတ်ပုံအစုံနဲ့ Animation မပြီးသေးပါ။", (
         ("Draw a Card", "tarot"),)),

@@ -61,8 +61,14 @@ RULES = {
     'NUM-PYT-LIFE-PATH-001': {
         'heading': 'ဘဝလမ်းကြောင်းကိန်း',
         'method': 'မွေးလ၊ မွေးရက်နှင့် မွေးနှစ်ကိန်းတို့ကို သီးခြားပေါင်းလျှော့ပြီး ထပ်ပေါင်းလျှော့သည်။ 11, 22, 33 ကို Master Numbers အဖြစ်ထားသည်။',
-        'source': 'Modern Pythagorean-style numerology convention (school-dependent; book-level citation pending)',
+        'source': 'Hans Decoz, Life Path Number method, https://www.worldnumerology.com/numerology-life-path/ ; Numerology.com, Life Path Number meanings, https://www.numerology.com/articles/your-numerology-chart/life-path-number-meanings/ (school-dependent)',
         'limits': 'နာမည်/မွေးနေ့ကိန်းဂဏန်း၏ ရိုးရာအနက်ဖွင့်ဆိုချက်သာ ဖြစ်ပြီး ဖြစ်ရပ်တစ်ခုကို အာမခံမဟုတ်ပါ။'
+    },
+    'NUM-LIFE-PATH-THEMES-001': {
+        'heading': 'Life Path ရိုးရာကိန်းအနက် (Modern Numerology)',
+        'method': '၁–၉ နှင့် Master Numbers ၁၁၊ ၂၂၊ ၃၃ ၏ ဆက်စပ်သင်္ကေတခေါင်းစဉ်များကို မျက်မှောက်ခေတ် Numerology.com ကျောင်း၏ ဖော်ပြချက်အပေါ် အခြေခံ၍ မူရင်းမြန်မာစကားဖြင့် အကျဉ်းချုပ်ထားသည်။ ကိန်းတွက်ချက်မှုနှင့် သီးခြားဖြစ်သည်။',
+        'source': 'Numerology.com, What Is Numerology? https://www.numerology.com/articles/about-numerology/what-is-numerology/ ; Hans Decoz, Life Path: https://www.worldnumerology.com/numerology-life-path/',
+        'limits': 'Numerology ကျောင်းများအလိုက် သင်္ကေတကွာနိုင်သည်။ ဤအဓိပ္ပာယ်သည် လူ့စိတ်အခြေအနေ၊ အထူးစွမ်းအား၊ အလုပ်အကိုင်၊ ကျန်းမာရေး သို့မဟုတ် အနာဂတ်အောင်မြင်မှုကို သိပ္ပံနည်းကျ အတည်မပြုနိုင်ပါ။'
     },
     'CHN-BAZI-VISIBLE-WUXING-001': {
         'heading': 'BaZi မြင်ရသော ဓာတ်ငါးပါး',

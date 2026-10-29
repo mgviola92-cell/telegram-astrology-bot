@@ -18,6 +18,9 @@ class DailyCommandTests(unittest.IsolatedAsyncioTestCase):
         m.answer.assert_awaited_once()
         text=m.answer.await_args.args[0]
         self.assertIn("2026-10-27",text)
+        self.assertIn("\n",text)
+        self.assertNotIn("\\n",text)
+        self.assertIn("\n<b>ရိုးရာနေ့အမှတ်အသားများ</b>\n",text)
         self.assertIn("ရက်ရာဇာ",text)
         self.assertNotIn("ကံကြမ္မာသေချာ",text)
         self.assertLess(len(text),4096)

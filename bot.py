@@ -13,6 +13,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from astro_core import life_path
+from numerology_reading import interpret_life_path
 from profection_reading import profection_reading
 from natal_pipeline import assemble_natal
 from natal_render import render_natal_preview
@@ -139,7 +140,7 @@ async def native_navigation(cb: CallbackQuery):
         await cb.answer("ကိုယ်ပိုင်ဇာတာကို Private Chat မှာသာ ကြည့်ပါ။",show_alert=True)
         return
     if data=="ui:library":
-        text="<b>ကျမ်းကိုးမှတ်တမ်းများ</b>\\n━━━━━━━━━━━━━━\\nလေ့လာလိုသည့် ရိုးရာတွက်ချက်နည်းကို ရွေးပါ။"
+        text="<b>ကျမ်းကိုးမှတ်တမ်းများ</b>\n━━━━━━━━━━━━━━\nလေ့လာလိုသည့် ရိုးရာတွက်ချက်နည်းကို ရွေးပါ။"
         markup=reference_category_keyboard()
     elif data=="ui:home":
         text,markup=home_text(),home_keyboard()
@@ -230,18 +231,18 @@ async def daily_command(message: Message):
         await message.answer('ရက်စွဲကို YYYY-MM-DD ပုံစံဖြင့် 1900–2100 အတွင်း ပြန်စစ်ပါ။')
         return
     markers='၊ '.join(daily['active_labels']) if daily['active_labels'] else 'သီးခြားရိုးရာအမှတ်အသား မတွေ့ပါ။'
-    observations='\\n'.join(daily['observations'])
+    observations='\n'.join(daily['observations'])
     await message.answer(
-        '<b>မြန်မာရိုးရာ နေ့စဉ်ပြက္ခဒိန်</b>\\n'
-        '━━━━━━━━━━━━━━\\n'
-        f'ရက်စွဲ — <b>{html.escape(daily["date"])}</b> (မြန်မာစံတော်ချိန်အခြေခံ)\\n'
-        f'မြန်မာလ — <b>{html.escape(daily["myanmar_month"])}</b>\\n'
-        f'လ၏အဆင့် — <b>{html.escape(str(daily["moon_phase"]))}</b>\\n\\n'
-        '<b>ရိုးရာနေ့အမှတ်အသားများ</b>\\n'
-        f'{html.escape(markers)}\\n\\n'
-        f'{html.escape(observations)}\\n\\n'
-        f'နဂါးခေါင်းလှည့်ရာ — {html.escape(daily["nagahle_direction"])}\\n'
-        f'နက္ခတ် — {html.escape(daily["nakhat_name"])}\\n\\n'
+        '<b>မြန်မာရိုးရာ နေ့စဉ်ပြက္ခဒိန်</b>\n'
+        '━━━━━━━━━━━━━━\n'
+        f'ရက်စွဲ — <b>{html.escape(daily["date"])}</b> (မြန်မာစံတော်ချိန်အခြေခံ)\n'
+        f'မြန်မာလ — <b>{html.escape(daily["myanmar_month"])}</b>\n'
+        f'လ၏အဆင့် — <b>{html.escape(str(daily["moon_phase"]))}</b>\n\n'
+        '<b>ရိုးရာနေ့အမှတ်အသားများ</b>\n'
+        f'{html.escape(markers)}\n\n'
+        f'{html.escape(observations)}\n\n'
+        f'နဂါးခေါင်းလှည့်ရာ — {html.escape(daily["nagahle_direction"])}\n'
+        f'နက္ခတ် — {html.escape(daily["nakhat_name"])}\n\n'
         f'{html.escape(daily["note"])}',
         parse_mode='HTML',
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
@@ -316,6 +317,8 @@ async def personal_reading_command(message: Message):
             callback_data='evidence:'+reading['evidence_rule_ids'][1])],
         [InlineKeyboardButton(text='Life Path တွက်ချက်နည်း',
             callback_data='evidence:'+reading['evidence_rule_ids'][2])],
+        [InlineKeyboardButton(text='Life Path ရိုးရာအနက်',
+            callback_data='evidence:'+reading['evidence_rule_ids'][3])],
     ])
     await message.answer(
         '<b>ကိုယ်ပိုင်ရိုးရာဇာတာအနှစ်ချုပ်</b>\n'
@@ -329,7 +332,8 @@ async def personal_reading_command(message: Message):
         f'{html.escape(reading["mahabote_interpretation"])}\n\n'
         '<b>Numerology — Life Path</b>\n'
         f'သတ်မှတ်ထားသော ကိန်းလျှော့နည်းအရ — <b>{reading["life_path"]}</b>\n'
-        'ဤနံပါတ်အတွက် ကျမ်းကိုးအပြည့် အနက်ဖွင့်မှု မဖြည့်ရသေးသဖြင့် အဓိပ္ပာယ်အသစ် မတီထွင်ထားပါ။\n\n'
+        f'<b>{html.escape(reading["life_path_theme"])}</b>\n'
+        f'{html.escape(reading["life_path_interpretation"])}\n\n'
         'ရိုးရာစနစ်နှစ်ခုကို သီးခြားဖော်ပြထားခြင်းသာဖြစ်သည်။ '
         'အနာဂတ်ဖြစ်ရပ်ကို အာမခံမဟုတ်ပါ။ ဤ Command က မွေးအချက်အလက်ကို မသိမ်းပါ။',
         parse_mode='HTML', reply_markup=rule_buttons
@@ -484,6 +488,7 @@ async def numerology(message: Message):
         if born > date.today(): raise ValueError('future date')
         result=life_path(born)
         reading_facts('numerology',result)
+        number_meaning=interpret_life_path(result)
     except ValueError:
         await message.answer('🌫️ မွေးနေ့ပုံစံ မမှန်သေးပါ။ YYYY-MM-DD အတိုင်း ပြန်ဖြည့်ပေးပါ။')
         return
@@ -492,8 +497,14 @@ async def numerology(message: Message):
         '━━━━━━━━━━━━━━\n'
         'Pythagorean-style ကိန်းဂဏန်းတွက်နည်းအရ ထွက်ပေါ်လာသည့်ရလဒ်ဖြစ်သည်။\n\n'
         f'📖 စည်းမျဉ်း: <code>{result["evidence"]["rule_id"]}</code>\n'
-        'ဟောကိန်းအနက်ဖွင့်ဆိုချက်များကို ကျမ်းကိုးစစ်ဆေးပြီးမှ ဖြည့်သွင်းမည်။',
-        parse_mode='HTML', reply_markup=evidence_button(result['evidence']['rule_id']),
+        f'<b>{html.escape(number_meaning["theme"])}</b>\n'
+        f'{html.escape(number_meaning["interpretation"])}\n\n'
+        'ဤအနက်မှာ ယနေ့ခေတ် Numerology ကျောင်း၏ ရိုးရာအမြင်သာဖြစ်ပြီး '
+        'လူတစ်ဦး၏ အနာဂတ်ကို အဆုံးအဖြတ်မပေးပါ။',
+        parse_mode='HTML', reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text='တွက်ချက်နည်း',callback_data='evidence:'+result['evidence']['rule_id'])],
+            [InlineKeyboardButton(text='ရိုးရာအနက်ကျမ်းကိုး',callback_data='evidence:'+number_meaning['interpretation_rule_id'])],
+        ]),
     )
 
 @dp.message(Command('natal'))

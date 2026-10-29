@@ -64,6 +64,6 @@ def life_path(date_of_birth: date, preserve_master: bool = True) -> dict:
         method='reduce month, day, digits of year separately; sum and reduce; preserve 11/22/33',
         input_assumptions={'birth_date':date_of_birth.isoformat(),'preserve_master_numbers':preserve_master},
         derived_facts={'month_component':month,'day_component':day,'year_component':year,'life_path':final},
-        reference='Conventional modern Pythagorean numerology; school-specific citation pending verification',
+        reference='Hans Decoz, Life Path calculation, https://www.worldnumerology.com/numerology-life-path/ (modern school-dependent convention)',
     )
     return {'number':final,'evidence':asdict(evidence)}

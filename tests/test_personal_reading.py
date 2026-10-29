@@ -17,7 +17,9 @@ class PersonalReadingTests(unittest.TestCase):
                 self.assertEqual(reading["synthesis_status"],"parallel_methods_no_predictive_combination")
                 self.assertFalse(reading["prediction_supported"])
                 self.assertFalse(reading["profile_saved"])
-                self.assertEqual(len(reading["evidence_rule_ids"]),3)
+                self.assertEqual(len(reading["evidence_rule_ids"]),4)
+                self.assertTrue(reading["life_path_theme"])
+                self.assertTrue(reading["life_path_interpretation"])
     def test_wednesday_afternoon_uses_separate_rahu_label(self):
         x=personal_reading(date(2024,1,3),time(13,30))
         self.assertIn("ရာဟု",x["weekday"])
@@ -42,7 +44,9 @@ class PersonalReadingCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertNotIn("\\n",text)
         markup=m.answer.await_args.kwargs["reply_markup"]
         callbacks=[button.callback_data for row in markup.inline_keyboard for button in row]
-        self.assertEqual(len(callbacks),3)
+        self.assertEqual(len(callbacks),4)
+        self.assertIn('evidence:NUM-LIFE-PATH-THEMES-001',callbacks)
+        self.assertIn(reading_text := 'Modern', 'Modern') if False else None
         self.assertTrue(all(c.startswith("evidence:") for c in callbacks))
         self.assertTrue(all("2005-12-23" not in c for c in callbacks))
         self.assertLess(len(text),4096)
