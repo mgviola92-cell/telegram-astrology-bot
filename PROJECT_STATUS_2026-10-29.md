@@ -1,0 +1,55 @@
+# Development status — 2026-10-29
+
+Repository: mgviola92-cell/telegram-astrology-bot
+Branch: main
+Last verified source and test commit: a0e2b376c39c1c88ae834b071aa0303e1407e6b3
+GitHub Actions: https://github.com/mgviola92-cell/telegram-astrology-bot/actions/runs/40840143670
+Result: SUCCESS — 370 unittest tests, 5 skipped; compile and CI preflight succeeded.
+This is NOT a real Telegram API / Render live-smoke result.
+
+## Development changes carried over from the full October 28 handoff
+- 24a962af: Fixed /daily escaped newline rendering, added sourced modern
+  Life Path 1–9,11,22,33 original Burmese reflections and evidence keys.
+  Personal /reading now presents separate Mahabote and Numerology themes.
+- 94f047fa: Added Telegram /number privacy and invalid-argument tests;
+  refreshed stale README, design and roadmap statements.
+- a25a2c58: Added per-user/per-private-chat temporary reading form input
+  with 300-second expiry per stage and bounded in-process sessions.
+- c923e32f: Wired private native start/skip callbacks, /reading with no
+  arguments, HH:MM input, /cancel and shared personal-reading response.
+- daaffdd8: Added offline end-to-end reading-form tests for validation,
+  invalid input, group exclusion, cancel and no birth dates in callbacks.
+- a0e2b376: Corrected existing test fixtures and native callback
+  validation; all 370 tests succeeded (5 skipped).
+All changes above are in main and ARE NOT DEPLOYED.
+
+## Hard constraints retained
+1. All-in-one native Telegram experience, no WebApp/Mini App.
+2. Myanmar calendar/Mahabote, Western tropical/Hellenistic, Chinese BaZi
+   with Chinese Da Yun, Numerology and Tarot; no Vedic/Jyotish/Dasha.
+3. Source/algorithm-based calculations, separate and attributed
+   school-specific interpretations, no invented predictions or guaranteed
+   personal outcomes. Tarot draw random, meaning source-reviewed.
+4. Never show private birth details in groups or callback identifiers.
+   Birth profiles require explicit owner opt-in and encrypted persistent
+   storage; ordinary /daily, /number, /reading do NOT save.
+5. No image binary in DB, only optional Telegram file_id media.
+6. Western natal preview stays OFF until independent benchmark/security
+   checks and explicit owner release decision. No silent JPL downloads.
+7. No Render deploy or production/live Telegram API claim until the owner
+   approves controlled smoke checks and later deployment explicitly.
+
+## Next engineering batches
+- Improve error handling after Telegram API send failures, multi-worker
+  session strategy, input-flow integration with other traditions.
+- Build larger authentic evidence-reviewed Myanmar, Chinese and Western
+  interpretive material without cross-school fabricated synthesis.
+- Finish original-source research, professional review and complete
+  licensed Tarot art / file_id assets; harden group/owner settings.
+- Security/privacy audit, opt-in profile storage deletion/backup review,
+  operational logging and rate limits, independent ephemeris benchmark,
+  approved live Telegram smoke.
+- Render deployment remains a separate explicit permission gate.
+
+README and RESEARCH_VALIDATION_GATE.md contain detailed foundations.
+Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.

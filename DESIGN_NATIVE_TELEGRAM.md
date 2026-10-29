@@ -42,5 +42,8 @@ Live Telegram verification and multi-worker state are pending.
 
 Private /daily, /reading and /number also exist. Personal Reading
 displays separate Mahabote and sourced Life Path symbolism, not a
-cross-system event prediction. Full private step-by-step birth input,
-complete media and group/owner controls remain future work.
+cross-system event prediction. Private step-by-step /reading birth input is now implemented using an
+in-memory, user-bound 5-minute-per-step session. It accepts birth date,
+then optional local birth time, with a no-clock skip button and /cancel;
+no implicit encrypted-profile writes. Sessions disappear on restart.
+Complete media and group/owner controls remain future work.

@@ -18,6 +18,9 @@ deployment or implementation status.
   genuinely rendered newlines (not backslash-n text).
 - Private /reading: distinct Mahabote and Life Path sections; no
   invented cross-tradition synthesis or implicit birth-data storage.
+  The native menu and argument-free /reading now start a two-step
+  private birth-date/optional-clock form, with 5-minute per-step expiry,
+  cancellation and a no-clock skip button. The old direct command remains.
 - Numerology /number: Life Path arithmetic plus 12 sourced modern
   school-specific Burmese symbolic themes (1–9, 11, 22, 33).
   Details: NUMEROLOGY_INTERPRETATION_SOURCES.md.

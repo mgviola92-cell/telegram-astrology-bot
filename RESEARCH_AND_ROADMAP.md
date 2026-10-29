@@ -35,8 +35,10 @@ Traditional readings are culturally attributed, **not** empirically
 verified event forecasts or diagnostic claims; schools disagree.
 
 ## Next batches
-1. Implement privacy-safe native step-by-step birth inputs, cancellation,
-   short TTL, group restrictions and tests; never save without opt-in.
+1. The private native /reading step-by-step input, /cancel, short TTL,
+   group guards and offline tests are implemented. Next extend the
+   consent-first experience to the other birth-time-dependent systems,
+   without storing birth data by default.
 2. Author-review full BaZi/Western/Myanmar interpretation material
    with sources, boundary conditions and separate arithmetic evidence.
 3. Complete independent natal reference checks, legal/license review,
