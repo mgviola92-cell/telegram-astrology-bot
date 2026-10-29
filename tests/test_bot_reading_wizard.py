@@ -75,3 +75,32 @@ class ReadingWizardCommandTests(unittest.IsolatedAsyncioTestCase):
 
 if __name__=="__main__":
     unittest.main()
+
+class RealCallbackBindingTests(unittest.IsolatedAsyncioTestCase):
+    async def test_current_button_works_and_prior_one_is_rejected(self):
+        from unittest.mock import patch
+        from bot import native_navigation,reading_inputs
+        owner=99220031
+        chat=SimpleNamespace(id=owner,type="private")
+        reading_inputs.start(owner,owner)
+        reading_inputs.set_date(owner,owner,"2005-12-23",
+                                __import__("datetime").date(2026,10,29))
+        reading_inputs.bind_prompt(owner,owner,900)
+        def callback(message_id):
+            msg=SimpleNamespace(chat=chat,message_id=message_id,answer=AsyncMock())
+            return SimpleNamespace(data="ui:reading:skip",message=msg,
+                                   from_user=SimpleNamespace(id=owner),answer=AsyncMock())
+        try:
+            with patch("bot.Message",SimpleNamespace):
+                old=callback(899)
+                await native_navigation(old)
+                self.assertTrue(old.answer.await_args.kwargs["show_alert"])
+                self.assertEqual(reading_inputs.step(owner,owner),"time")
+                new=callback(900)
+                await native_navigation(new)
+                self.assertIn("ကိုယ်ပိုင်ရိုးရာဇာတာ",new.message.answer.await_args.args[0])
+                self.assertIsNone(reading_inputs.step(owner,owner))
+                await native_navigation(old)
+                self.assertTrue(old.answer.await_args.kwargs["show_alert"])
+        finally:
+            reading_inputs.cancel(owner,owner)

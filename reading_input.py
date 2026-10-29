@@ -43,6 +43,24 @@ class ReadingInputSessions:
         item.update(step="time", born=born, until=self.clock() + self.ttl)
         return born
 
+    def bind_prompt(self, chat_id, user_id, message_id):
+        """Bind the optional-time button to its actual Telegram prompt."""
+        item = self._lookup(chat_id, user_id)
+        if (item is None or item["step"] != "time"
+                or type(message_id) is not int or message_id <= 0):
+            return False
+        item["prompt_message_id"] = message_id
+        return True
+
+    def finish_from_button(self, chat_id, user_id, message_id):
+        """Reject stale buttons, including those from a prior reading form."""
+        item = self._lookup(chat_id, user_id)
+        if (item is None or item["step"] != "time"
+                or type(message_id) is not int
+                or item.get("prompt_message_id") != message_id):
+            raise ValueError("Stale or unbound birth-time button")
+        return self.finish(chat_id, user_id, "မသိပါ")
+
     def finish(self, chat_id, user_id, value):
         item = self._lookup(chat_id, user_id)
         if item is None or item["step"] != "time":

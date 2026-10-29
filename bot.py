@@ -152,10 +152,15 @@ async def native_navigation(cb: CallbackQuery):
         await start_private_reading_input(cb.message,cb.from_user.id)
         return
     elif data=="ui:reading:skip":
-        if cb.from_user is None or reading_inputs.step(cb.message.chat.id,cb.from_user.id)!="time":
+        if cb.from_user is None:
             await cb.answer("ဒီအဆင့် သက်တမ်းကုန်သွားပါပြီ။",show_alert=True)
             return
-        born,clock=reading_inputs.finish(cb.message.chat.id,cb.from_user.id,"မသိပါ")
+        try:
+            born,clock=reading_inputs.finish_from_button(
+                cb.message.chat.id,cb.from_user.id,cb.message.message_id)
+        except (TypeError,ValueError):
+            await cb.answer("ဒီခလုတ်က ဟောင်းနေပါပြီ။ မွေးချိန်ကို ပြန်ဖြည့်ပါ။",show_alert=True)
+            return
         await cb.answer()
         await post_personal_reading(cb.message,personal_reading(born,clock))
         return
@@ -947,7 +952,7 @@ async def private_reading_input_message(message: Message):
         except ValueError:
             await message.answer("မွေးရက်ကို 1900–2100 အတွင်း YYYY-MM-DD ပုံစံဖြင့် ပြန်ဖြည့်ပါ။")
             return
-        await message.answer(
+        prompt=await message.answer(
             "<b>မွေးချိန် ထည့်ပါ</b>\n"
             "မွေးရပ်ဒေသ နာရီကို HH:MM ပုံစံဖြင့် ပို့ပါ။ "
             "ဥပမာ <code>08:37</code>\n"
@@ -959,6 +964,7 @@ async def private_reading_input_message(message: Message):
                                      callback_data="ui:reading:skip")
             ]])
         )
+        reading_inputs.bind_prompt(chat_id,user_id,getattr(prompt,"message_id",None))
     elif stage=="time":
         try:
             day,clock=reading_inputs.finish(chat_id,user_id,message.text)
