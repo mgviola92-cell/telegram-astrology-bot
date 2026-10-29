@@ -38,6 +38,15 @@ deployment or implementation status.
   SQLite birth profiles; no automatic profile saving and no birth data
   in callback payloads.
 
+### Group-safe daily Myanmar calendar
+
+Group members can request /today to see a short, **public/non-personal**
+Myanmar calendar card with stateless nearby-day controls. A bounded
+in-memory result cache and per-group command cooldown avoid repeated
+computation and chat spam. /daily and all private birth readings remain
+private-only. No automatic daily group messages and no DB writes; read
+[group calendar design](GROUP_CALENDAR_2026-10-29.md).
+
 ### Resource and database savings
 
 The default calculations do not persist personal data. Optional encrypted

@@ -78,3 +78,13 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
 - Corrected test helper in the following commit; inspect GitHub Actions
   tied to final HEAD for verified test counts. These are offline tests,
   not live Telegram API verification. No deployment was performed.
+
+
+## Opt-in group calendar feature
+
+- fb15b4ac: Group-safe /today command with local Myanmar date,
+  cached short culturally grounded calendar facts, bounded per-chat
+  cooldown and stateless interactive nearby-day navigation.
+- Details in GROUP_CALENDAR_2026-10-29.md, including no auto-posts,
+  no birth input, and no new database storage.
+- Telegram live behavior remains unverified pending owner approval.

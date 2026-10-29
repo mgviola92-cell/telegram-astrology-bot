@@ -82,3 +82,14 @@ Official documentation:
 - Evidence/source callback details are blocked from public groups.
 - None of these changes adds background DB queries, cache databases,
   scheduled tasks or additional media uploads.
+
+
+## Group on-demand calendar
+The /today command lets groups request a short non-personal Myanmar
+calendar card. No birth data, no external API, no DB reads/writes.
+Calendar text is cached per date in 32-entry bounded RAM LRU; group
+request traffic is throttled by 20 seconds per chat with a bounded
+1024-entry RAM map. Only on-demand requests create short messages;
+no group-wide scheduled posts or keepalives. Small stateless day
+buttons edit the same card instead of posting one message per tap.
+See GROUP_CALENDAR_2026-10-29.md.
