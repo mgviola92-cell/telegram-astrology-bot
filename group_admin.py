@@ -16,4 +16,5 @@ async def is_verified_group_admin(bot,chat_id,from_user,*,sender_chat=None):
         # Telegram only guarantees other-user checks if the bot is itself
         # an admin. Fail closed if the API cannot verify.
         return False
-    return str(getattr(member,"status","")) in ("creator","administrator")
+    status=getattr(member,"status","")
+    return str(getattr(status,"value",status)) in ("creator","administrator")

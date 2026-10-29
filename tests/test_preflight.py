@@ -65,6 +65,23 @@ class PreflightTests(unittest.TestCase):
             r=preflight.inspect_environment(mode="deploy",environ={
                 "TELEGRAM_BOT_TOKEN":"111:dummy","ENABLE_WESTERN_NATAL":"1"})
         self.assertFalse(next(x for x in r["checks"] if x["name"]=="jpl_kernel_present")["passed"])
+    def test_group_settings_require_persistent_render_disk_and_real_directory(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+        with TemporaryDirectory() as temp:
+            config={"TELEGRAM_BOT_TOKEN":"333:test","RENDER":"1",
+                    "GROUP_SETTINGS_DB_PATH":str(Path(temp)/"small.sqlite3")}
+            with patch.object(preflight.importlib,"import_module",return_value=object()):
+                result=preflight.inspect_environment(mode="deploy",environ=config)
+                self.assertFalse(result["passed"])
+                self.assertFalse(next(x for x in result["checks"] if x["name"]=="render_group_settings_disk_confirmed")["passed"])
+                config["GROUP_SETTINGS_PERSISTENT_DISK_CONFIRMED"]="1"
+                accepted=preflight.inspect_environment(mode="deploy",environ=config)
+                self.assertTrue(accepted["passed"])
+                config["GROUP_SETTINGS_DB_PATH"]=str(Path(temp)/"missing"/"small.sqlite3")
+                bad=preflight.inspect_environment(mode="deploy",environ=config)
+                self.assertFalse(next(x for x in bad["checks"] if x["name"]=="group_settings_db_directory")["passed"])
+
     def test_optional_jpl_path_must_exist_if_configured(self):
         with patch.object(preflight.importlib,"import_module",return_value=object()):
             r=preflight.inspect_environment(mode="deploy",environ={

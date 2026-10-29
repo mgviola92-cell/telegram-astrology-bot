@@ -14,6 +14,14 @@ class TelegramAdminTests(unittest.IsolatedAsyncioTestCase):
                 bot.get_chat_member.return_value=SimpleNamespace(status=status)
                 self.assertEqual(await is_verified_group_admin(bot,-101,SimpleNamespace(id=22)),expected)
         self.assertEqual(bot.get_chat_member.await_args.kwargs,{"chat_id":-101,"user_id":22})
+    async def test_enum_status_from_aiogram_is_accepted(self):
+        from aiogram.enums import ChatMemberStatus
+        bot=SimpleNamespace(get_chat_member=AsyncMock(return_value=SimpleNamespace(
+            status=ChatMemberStatus.ADMINISTRATOR)))
+        self.assertTrue(await is_verified_group_admin(bot,-101,SimpleNamespace(id=22)))
+        bot.get_chat_member.return_value.status=ChatMemberStatus.CREATOR
+        self.assertTrue(await is_verified_group_admin(bot,-101,SimpleNamespace(id=22)))
+
     async def test_unknown_id_and_anonymous_sender_deny_without_api_call(self):
         bot=SimpleNamespace(get_chat_member=AsyncMock(return_value=SimpleNamespace(status="administrator")))
         self.assertFalse(await is_verified_group_admin(bot,-101,None))
