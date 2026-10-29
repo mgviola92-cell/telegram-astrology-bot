@@ -307,3 +307,20 @@ Some Burmese historical writings instead describe an evening cutoff,
 so the app states its chosen convention rather than claiming there is
 one indisputable national rule. No birth data is automatically stored
 and no animal symbol is presented as a guaranteed personality or fate.
+
+
+## BaZi Ten Gods relationship reading
+
+Private /bazi now adds source-grounded Burmese labels to the
+computed Ten Gods for Year, Month and Hour Heavenly Stems relative to
+the Day Stem (Day Master). There are seven evidence buttons, including
+a distinct Ten Gods interpretive source apart from the calculation.
+Five dynamically calculated five-phase relations are presented:
+Peer, Output, Wealth, Authority and Resource.
+
+Individual Ten Gods names follow lunar-python LunarUtil.SHI_SHEN and
+Yin/Yang polarity. Hidden Stems are unweighted; seasonal strength and
+favorable/unfavorable elements are not inferred. Roles are not
+literal predictions of money, employment, illness or relationships.
+The verified natal input is recomputed before deriving the labels.
+No new DB, birth-detail callback, media, or external API.

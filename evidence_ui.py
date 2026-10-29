@@ -76,6 +76,12 @@ RULES = {
         'source': 'Traditional Five Phases correspondences: https://www.ibiblio.org/chinesehistory/contents/08fea/c06s02.htm ; https://uaya.org/iching/correspondences/',
         'limits': 'Hidden Stems, Seasonal Strength နှင့် Day Master အားကောင်းမှု မတွက်ရသေးပါ။ အရေအတွက်တစ်ခုတည်းဖြင့် အနာဂတ်ဖြစ်ရပ် မဆုံးဖြတ်နိုင်ပါ။'
     },
+    'CHN-BAZI-TENGODS-SYMBOLIC-001': {
+        'heading': 'BaZi Ten Gods — ဓာတ်အုပ်စုငါးမျိုးနှင့် ရိုးရာသင်္ကေတအနက်',
+        'method': 'တွက်ပြီးသား တိုင်လေးတိုင်ကို မူလမွေးချိန်နှင့် Source Evidence ဖြင့် ပြန်တွက်စစ်သည်။ Day Master နဲ့ တခြားမြင်ရသော နှစ်/လ/နာရီ Heavenly Stem သုံးခု၏ ဓာတ်အမျိုးအစား၊ ထုတ်ပေး/ထိန်းချုပ်ဆက်နွယ်မှုနှင့် Yin/Yang တူ/ကွာချက်မှ Ten Gods အမည်များကို သတ်မှတ်သည်။ အဖော်၊ ဖော်ထုတ်၊ အရင်းအမြစ်၊ ထိန်းညှိနှင့် ပံ့ပိုးမှု အုပ်စုငါးမျိုးအဖြစ် မြန်မာလို သင်္ကေတအကျဉ်းချုပ်ဖော်ပြသည်။',
+        'source': '6tail/lunar-python LunarUtil.SHI_SHEN (calculation): https://github.com/6tail/lunar-python ; Traditional roles: https://yuanzizhiyi.com/en/wiki/bazi/ten-gods ; https://bazimethod.com/learn/ten-gods/',
+        'limits': 'ဤအုပ်စုအမည်များက တိုက်ရိုက်ငွေဝင်မည်၊ အရာရှိဖြစ်မည်၊ အန္တရာယ်ကျမည် စသည့် အနာဂတ်ရလဒ်များကို မဆိုလိုပါ။ 7 Killings နှင့် Rob Wealth သည် စာရင်းဇယားအမည်များဖြစ်ပြီး ထိခိုက်မှုအာမခံချက် မဟုတ်ပါ။ Hidden Stems အလေးချိန်၊ ရာသီအင်အား၊ ဓာတ်အားကောင်းမှုနှင့် Favorable Elements မသတ်မှတ်ရသေးပါ။ ကျောင်းအလိုက် အနက်ကွာနိုင်သည်။'
+    },
     'CHN-BAZI-TENGODS-001': {
         'heading': 'BaZi Ten Gods (ဆယ်မျိုးဆက်စပ်မှု)',
         'method': 'Day Master နဲ့ Heavenly Stem တစ်ခုချင်းစီ၏ ဓာတ်မွေးပေးခြင်း၊ ဓာတ်ထိန်းချုပ်ခြင်း၊ Yin/Yang တူကွာခြင်းကို ရိုးရာစည်းမျဉ်းအတိုင်း တွက်ချက်သည်။',

@@ -171,3 +171,14 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
   are rejected, and the cutoff/source variation is communicated.
 - This remains a cultural symbolic lookup, NOT eight new personal
   fate formulas, and no birth data is written to DB.
+
+
+## BaZi Ten Gods interpretive source sprint
+
+- 24fbe951: Evidence-rechecked ten-role and five-family Burmese
+  educational reading adapter. Verifies Day Master, three other visible
+  stems and all branch hidden relationships against original pillars.
+- Private /bazi now includes the meanings with a separate linked source
+  ID and without DOB/time in callbacks; /study Bazi adds same provenance.
+- This does not fabricate Day Master strength, favorable elements or
+  fortunes. Offline CI must be checked for final commit.

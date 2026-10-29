@@ -22,6 +22,7 @@ from reading_facts import reading_facts
 from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
 from bazi_element_reading import bazi_element_reading
+from bazi_ten_gods_reading import interpret_ten_gods, summarize_ten_gods_burmese
 from bazi_growth_stages import calculate_growth_stages
 from bazi_seasons import calculate_bazi_seasons
 from bazi_luck import calculate_bazi_luck
@@ -954,6 +955,8 @@ async def bazi(message: Message):
         result=calculate_bazi(normalized['wall_time'], timezone_verified=normalized['timezone'])
         reading_facts('bazi',result)
         element_reading=bazi_element_reading(result)
+        ten_gods_reading=interpret_ten_gods(result)
+        ten_gods_section=summarize_ten_gods_burmese(ten_gods_reading)
         growth_reading=calculate_growth_stages(result)
         seasonal_reading=calculate_bazi_seasons(result)
     except (ValueError,RuntimeError):
@@ -970,6 +973,7 @@ async def bazi(message: Message):
         ("Five Elements","CHN-BAZI-VISIBLE-WUXING-001"),
         ("Hidden Stems","CHN-BAZI-HIDDEN-STEMS-001"),
         ("Ten Gods","CHN-BAZI-TENGODS-001"),
+        ("Ten Gods အနက်","CHN-BAZI-TENGODS-SYMBOLIC-001"),
         ("Twelve Stages","CHN-BAZI-CHANGSHENG-001"),
         ("Seasons","CHN-BAZI-SEASON-MONTH-001"),
     )
@@ -982,7 +986,7 @@ async def bazi(message: Message):
         for label,rule_id in methods
     ]
     bazi_markup=InlineKeyboardMarkup(inline_keyboard=[
-        buttons[0:2],buttons[2:4],buttons[4:6]
+        buttons[0:2],buttons[2:4],buttons[4:6],buttons[6:]
     ])
     balance=' · '.join(f'{name}: {count}' for name,count in visible['visible_counts'].items())
     growth_summary=' · '.join(f'{name}: {growth_reading["stages"][name]} ({growth_reading["burmese_stage_names"][name]})' for name in ('year','month','day','hour'))
@@ -1008,7 +1012,7 @@ async def bazi(message: Message):
         f'🍃 Hidden Stems — {html.escape(hidden_summary)}\n'
         'အဓိက/အရံဓာတ်အစဉ်သာ ဖြစ်ပြီး ရာသီအင်အား မတွက်ရသေးပါ။\n\n'
         f'☯️ Ten Gods — {html.escape(gods_summary)}\n'
-        'ဤသည် ရိုးရာ ဆက်စပ်မှုအမျိုးအစားများသာဖြစ်သည်။\n\n'
+        f'{ten_gods_section}\n\n'
         '<b>十二长生 — ရိုးရာအဆင့် ၁၂ မျိုး</b>\n'
         f'{html.escape(growth_summary)}\n'
         'ဤအဆင့်အမည်များသည် ကျန်းမာရေး သို့မဟုတ် အနာဂတ်ဖြစ်ရပ်ကို ခန့်မှန်းခြင်း မဟုတ်ပါ။\n\n'

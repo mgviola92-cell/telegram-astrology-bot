@@ -17,14 +17,23 @@ class BaziBotCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("乙酉",body)
         self.assertIn("十二长生",body)
         self.assertIn("Ten Gods",body)
+        self.assertIn("ရိုးရာ ဓာတ်ဆက်နွယ်မှု ၅ အုပ်စု",body)
+        self.assertIn("正印",body)
+        self.assertIn("偏财",body)
+        self.assertIn("Hidden Stems များကို အလေးချိန်မသတ်မှတ်ရသေး",body)
+        self.assertLess(len(body),4096)
         self.assertIn("Solar-Term",body)
         self.assertIn("Winter",body)
         self.assertIn("Asia/Yangon",body)
         self.assertNotIn(chr(92)+"n",body)
         markup=kwargs["reply_markup"]
-        self.assertEqual([len(row) for row in markup.inline_keyboard],[2,2,2])
+        self.assertEqual([len(row) for row in markup.inline_keyboard],[2,2,2,1])
         buttons=[b for row in markup.inline_keyboard for b in row]
-        self.assertEqual(len({b.text for b in buttons}),6)
+        self.assertEqual(len({b.text for b in buttons}),7)
+        self.assertIn("evidence:CHN-BAZI-TENGODS-SYMBOLIC-001",
+                      [b.callback_data for b in buttons])
+        self.assertTrue(all("2005-12-23" not in b.callback_data
+                            for b in buttons))
         self.assertEqual(set(b.callback_data.split(":",1)[1] for b in buttons)&set(RULES),
                          {b.callback_data.split(":",1)[1] for b in buttons})
         self.assertFalse(any(ord(c)>0x1F000 for b in buttons for c in b.text))

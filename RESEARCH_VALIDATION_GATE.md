@@ -297,3 +297,22 @@ This document tracks actual completed versus pending work. No features added bey
 - Added a separate evidence record for 8-day animal/direction symbolism,
   which is NOT the seven-house Mahabote algorithm or any scientific
   evidence of personality predictions.
+
+
+## BaZi Ten Gods source/interpretation boundary (2026-10-29)
+
+- Calculation: 6tail/lunar-python LunarUtil.SHI_SHEN
+  https://github.com/6tail/lunar-python; all 100 pairwise Heavenly Stem
+  combinations already have comparison tests.
+- Independent relationship matrix and contextual limitations:
+  https://yuanzizhiyi.com/en/wiki/bazi/ten-gods
+  and https://bazimethod.com/learn/ten-gods/
+- Families: same Day Master phase=Peer; produced by Day Master=Output;
+  controlled by Day Master=Wealth; controlling Day Master=Authority;
+  producing Day Master=Resource. Same/opposite Yin/Yang split ten roles.
+- Names such as Seven Killings, Rob Wealth, Hurting Officer describe
+  historical relationships, NOT literal criminal, health or financial
+  outcomes. Burmese readings are contemporary educational paraphrases,
+  not original-quote translations or empirically validated predictions.
+- Hidden stem weighting, month-command strength and favorable-element
+  recommendations are explicitly out of scope until separately reviewed.
