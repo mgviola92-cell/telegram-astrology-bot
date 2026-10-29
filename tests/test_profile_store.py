@@ -28,6 +28,15 @@ class ProfileStoreTests(unittest.TestCase):
         row=conn.execute("SELECT encrypted_payload FROM birth_profiles").fetchone()[0]
     self.assertNotIn(b"2005-12-23",row)
     self.assertNotIn("2005-12-23".encode(),Path(self.db).read_bytes())
+ def test_database_uses_persistent_wal_mode_and_minimal_profile_rows(self):
+    with sqlite3.connect(self.db) as conn:
+        self.assertEqual(conn.execute("PRAGMA journal_mode").fetchone()[0].lower(),"wal")
+        columns=[r[1] for r in conn.execute("PRAGMA table_info(birth_profiles)")]
+        self.assertEqual(columns,["user_id","encrypted_payload","updated_unix","consent_unix"])
+        self.assertEqual(conn.execute("SELECT COUNT(*) FROM birth_profiles").fetchone()[0],0)
+    self.store.read(123)
+    with sqlite3.connect(self.db) as conn:
+        self.assertEqual(conn.execute("SELECT COUNT(*) FROM birth_profiles").fetchone()[0],0)
  def test_wrong_key_fails(self):
     self.store.save(123,self.birth,explicit_consent=True)
     wrong=ProfileStore(self.db,Fernet.generate_key())

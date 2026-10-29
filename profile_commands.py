@@ -15,6 +15,11 @@ router=Router()
 
 @lru_cache(maxsize=1)
 def _store():
+    # Free Render web services have no persistent disk. Opt-in profiles must
+    # not silently land on a filesystem that disappears on spin-down/redeploy.
+    # This guard is NOT proof of a mounted disk: the operator must verify it.
+    if os.environ.get("RENDER") and os.environ.get("PROFILE_PERSISTENT_DISK_CONFIRMED")!="1":
+        return None
     key=os.environ.get("PROFILE_ENCRYPTION_KEY")
     db=os.environ.get("PROFILE_DB_PATH")
     if not key or not db:

@@ -44,6 +44,10 @@ def inspect_environment(*, mode="ci", environ=None):
         add("profile_config_paired",bool(path)==bool(key),
             "Set both PROFILE_DB_PATH and PROFILE_ENCRYPTION_KEY, or neither")
         if path and key:
+            if env.get("RENDER"):
+                add("render_profile_persistence_confirmed",
+                    env.get("PROFILE_PERSISTENT_DISK_CONFIRMED")=="1",
+                    "Render SQLite birth profiles require a verified paid persistent disk; free web service filesystem is ephemeral")
             try:
                 from cryptography.fernet import Fernet
                 Fernet(key.encode("ascii"))
@@ -66,6 +70,9 @@ def inspect_environment(*, mode="ci", environ=None):
         elif kernel:
             add("jpl_kernel_optional_path",Path(kernel).is_file(),
                 "Configured optional JPL path must exist if provided")
+        media_mode=env.get("TAROT_MEDIA_MODE","telegram").strip().lower()
+        add("tarot_media_mode",media_mode in ("telegram","text"),
+            "TAROT_MEDIA_MODE must be telegram or text; configured Telegram file_ids are reusable, not uploaded")
         # Animation IDs are optional: bot.py implements a text-only fallback.
         # Recording them as warnings avoids blocking a valid text-only bot.
         for var in ("TAROT_REVEAL_FILE_ID","TAROT_SHUFFLE_FILE_ID"):

@@ -34,6 +34,32 @@ class PreflightTests(unittest.TestCase):
                 result=preflight.inspect_environment(mode="deploy",environ=env)
         self.assertTrue(result["passed"])
         self.assertIn("optional:TAROT_SHUFFLE_FILE_ID",[x["name"] for x in result["checks"]])
+    def test_render_profile_storage_requires_explicit_persistent_disk_confirmation(self):
+        from tempfile import TemporaryDirectory
+        from pathlib import Path
+        from cryptography.fernet import Fernet
+        with TemporaryDirectory() as directory:
+            config={"TELEGRAM_BOT_TOKEN":"123:test", "RENDER":"true",
+                    "PROFILE_DB_PATH":str(Path(directory)/"birth.sqlite3"),
+                    "PROFILE_ENCRYPTION_KEY":Fernet.generate_key().decode("ascii")}
+            with patch.object(preflight.importlib,"import_module",return_value=object()):
+                r=preflight.inspect_environment(mode="deploy",environ=config)
+                self.assertFalse(r["passed"])
+                guard=next(c for c in r["checks"] if c["name"]=="render_profile_persistence_confirmed")
+                self.assertFalse(guard["passed"])
+                config["PROFILE_PERSISTENT_DISK_CONFIRMED"]="1"
+                verified=preflight.inspect_environment(mode="deploy",environ=config)
+                self.assertTrue(verified["passed"])
+                config.pop("PROFILE_DB_PATH")
+                config.pop("PROFILE_ENCRYPTION_KEY")
+                without_profiles=preflight.inspect_environment(mode="deploy",environ=config)
+                self.assertTrue(without_profiles["passed"])
+
+    def test_reject_unknown_media_mode(self):
+        with patch.object(preflight.importlib,"import_module",return_value=object()):
+            bad=preflight.inspect_environment(mode="deploy",environ={"TELEGRAM_BOT_TOKEN":"123:test","TAROT_MEDIA_MODE":"reupload"})
+        self.assertFalse(next(c for c in bad["checks"] if c["name"]=="tarot_media_mode")["passed"])
+
     def test_natal_kernel_only_required_when_enabled(self):
         with patch.object(preflight.importlib,"import_module",return_value=object()):
             r=preflight.inspect_environment(mode="deploy",environ={

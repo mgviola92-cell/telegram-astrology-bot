@@ -33,6 +33,10 @@ class ProfileStore:
         self._db_path=str(Path(db_path))
         self._now=now or (lambda:int(time.time()))
         with self._connection() as conn:
+            # WAL mode persists in the SQLite database header. Set it once
+            # at initialization rather than repeating a write-oriented PRAGMA
+            # on every short-lived read connection.
+            conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("""CREATE TABLE IF NOT EXISTS birth_profiles (
                 user_id INTEGER PRIMARY KEY,
                 encrypted_payload BLOB NOT NULL,
@@ -47,7 +51,6 @@ class ProfileStore:
         conn=sqlite3.connect(self._db_path,timeout=10)
         try:
             conn.execute("PRAGMA busy_timeout=10000")
-            conn.execute("PRAGMA journal_mode=WAL")
             try:
                 yield conn
             except BaseException:
