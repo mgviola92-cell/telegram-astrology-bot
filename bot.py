@@ -30,6 +30,7 @@ from birth_time import normalize_birth_wall_time
 from tarot_core import draw_tarot
 from tarot_meanings import interpret_tarot_card
 from tarot_delivery import TarotAssetPolicy
+from outbound_budget import CooldownBudget
 from tarot_sessions import TarotSessions
 from myanmar_core import myanmar_birth_day
 from myanmar_calendar import calculate_myanmar_calendar
@@ -51,6 +52,7 @@ dp=Dispatcher()
 dp.include_router(profile_router)
 tarot_sessions = TarotSessions()
 tarot_delivery = TarotAssetPolicy()
+tarot_cooldown = CooldownBudget(seconds=3.0,capacity=1000)
 reading_inputs = ReadingInputSessions(ttl=300)
 
 def menu():
@@ -800,6 +802,11 @@ def tarot_choice_keyboard(token: str) -> InlineKeyboardMarkup:
 async def open_tarot(message: Message, *, user_id: int):
     if message.chat.type != 'private':
         await message.answer('🌙 ကံကြမ္မာကတ်ရွေးဖို့ သီးသန့်ဇာတာခန်းကို ဝင်ခဲ့ပါ။')
+        return
+    # Ignore rapid repeated taps before allocating a session or sending media.
+    # No extra Telegram message for denied attempts, so spam cannot create a
+    # flood of 'slow down' notices either.
+    if not tarot_cooldown.allow(message.chat.id,user_id):
         return
     token = tarot_sessions.start(owner_id=user_id, chat_id=message.chat.id)
     text = ('🃏 <b>ကတ်သုံးချပ်ထဲက တစ်ချပ်ရွေးပါ</b>\n'
