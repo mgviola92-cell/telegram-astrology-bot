@@ -13,7 +13,7 @@ class PreflightTests(unittest.TestCase):
         with patch.object(preflight.importlib,"import_module",side_effect=ImportError("absent")):
             r=preflight.inspect_environment(mode="ci",environ={})
         self.assertFalse(r["passed"])
-        self.assertEqual(len([x for x in r["checks"] if x["name"].startswith("dependency:") and not x["passed"]]),4)
+        self.assertEqual(len([x for x in r["checks"] if x["name"].startswith("dependency:") and not x["passed"]]),5)
     def test_deploy_config_fails_closed(self):
         with patch.object(preflight.importlib,"import_module",return_value=object()):
             r=preflight.inspect_environment(mode="deploy",environ={})

@@ -33,7 +33,7 @@ def verified_neon_url(url: str) -> str:
                and bool(parts.username) and bool(parts.password)
                and parts.hostname is not None
                and parts.hostname.endswith(".neon.tech")
-               and query.get("sslmode",[])[-1] in ("require","verify-ca","verify-full"))
+               and (query.get("sslmode") or [""])[-1] in ("require","verify-ca","verify-full"))
     except (ValueError,TypeError,AttributeError):
         valid=False
     if not valid:
