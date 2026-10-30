@@ -206,3 +206,15 @@ Earlier PROJECT_STATUS_2026-10-27.md is historical, not a launch claim.
 - Added calendar-boundary regression tests and an explicit convention
   disclaimer on applicable private /profection cards. No personal
   data persistence or natal feature activation.
+
+
+## October 30 Compatibility reference MVP
+
+- 6267c33: Implemented source-attributed Chinese Earthly Branch
+  六合/六冲 and shared 三合 group lookup with 144 ordered-pair tests
+  and no invented transformation, scoring or life-event predictions.
+- Native private /compat plus two-step inline picker; invalid/stale/group
+  actions rejected; no stored birth data or retained sessions.
+- Explicitly not a full two-person birth-chart / romantic compatibility
+  calculation. The complete agreed compatibility scope and external
+  professional review remain pending.

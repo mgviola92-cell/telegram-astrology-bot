@@ -334,3 +334,19 @@ This document tracks actual completed versus pending work. No features added bey
   historical astrological school disagreements. Natal remains gated.
 - Release still requires independent astronomic and professional
   interpretive review; offline tests only.
+
+
+## October 30 Chinese branch-pair compatibility milestone
+
+- Classical lists for 六冲 and 六合 and the four 三合 trines cross-read
+  from https://lunarkanji.com/chinese-zodiac-compatibility/
+  (sources cited there: Wuxing Dayi and Qinding Xieji Bianfang Shu)
+  and https://yuanzizhiyi.com/en/wiki/bazi/relations.
+- Six Harmony pairs: 子丑、寅亥、卯戌、辰酉、巳申、午未.
+  Six Clash pairs: 子午、丑未、寅申、卯酉、辰戌、巳亥.
+  San He trines: 申子辰、亥卯未、寅午戌、巳酉丑.
+- Classification does not imply a transformation or actual human
+  compatibility. The new /compat command accepts symbolic branch
+  inputs only, avoiding falsely derived year pillars at Li Chun.
+- Fully reviewed natal-versus-natal traditional compatibility,
+  mutual consent and broader school-specific methods remain pending.

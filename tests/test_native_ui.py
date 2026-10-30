@@ -37,13 +37,16 @@ class NativeUiTests(unittest.TestCase):
                         self.assertIn(parts[2],COMMAND_GUIDES)
                     elif parts[1]=="reading":
                         self.assertIn(parts[2],("start","skip"))
+                    elif parts[1]=="compat":
+                        self.assertEqual(parts[2],"start")
                     else:
                         self.fail("Unknown navigation type")
     def test_unfinished_feature_not_claimed_ready(self):
         self.assertIn(("Annual Profection","profection"),FEATURES["western"][2])
         self.assertNotIn("natal",COMMAND_GUIDES)
         self.assertIn(("နေ့စဉ်ပြက္ခဒိန်","daily"),FEATURES["daily"][2])
-        self.assertFalse(FEATURES["compatibility"][2])
+        self.assertIn(("အကိုင်းနှစ်ခု ရွေးမယ်","compat"),FEATURES["compatibility"][2])
+        self.assertIn("compat",COMMAND_GUIDES)
     def test_guides_do_not_embed_user_data(self):
         for command in COMMAND_GUIDES:
             with self.subTest(command=command):

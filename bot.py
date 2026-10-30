@@ -22,6 +22,7 @@ from zoneinfo import ZoneInfo
 from reading_facts import reading_facts
 from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
+from branch_compatibility import compare_branches, render_branch_comparison, branch_picker, RULE_ID as BRANCH_PAIR_RULE_ID
 from bazi_element_reading import bazi_element_reading
 from bazi_ten_gods_reading import interpret_ten_gods, summarize_ten_gods_burmese
 from bazi_growth_stages import calculate_growth_stages
@@ -150,6 +151,90 @@ async def reference_library_navigation(cb:CallbackQuery):
 
 
 
+def _branch_picker_markup(stage: str, first: str | None = None) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=label, callback_data=code) for label,code in row]
+        for row in branch_picker(stage,first)
+    ])
+
+
+def _branch_picker_text(stage: str, first: str | None = None) -> str:
+    if stage=="first":
+        return (
+            "<b>တရုတ် ၁၂ ရာသီနံ — ဆက်နွယ်မှုဇယား</b>\n"
+            "━━━━━━━━━━━━━━\n"
+            "နှိုင်းယှဉ်မည့် ပထမ အကိုင်းသင်္ကေတကို ရွေးပါ။\n\n"
+            "မွေးနေ့မလိုတဲ့ ရိုးရာ Earthly Branch ဇယားကြည့်ခြင်းသာဖြစ်ပြီး "
+            "လူနှစ်ဦး၏ သင့်လျော်မှုကို အကဲမဖြတ်ပါ။"
+        )
+    return (
+        "<b>တရုတ် ၁၂ ရာသီနံ — ဆက်နွယ်မှုဇယား</b>\n"
+        "━━━━━━━━━━━━━━\n"
+        f"ပထမ အကိုင်း — <b>{html.escape(first)}</b>\n"
+        "ဒုတိယ အကိုင်းသင်္ကေတကို ရွေးပါ။ "
+        "ရိုးရာဇယားထဲမှာ ရှိ/မရှိကိုသာ ပြမယ်။"
+    )
+
+
+def _branch_result_markup() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="နောက်တစ်စုံ ရွေးမယ်",callback_data="compat:start")],
+        [InlineKeyboardButton(text="ရိုးရာဇယား ကျမ်းကိုး",callback_data="evidence:"+BRANCH_PAIR_RULE_ID)],
+    ])
+
+
+@dp.message(Command("compat"))
+async def compatibility_command(message: Message):
+    if not private_only(message):
+        await message.answer("ရိုးရာအကိုင်းဆက်နွယ်မှုကို Bot ရဲ့ Private Chat မှာသာ ကြည့်ပါ။")
+        return
+    parts=(message.text or "").split()
+    if len(parts)==1:
+        await message.answer(_branch_picker_text("first"),
+                             reply_markup=_branch_picker_markup("first"),parse_mode="HTML")
+        return
+    if len(parts)!=3:
+        await message.answer("တရုတ် ၁၂ ရာသီနံကို ခလုတ်နဲ့ရွေးရန် /compat လို့ပို့ပါ။ "
+                             "သို့မဟုတ် /compat 子 丑 လို့ အကိုင်းနှစ်ခုထည့်ပါ။")
+        return
+    try:
+        result=compare_branches(parts[1],parts[2])
+        text=render_branch_comparison(result)
+    except ValueError:
+        await message.answer("အကိုင်းသင်္ကေတ ၁၂ မျိုးထဲက ရွေးပါ။ /compat နဲ့ ခလုတ်ရွေးနိုင်တယ်။")
+        return
+    await message.answer(text,parse_mode="HTML",reply_markup=_branch_result_markup())
+
+
+@dp.callback_query(F.data.startswith("compat:"))
+async def compatibility_navigation(cb: CallbackQuery):
+    if not isinstance(cb.message,Message) or cb.message.chat.type!="private":
+        await cb.answer("Private Chat မှာသာ ကြည့်နိုင်ပါတယ်။",show_alert=True)
+        return
+    parts=(cb.data or "").split(":")
+    try:
+        if parts==["compat","start"]:
+            text=_branch_picker_text("first")
+            markup=_branch_picker_markup("first")
+        elif len(parts)==3 and parts[0:2]==["compat","a"]:
+            first=parts[2]
+            # Validates before displaying any user-controlled text.
+            branch_picker("second",first)
+            text=_branch_picker_text("second",first)
+            markup=_branch_picker_markup("second",first)
+        elif len(parts)==4 and parts[0:2]==["compat","b"]:
+            result=compare_branches(parts[2],parts[3])
+            text=render_branch_comparison(result)
+            markup=_branch_result_markup()
+        else:
+            raise ValueError("Unknown compatibility callback")
+    except (ValueError,TypeError):
+        await cb.answer("ဒီရွေးချယ်မှု မမှန်တော့ပါ။ /compat နဲ့ ပြန်စနိုင်ပါတယ်။",show_alert=True)
+        return
+    await cb.answer()
+    await edit_or_reply(cb.message,text,markup)
+
+
 @dp.message(Command('study'))
 async def study_command(message: Message):
     if not private_only(message):
@@ -209,6 +294,8 @@ async def native_navigation(cb: CallbackQuery):
         await cb.answer()
         await post_personal_reading(cb.message,personal_reading(born,clock))
         return
+    elif data=="ui:compat:start":
+        text,markup=_branch_picker_text("first"),_branch_picker_markup("first")
     elif data=="ui:study":
         text,markup=study_index_text(),study_index_keyboard()
     elif data=="ui:library":

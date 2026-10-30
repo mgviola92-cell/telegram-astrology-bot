@@ -351,3 +351,24 @@ calendar year counts the annual profection birthday on **March 1**.
 This follows the underlying completed-year calendar comparison and is
 explicitly shown on the personal /profection response. The Feb 28
 alternative is a school-specific convention not silently assumed.
+
+
+## Compatibility: traditional Chinese Branch pairs (first functional slice)
+
+A private, stateless /compat command is available with one native
+two-step 12-animal inline picker or the direct non-personal form
+/compat 子 丑. This compares **explicitly selected** Chinese Earthly
+Branches against the traditional Six Harmonies (六合), Six Clashes
+(六冲), and membership of Three Harmonies (三合) groups. A partial
+two-of-three group match is never presented as a completed triple.
+
+- All 144 ordered pairs are covered in tests, with symmetric results.
+- The native Compatibility section now opens the picker directly;
+  callback data carries only public zodiac characters, no DOB or ID.
+- There is no birth-year inference (especially not near Li Chun),
+  Day Master strength, partner score, "perfect match", personal
+  relationship forecast, new database or API request.
+- **Full two-person natal compatibility is STILL NOT COMPLETE**:
+  this is a reference table for users who already know their branch
+  symbols from a sourced chart. Source explanations are available
+  through the existing evidence registry.

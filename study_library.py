@@ -27,7 +27,7 @@ CHAPTERS = {
         "intro": "BaZi သည် မွေးနှစ်၊ လ၊ ရက်နှင့် နာရီတိုင်ကို Heavenly Stem နှင့် Earthly Branch အစုံများဖြင့် ရှင်းပြသည့် တရုတ်ရိုးရာစနစ်ဖြစ်သည်။",
         "method": "လတိုင်တွက်ရာတွင် အနောက်တိုင်းလတစ်လ၏ ပထမရက်ကိုသာ မယူဘဲ Solar Terms နယ်နိမိတ်များကို ထည့်တွက်သည်။ တကယ့်မွေးရပ် Timezone နှင့် နာရီမှန်ဖို့ အရေးကြီးသည်။ Ten Gods ဆိုသည်မှာ Day Master နှင့် တခြားတိုင်များ၏ ဓာတ်/ယင်ယန်ဆက်နွယ်မှုအမည်များဖြစ်သည်။ ဓာတ်တူ/ဖော်ထုတ်/အရင်းအမြစ်/ထိန်းညှိ/ပံ့ပိုး အုပ်စုငါးမျိုးနှင့် ရိုးရာဆက်စပ်မှုရှိသည်။ Five Phases အရေအတွက်တစ်ခုတည်းက Day Master အားကို မဆုံးဖြတ်ပါ။",
         "limits": "ဒီ Bot ၏ BaZi တွင် True Solar Time နှင့် ကျောင်းအလိုက် interpretive အချက်အချို့ မပြီးသေးပါ။ တိုင်အမည်များသည် လူတစ်ဦး၏အနာဂတ်ကို သိပ္ပံနည်းကျ အတည်မပြုနိုင်ပါ။",
-        "rules": ("CHN-BAZI-PILLARS-001", "CHN-BAZI-VISIBLE-WUXING-001", "CHN-BAZI-TENGODS-SYMBOLIC-001"),
+        "rules": ("CHN-BAZI-PILLARS-001", "CHN-BAZI-VISIBLE-WUXING-001", "CHN-BAZI-TENGODS-SYMBOLIC-001", "CHN-BAZI-EARTHLY-BRANCH-PAIR-001"),
     },
     "western": {
         "title": "Western Profection အခြေခံ",

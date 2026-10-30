@@ -50,7 +50,7 @@ FEATURES = {
         ("Save Birth Date", "savebirth"), ("View Birth Date", "mybirth"),
         ("Delete Birth Date", "forgetbirth"))),
     "reading": ("Personal Reading", "မဟာဘုတ်ရိုးရာအိမ်အနက်နှင့် Numerology Life Path ကို သီးခြားနည်းလမ်းအဖြစ် ဖတ်နိုင်ပါတယ်။", (("အဆင့်ဆင့် ဖြည့်မယ်", "reading_start"), ("Command နဲ့တွက်မယ်", "reading"),)),
-    "compatibility": ("Compatibility", "နှစ်ဦးဇာတာ တွက်ချက်မှုနှင့် ရိုးရာနည်းလမ်းစစ်ဆေးခြင်း မပြီးသေးပါ။", ()),
+    "compatibility": ("Compatibility", "တရုတ် ၁၂ ရာသီနံ Earthly Branch နှစ်ခု၏ 六合 / 六冲 / 三合 ရိုးရာဆက်နွယ်မှုဇယားကို လေ့လာနိုင်ပါတယ်။ မွေးနေ့နှစ်ခုရဲ့ လေးတိုင်ဇာတာအပြည့်နှိုင်းယှဉ်ခြင်း မပြီးသေးပါ။", (("အကိုင်းနှစ်ခု ရွေးမယ်","compat"),)),
     "daily": ("Daily Reading", "မြန်မာပြက္ခဒိန်အခြေခံ နေ့စဉ်ရိုးရာအမှတ်အသားများကို ဖတ်နိုင်ပါတယ်။ ကိုယ်ပိုင်အနာဂတ်ဟောစာတမ်းမဟုတ်ပါ။", (("နေ့စဉ်ပြက္ခဒိန်", "daily"),)),
     "timing": ("Timing Cycles", "Timing backend အချို့ရှိပေမဲ့ လုံလောက်စွာ မစမ်းသပ်ရသေးပါ။", ()),
     "mmcal": ("မြန်မာပြက္ခဒိန်", "မြန်မာရက်စွဲ၊ လဆန်းလဆုတ်၊ ရက်ရာဇာနှင့် ပြဿဒါးတို့ကို တွက်နိုင်ပါတယ်။", (
@@ -71,6 +71,7 @@ COMMAND_GUIDES = {
     "dayun": "/dayun 2005-12-23 08:37 Asia/Yangon 1",
     "profection": "/profection 2005-12-23 2026-10-27 Aries",
     "profection_houses": "/profection houses",
+    "compat": "/compat 子 丑",
     "number": "/number 1999-12-31",
     "savebirth": "/savebirth 2005-12-23 အတည်ပြု",
     "mybirth": "/mybirth",
@@ -102,7 +103,7 @@ def section_keyboard(section: str):
 def feature_keyboard(feature: str):
     if feature not in FEATURES:
         raise KeyError(feature)
-    rows=[[button(label,("ui:tarot" if cmd=="tarot" else "ui:library" if cmd=="library" else "ui:reading:start" if cmd=="reading_start" else "ui:study" if cmd=="study" else "ui:guide:"+cmd))]
+    rows=[[button(label,("ui:tarot" if cmd=="tarot" else "ui:library" if cmd=="library" else "ui:reading:start" if cmd=="reading_start" else "ui:study" if cmd=="study" else "ui:compat:start" if cmd=="compat" else "ui:guide:"+cmd))]
           for label,cmd in FEATURES[feature][2]]
     group=next((key for key,(_,items) in SECTIONS.items()
                 if any(name==feature for _,name in items)), "charts")

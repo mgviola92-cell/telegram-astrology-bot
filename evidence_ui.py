@@ -88,6 +88,12 @@ RULES = {
         'source': '6tail/lunar-python LunarUtil.SHI_SHEN (calculation): https://github.com/6tail/lunar-python ; Traditional roles: https://yuanzizhiyi.com/en/wiki/bazi/ten-gods ; https://bazimethod.com/learn/ten-gods/',
         'limits': 'ဤအုပ်စုအမည်များက တိုက်ရိုက်ငွေဝင်မည်၊ အရာရှိဖြစ်မည်၊ အန္တရာယ်ကျမည် စသည့် အနာဂတ်ရလဒ်များကို မဆိုလိုပါ။ 7 Killings နှင့် Rob Wealth သည် စာရင်းဇယားအမည်များဖြစ်ပြီး ထိခိုက်မှုအာမခံချက် မဟုတ်ပါ။ Hidden Stems အလေးချိန်၊ ရာသီအင်အား၊ ဓာတ်အားကောင်းမှုနှင့် Favorable Elements မသတ်မှတ်ရသေးပါ။ ကျောင်းအလိုက် အနက်ကွာနိုင်သည်။'
     },
+    'CHN-BAZI-EARTHLY-BRANCH-PAIR-001': {
+        'heading': 'Earthly Branch 六合 / 六冲 / 三合 — ရိုးရာအကိုင်းဆက်နွယ်မှုဇယား',
+        'method': 'တရုတ် Earthly Branch ၁၂ မျိုးမှ အသုံးပြုသူရွေးထားသော အကိုင်းနှစ်ခုကို ရိုးရာဇယား၏ 六合 ၆ စုံ၊ 六冲 ၆ စုံနှင့် 三合 အကိုင်းသုံးခုဖွဲ့စည်းသည့် အုပ်စု ၄ မျိုးတွင် တိုက်စစ်သည်။ 三合 တွင် နှစ်ခုသာပါလျှင် အပြည့်အဝ အုပ်စုမဖွဲ့ကြောင်း ရှင်းလင်းစွာ ဖော်ပြသည်။ မွေးနှစ်၊ မွေးချိန်၊ အိမ်ထောင်ဖက်၊ Day Master၊ ဓာတ်အင်အား သို့မဟုတ် အနာဂတ်မတွက်ပါ။',
+        'source': 'Wuxing Dayi နှင့် Qinding Xieji Bianfang Shu ရိုးရာအကိုင်းဇယားများ: https://lunarkanji.com/chinese-zodiac-compatibility/ ; https://yuanzizhiyi.com/en/wiki/bazi/relations ; https://clarifyhk.com/learn/bazi/earthly-branches/reading-order-for-branch-combinations-and-clashes',
+        'limits': 'အကိုင်းဆက်နွယ်မှုတစ်စုံရှိခြင်းသည် လူနှစ်ဦး၏ အဆင်ပြေမှု၊ မိတ်ဖက်မှု၊ အိမ်ထောင်ရေး သို့မဟုတ် အနာဂတ်ကို မဆုံးဖြတ်နိုင်ပါ။ 六合 သည် မဖြစ်မနေ ဓာတ်အသွင်ပြောင်းခြင်း မဟုတ်ပါ။ 六冲 သည် တကယ်ရန်ဖြစ်မည်ဟု မဆိုလိုပါ။ Zodiac Pair Lookup သည် Full BaZi Compatibility မဟုတ်ပါ။'
+    },
     'CHN-BAZI-TENGODS-001': {
         'heading': 'BaZi Ten Gods (ဆယ်မျိုးဆက်စပ်မှု)',
         'method': 'Day Master နဲ့ Heavenly Stem တစ်ခုချင်းစီ၏ ဓာတ်မွေးပေးခြင်း၊ ဓာတ်ထိန်းချုပ်ခြင်း၊ Yin/Yang တူကွာခြင်းကို ရိုးရာစည်းမျဉ်းအတိုင်း တွက်ချက်သည်။',
