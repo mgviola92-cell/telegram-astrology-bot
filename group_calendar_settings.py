@@ -38,6 +38,12 @@ class GroupCalendarSettings:
     def from_environment(cls, env=None):
         env=os.environ if env is None else env
         path=(env.get("GROUP_SETTINGS_DB_PATH") or "").strip() or None
+        neon=(env.get("ASTROLOGY_DATABASE_URL") or "").strip()
+        if neon:
+            if path:
+                raise ValueError("Neon and SQLite group settings cannot both be configured")
+            from neon_persistence import NeonGroupCalendarSettings
+            return NeonGroupCalendarSettings(neon)
         return cls(path,on_render=bool(env.get("RENDER")),
                    disk_confirmed=env.get("GROUP_SETTINGS_PERSISTENT_DISK_CONFIRMED")=="1")
 

@@ -10,17 +10,20 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 from profile_store import ProfileStore
+from neon_persistence import NeonBirthStore
 
 router=Router()
 
 @lru_cache(maxsize=1)
 def _store():
-    # Free Render web services have no persistent disk. Opt-in profiles must
-    # not silently land on a filesystem that disappears on spin-down/redeploy.
-    # This guard is NOT proof of a mounted disk: the operator must verify it.
+    neon=os.environ.get("ASTROLOGY_DATABASE_URL","").strip()
+    key=os.environ.get("PROFILE_ENCRYPTION_KEY")
+    if neon:
+        return NeonBirthStore(neon,key) if key else None
+    # A Render Free instance cannot durably store SQLite data. Existing
+    # SQLite mode remains for separately verified persistent disk only.
     if os.environ.get("RENDER") and os.environ.get("PROFILE_PERSISTENT_DISK_CONFIRMED")!="1":
         return None
-    key=os.environ.get("PROFILE_ENCRYPTION_KEY")
     db=os.environ.get("PROFILE_DB_PATH")
     if not key or not db:
         return None

@@ -16,6 +16,7 @@ DEPENDENCIES = {
     "lunar_python": "Four Pillars / Da Yun",
     "skyfield": "Western geocentric positions",
     "cryptography": "Encrypted user birth profiles",
+    "psycopg": "TLS connections to optional Neon database",
 }
 
 def inspect_environment(*, mode="ci", environ=None):
@@ -51,10 +52,25 @@ def inspect_environment(*, mode="ci", environ=None):
         # Profile storage may be deliberately disabled, but variables must be paired.
         path=env.get("PROFILE_DB_PATH","").strip()
         key=env.get("PROFILE_ENCRYPTION_KEY","").strip()
-        add("profile_config_paired",bool(path)==bool(key),
-            "Set both PROFILE_DB_PATH and PROFILE_ENCRYPTION_KEY, or neither")
-        if path and key:
-            if env.get("RENDER"):
+        neon=env.get("ASTROLOGY_DATABASE_URL","").strip()
+        if neon:
+            from neon_persistence import verified_neon_url
+            try:
+                verified_neon_url(neon)
+                neon_ok=True
+            except (ValueError,TypeError):
+                neon_ok=False
+            add("neon_tls_connection_config",neon_ok,
+                "ASTROLOGY_DATABASE_URL must be a Neon PostgreSQL TLS URL; credentials are never printed")
+            add("neon_not_mixed_with_sqlite",not path and not env.get("GROUP_SETTINGS_DB_PATH","").strip(),
+                "Neon mode cannot be mixed with local SQLite profile/group settings")
+            add("neon_profile_key_required",bool(key),
+                "Encrypted Neon birth profiles require PROFILE_ENCRYPTION_KEY")
+        else:
+            add("profile_config_paired",bool(path)==bool(key),
+                "Set both PROFILE_DB_PATH and PROFILE_ENCRYPTION_KEY, or neither")
+        if key and (path or neon):
+            if path and env.get("RENDER"):
                 add("render_profile_persistence_confirmed",
                     env.get("PROFILE_PERSISTENT_DISK_CONFIRMED")=="1",
                     "Render SQLite birth profiles require a verified paid persistent disk; free web service filesystem is ephemeral")
@@ -65,9 +81,10 @@ def inspect_environment(*, mode="ci", environ=None):
             except (ValueError, TypeError, UnicodeError, ImportError):
                 valid_key=False
             add("profile_key_format",valid_key,"Fernet encryption key format")
-            parent=Path(path).expanduser().parent
-            add("database_directory",parent.is_dir() and os.access(parent,os.W_OK),
-                "Persistent SQLite destination parent must already exist and be writable")
+            if path:
+                parent=Path(path).expanduser().parent
+                add("database_directory",parent.is_dir() and os.access(parent,os.W_OK),
+                    "Persistent SQLite destination parent must already exist and be writable")
         group_db=env.get("GROUP_SETTINGS_DB_PATH","").strip()
         if group_db and path:
             add("group_db_separate_from_birth_profiles",

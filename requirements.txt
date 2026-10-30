@@ -3,3 +3,4 @@ lunar-python>=1.4,<2
 
 skyfield>=1.50,<2
 cryptography>=43,<48
+psycopg[binary]>=3.2,<4

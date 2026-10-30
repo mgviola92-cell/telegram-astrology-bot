@@ -424,3 +424,25 @@ licensed arts remain outstanding.
   Telegram smoke check. Inspect Render Deploy logs and real bot
   commands after deployment, then audit errors. Do not enable natal
   simply to make the demo feature-complete.
+
+
+## Durable Neon storage for Render Free
+
+A dedicated optional Neon PostgreSQL backend supports explicit-consent,
+Fernet-encrypted birth dates (only a minimal encrypted byte string, user
+ID, update and consent timestamps) and one tiny boolean record per
+disabled group calendar. Database tables are provisioned by an operator;
+no migrations run on every webhook or import.
+
+Set ASTROLOGY_DATABASE_URL in the **Render private environment**, with
+sslmode=require, together with PROFILE_ENCRYPTION_KEY (Fernet 32-byte
+URL-safe base64 key). No secret is stored in GitHub. Neon takes precedence
+over SQLite, and the combination is disallowed. A valid Fernet key must
+be safely backed up by the service owner; losing it makes previously
+saved profiles unreadable. No user profile is stored unless an authorized
+private /savebirth command has the explicit Burmese consent marker.
+
+On Neon outage, group public calendar is disabled fail-closed rather than
+bypassing a prior admin setting. Short-lived database connections are
+opened only for explicit profile actions or group settings cache misses
+and changes. No background polling, cron, images, media or bulk imports.
