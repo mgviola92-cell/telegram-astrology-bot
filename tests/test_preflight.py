@@ -58,6 +58,19 @@ class PreflightTests(unittest.TestCase):
                 self.assertFalse(next(x for x in invalid["checks"]
                     if x["name"]=="tarot_asset_valid:TAROT_SHUFFLE_FILE_ID")["passed"])
 
+    def test_render_web_service_webhook_needs_secret_and_valid_origin(self):
+        config={"TELEGRAM_BOT_TOKEN":"111:dummy","RENDER":"true",
+                "RENDER_SERVICE_TYPE":"web","RENDER_EXTERNAL_URL":"https://my-bot.onrender.com"}
+        with patch.object(preflight.importlib,"import_module",return_value=object()):
+            invalid=preflight.inspect_environment(mode="deploy",environ=config)
+            self.assertFalse(next(x for x in invalid["checks"] if x["name"]=="render_webhook_config")["passed"])
+            config["TELEGRAM_WEBHOOK_SECRET"]="A"*40
+            valid=preflight.inspect_environment(mode="deploy",environ=config)
+            self.assertTrue(next(x for x in valid["checks"] if x["name"]=="render_webhook_config")["passed"])
+            config["RENDER_EXTERNAL_URL"]="http://insecure.onrender.com"
+            invalid_http=preflight.inspect_environment(mode="deploy",environ=config)
+            self.assertFalse(next(x for x in invalid_http["checks"] if x["name"]=="render_webhook_config")["passed"])
+
     def test_optional_tarot_assets_do_not_block_deploy(self):
         from tempfile import TemporaryDirectory
         from pathlib import Path

@@ -59,6 +59,7 @@ from public_calendar import (
 )
 from profile_commands import router as profile_router
 from preflight import inspect_environment
+from render_webhook import webhook_configuration, run_render_webhook
 from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
                        feature_keyboard, feature_text, guide_keyboard, guide_text,
                        SECTIONS, FEATURES, COMMAND_GUIDES,
@@ -1303,8 +1304,15 @@ async def main():
     token=os.environ.get('TELEGRAM_BOT_TOKEN')
     logging.basicConfig(level=logging.INFO)
     async with Bot(token=token) as bot:
-        await bot.delete_webhook(drop_pending_updates=False)
-        await dp.start_polling(bot)
+        webhook=webhook_configuration(os.environ)
+        if webhook is not None:
+            # Render Web Service: incoming Telegram HTTPS updates can wake
+            # a sleeping Free instance; long polling cannot wake it.
+            await run_render_webhook(bot,dp,webhook)
+        else:
+            # Local execution and worker instances retain polling support.
+            await bot.delete_webhook(drop_pending_updates=False)
+            await dp.start_polling(bot)
 
 if __name__=='__main__':
     asyncio.run(main())

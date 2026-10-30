@@ -390,3 +390,37 @@ TAROT_CARD_PHOTOS_JSON is the filesystem path to a JSON **file**, not
 a pasted inline JSON object. A partial mapping may be used, with a
 coverage warning and text fallback. All 78 complete matching
 licensed arts remain outstanding.
+
+
+## Deploy on Render Web Service (2026-10-30)
+
+- GitHub repository: mgviola92-cell/telegram-astrology-bot, branch main,
+  root directory blank, native Python runtime.
+- Build: pip install -r requirements.txt
+- Start: python bot.py
+- Health check path: /healthz
+- Python version: .python-version in the repository pins 3.12 family,
+  matching GitHub CI; no special PYTHON_VERSION env override needed.
+- Required Render secret env vars: TELEGRAM_BOT_TOKEN (BotFather) and
+  TELEGRAM_WEBHOOK_SECRET (unique random >=32 ASCII characters
+  [A-Za-z0-9_-]). Do not commit these or send them in chats.
+- Recommended first test env: TAROT_MEDIA_MODE=text,
+  ENABLE_WESTERN_NATAL=0, WESTERN_NATAL_REVIEW_APPROVED=0.
+  Leave PROFILE_DB_PATH, PROFILE_ENCRYPTION_KEY,
+  GROUP_SETTINGS_DB_PATH and JPL_EPHEMERIS_PATH unset for the
+  first stateless trial. No paid persistent disk is present on Free.
+- Render itself provides RENDER_EXTERNAL_URL and PORT; do not invent
+  or manually add them. With a valid Render external origin the bot
+  automatically registers https://YOUR-SERVICE.onrender.com/telegram/webhook,
+  validates Telegram's secret token header, opens 0.0.0.0:PORT and serves
+  GET /healthz. Local instances without this origin use polling.
+- Only ONE instance of the bot token should run. Webhook and polling
+  must never run simultaneously on different hosts for the same bot.
+- On Render Free, inbound inactivity for 15 minutes spins the service
+  down. A new webhook HTTP request may wake it, but cold start and
+  retry delay mean no guarantee of instant message handling, 24/7
+  availability or delivery; use a paid always-on service if needed.
+- Webhook source changes are not evidence of a successful live
+  Telegram smoke check. Inspect Render Deploy logs and real bot
+  commands after deployment, then audit errors. Do not enable natal
+  simply to make the demo feature-complete.

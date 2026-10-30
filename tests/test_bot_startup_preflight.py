@@ -24,6 +24,25 @@ class StartupSafetyTests(unittest.IsolatedAsyncioTestCase):
         preflight.assert_called_once_with(mode="deploy")
         constructor.assert_not_called()
 
+    async def test_web_service_uses_webhook_not_polling(self):
+        report={"passed":True,"checks":[]}
+        fake=SimpleNamespace()
+        client=MagicMock()
+        client.__aenter__=AsyncMock(return_value=fake)
+        client.__aexit__=AsyncMock(return_value=False)
+        config={"port":10000,"public_url":"https://example.onrender.com",
+                "webhook_url":"https://example.onrender.com/telegram/webhook","secret":"a"*40}
+        with patch.dict(os.environ,{"TELEGRAM_BOT_TOKEN":"123:NONLIVE","RENDER_EXTERNAL_URL":"https://example.onrender.com"},clear=True):
+            with patch("bot.inspect_environment",return_value=report):
+                with patch("bot.webhook_configuration",return_value=config):
+                    with patch("bot.Bot",return_value=client):
+                        with patch("bot.run_render_webhook",new_callable=AsyncMock) as webhook:
+                            with patch("bot.dp.start_polling",new_callable=AsyncMock) as poll:
+                                await main()
+        webhook.assert_awaited_once_with(fake,unittest.mock.ANY,config)
+        poll.assert_not_awaited()
+        client.__aexit__.assert_awaited_once()
+
     async def test_valid_preflight_allows_only_intended_poll_sequence(self):
         report={"passed":True,"checks":[{"name":"telegram_token","passed":True}]}
         fake=SimpleNamespace(delete_webhook=AsyncMock())

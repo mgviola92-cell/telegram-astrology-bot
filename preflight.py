@@ -38,6 +38,16 @@ def inspect_environment(*, mode="ci", environ=None):
         token=env.get("TELEGRAM_BOT_TOKEN","").strip()
         add("telegram_token",bool(token and ":" in token and not token.startswith(":")),
             "Telegram token must be present in secret environment; value never printed")
+        # Render Web Services need an HTTPS webhook, not polling without PORT.
+        # Render automatically supplies the public origin. Never log secrets.
+        from render_webhook import webhook_configuration
+        try:
+            webhook_configuration(env)
+            webhook_config_ok=True
+        except (ValueError,TypeError):
+            webhook_config_ok=False
+        add("render_webhook_config",webhook_config_ok,
+            "Render web services require an auto-supplied HTTPS origin, a 32+ character TELEGRAM_WEBHOOK_SECRET and a valid PORT")
         # Profile storage may be deliberately disabled, but variables must be paired.
         path=env.get("PROFILE_DB_PATH","").strip()
         key=env.get("PROFILE_ENCRYPTION_KEY","").strip()
