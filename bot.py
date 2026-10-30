@@ -24,6 +24,7 @@ from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
 from branch_compatibility import compare_branches, render_branch_comparison, branch_picker, RULE_ID as BRANCH_PAIR_RULE_ID
 from bazi_element_reading import bazi_element_reading
+from bazi_pairs import classify_pairs, format_pairs
 from bazi_ten_gods_reading import interpret_ten_gods, summarize_ten_gods_burmese
 from bazi_growth_stages import calculate_growth_stages
 from bazi_seasons import calculate_bazi_seasons
@@ -1047,6 +1048,7 @@ async def bazi(message: Message):
         result=calculate_bazi(normalized['wall_time'], timezone_verified=normalized['timezone'])
         reading_facts('bazi',result)
         element_reading=bazi_element_reading(result)
+        pair_section=format_pairs(classify_pairs(result))
         ten_gods_reading=interpret_ten_gods(result)
         ten_gods_section=summarize_ten_gods_burmese(ten_gods_reading)
         growth_reading=calculate_growth_stages(result)
@@ -1068,6 +1070,7 @@ async def bazi(message: Message):
         ("Ten Gods အနက်","CHN-BAZI-TENGODS-SYMBOLIC-001"),
         ("Twelve Stages","CHN-BAZI-CHANGSHENG-001"),
         ("Seasons","CHN-BAZI-SEASON-MONTH-001"),
+        ("တိုင်အတွဲ","CHN-BAZI-PAIR-RELATIONS-001"),
     )
     # The card uses distinct, compact native inline labels rather than five
     # identical "Calculation Method" buttons.
@@ -1078,7 +1081,7 @@ async def bazi(message: Message):
         for label,rule_id in methods
     ]
     bazi_markup=InlineKeyboardMarkup(inline_keyboard=[
-        buttons[0:2],buttons[2:4],buttons[4:6],buttons[6:]
+        buttons[0:2],buttons[2:4],buttons[4:6],buttons[6:8]
     ])
     balance=' · '.join(f'{name}: {count}' for name,count in visible['visible_counts'].items())
     growth_summary=' · '.join(f'{name}: {growth_reading["stages"][name]} ({growth_reading["burmese_stage_names"][name]})' for name in ('year','month','day','hour'))
@@ -1105,6 +1108,7 @@ async def bazi(message: Message):
         'အဓိက/အရံဓာတ်အစဉ်သာ ဖြစ်ပြီး ရာသီအင်အား မတွက်ရသေးပါ။\n\n'
         f'☯️ Ten Gods — {html.escape(gods_summary)}\n'
         f'{ten_gods_section}\n\n'
+        f'{pair_section}\n\n'
         '<b>十二长生 — ရိုးရာအဆင့် ၁၂ မျိုး</b>\n'
         f'{html.escape(growth_summary)}\n'
         'ဤအဆင့်အမည်များသည် ကျန်းမာရေး သို့မဟုတ် အနာဂတ်ဖြစ်ရပ်ကို ခန့်မှန်းခြင်း မဟုတ်ပါ။\n\n'

@@ -17,6 +17,8 @@ class BaziBotCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("乙酉",body)
         self.assertIn("十二长生",body)
         self.assertIn("Ten Gods",body)
+        self.assertIn("တိုင်လေးတိုင် ဆက်နွယ်မှု",body)
+        self.assertIn("六冲",body)
         self.assertIn("ရိုးရာ ဓာတ်ဆက်နွယ်မှု ၅ အုပ်စု",body)
         self.assertIn("正印",body)
         self.assertIn("偏财",body)
@@ -27,9 +29,9 @@ class BaziBotCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("Asia/Yangon",body)
         self.assertNotIn(chr(92)+"n",body)
         markup=kwargs["reply_markup"]
-        self.assertEqual([len(row) for row in markup.inline_keyboard],[2,2,2,1])
+        self.assertEqual([len(row) for row in markup.inline_keyboard],[2,2,2,2])
         buttons=[b for row in markup.inline_keyboard for b in row]
-        self.assertEqual(len({b.text for b in buttons}),7)
+        self.assertEqual(len({b.text for b in buttons}),8)
         self.assertIn("evidence:CHN-BAZI-TENGODS-SYMBOLIC-001",
                       [b.callback_data for b in buttons])
         self.assertTrue(all("2005-12-23" not in b.callback_data

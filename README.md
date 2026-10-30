@@ -446,3 +446,8 @@ On Neon outage, group public calendar is disabled fail-closed rather than
 bypassing a prior admin setting. Short-lived database connections are
 opened only for explicit profile actions or group settings cache misses
 and changes. No background polling, cron, images, media or bulk imports.
+
+
+## BaZi natal pillar pairs
+
+The private /bazi report detects six fixed 六冲 branch opposites, six 六合 branch pairings and five 五合 visible stem pairings among the four natal pillars. This does not infer transformation or life events. The existing separate static Earthly Branch compatibility reference is unchanged.

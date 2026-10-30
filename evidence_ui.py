@@ -82,6 +82,12 @@ RULES = {
         'source': 'Traditional Five Phases correspondences: https://www.ibiblio.org/chinesehistory/contents/08fea/c06s02.htm ; https://uaya.org/iching/correspondences/',
         'limits': 'Hidden Stems, Seasonal Strength နှင့် Day Master အားကောင်းမှု မတွက်ရသေးပါ။ အရေအတွက်တစ်ခုတည်းဖြင့် အနာဂတ်ဖြစ်ရပ် မဆုံးဖြတ်နိုင်ပါ။'
     },
+    'CHN-BAZI-PAIR-RELATIONS-001': {
+        'heading': 'BaZi တိုင်အတွဲ 六冲 / 六合 / 五合',
+        'method': 'Source Evidence အပေါ်မူတည်၍ တိုင်လေးတိုင်ကို ပြန်တွက်စစ်ကာ မြင်ရသော Branch အချင်းချင်း 六冲 ခြောက်စုံ၊ 六合 ခြောက်စုံနှင့် Stem အချင်းချင်း 五合 ငါးစုံကိုသာ အတွဲတူမတူ စစ်ဆေးသည်။',
+        'source': 'https://clarifyhk.com/learn/bazi/earthly-branches/reading-order-for-branch-combinations-and-clashes ; https://wiki.openfate.ai/en/bazi/stem-branch-relations/five-combinations',
+        'limits': 'ဇယားအတွဲရှိခြင်းသာ စစ်သည်။ ဓာတ်အသွင်ပြောင်းခြင်း၊ မိတ်ဖက်အဆင်ပြေခြင်း၊ ကံကြမ္မာ သို့မဟုတ် Day Master အင်အားကို မတွက်ပါ။'
+    },
     'CHN-BAZI-TENGODS-SYMBOLIC-001': {
         'heading': 'BaZi Ten Gods — ဓာတ်အုပ်စုငါးမျိုးနှင့် ရိုးရာသင်္ကေတအနက်',
         'method': 'တွက်ပြီးသား တိုင်လေးတိုင်ကို မူလမွေးချိန်နှင့် Source Evidence ဖြင့် ပြန်တွက်စစ်သည်။ Day Master နဲ့ တခြားမြင်ရသော နှစ်/လ/နာရီ Heavenly Stem သုံးခု၏ ဓာတ်အမျိုးအစား၊ ထုတ်ပေး/ထိန်းချုပ်ဆက်နွယ်မှုနှင့် Yin/Yang တူ/ကွာချက်မှ Ten Gods အမည်များကို သတ်မှတ်သည်။ အဖော်၊ ဖော်ထုတ်၊ အရင်းအမြစ်၊ ထိန်းညှိနှင့် ပံ့ပိုးမှု အုပ်စုငါးမျိုးအဖြစ် မြန်မာလို သင်္ကေတအကျဉ်းချုပ်ဖော်ပြသည်။',
