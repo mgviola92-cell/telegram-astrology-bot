@@ -1296,8 +1296,9 @@ async def main():
     if not token:
         raise SystemExit('Set TELEGRAM_BOT_TOKEN in your private environment')
     logging.basicConfig(level=logging.INFO)
-    bot=Bot(token=token)
-    await dp.start_polling(bot)
+    async with Bot(token=token) as bot:
+        await bot.delete_webhook(drop_pending_updates=False)
+        await dp.start_polling(bot)
 
 if __name__=='__main__':
     asyncio.run(main())
