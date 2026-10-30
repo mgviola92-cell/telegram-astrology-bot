@@ -372,3 +372,21 @@ two-of-three group match is never presented as a completed triple.
   this is a reference table for users who already know their branch
   symbols from a sourced chart. Source explanations are available
   through the existing evidence registry.
+
+
+## Startup preflight and operator release protection
+
+The polling entrypoint now invokes preflight.deploy before any Telegram
+network operation. A missing dependency, token format, unsafe ephemeral
+storage or invalid optional configured Tarot manifest/asset causes
+startup to fail without logging secrets. It does not prove the remote
+token is valid or that any persistent disk is truly durable.
+
+Unreleased Western natal needs BOTH ENABLE_WESTERN_NATAL=1 and
+WESTERN_NATAL_REVIEW_APPROVED=1, plus the existing JPL kernel check.
+Leave both OFF until independent benchmarks and owner's approval.
+
+TAROT_CARD_PHOTOS_JSON is the filesystem path to a JSON **file**, not
+a pasted inline JSON object. A partial mapping may be used, with a
+coverage warning and text fallback. All 78 complete matching
+licensed arts remain outstanding.

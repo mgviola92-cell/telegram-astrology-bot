@@ -66,3 +66,16 @@ target, **NOT a claim of guaranteed completion or deployment**.
 
 No background work, live calls, Render deployment or completion guarantee
 is represented by this document.
+
+
+## October 30 additional operational gates
+
+- Real Telegram polling startup now blocks on preflight.deploy before
+  calling delete_webhook or start_polling; only failed check names are
+  reported (no Telegram token or birth data).
+- /natal now additionally requires independent review authorization
+  via WESTERN_NATAL_REVIEW_APPROVED=1; leave both natal flags at 0.
+- Optional Tarot photo manifest is a verified local JSON file path,
+  with coverage summarized as N/78. Invalid configured paths or file_ids
+  prevent startup instead of failing during the first Tarot request.
+- Full Telegram and Render live checks still not performed.

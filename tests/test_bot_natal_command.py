@@ -37,6 +37,15 @@ class NatalCommandTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("မဖွင့်ရသေး",msg.answer.await_args.args[0])
         self.assertNotIn("reply_markup",msg.answer.await_args.kwargs)
 
+    async def test_review_not_approved_cannot_enable_natal(self):
+        msg=message("/natal 2005-12-23 08:37 Asia/Yangon 16.85 96.15")
+        with patch.dict(os.environ,{"ENABLE_WESTERN_NATAL":"1"},clear=True):
+            with patch("bot.assemble_natal") as calculation:
+                await natal_preview_command(msg)
+                calculation.assert_not_called()
+        self.assertIn("မဖွင့်ရသေး",msg.answer.await_args.args[0])
+        self.assertNotIn("reply_markup",msg.answer.await_args.kwargs)
+
     async def test_group_birth_data_not_processed(self):
         msg=message("/natal 2005-12-23 08:37 Asia/Yangon 16.85 96.15","supergroup")
         await natal_preview_command(msg)
@@ -46,6 +55,7 @@ class NatalCommandTests(unittest.IsolatedAsyncioTestCase):
     async def test_enabled_requires_existing_bsp(self):
         msg=message("/natal 2005-12-23 08:37 Asia/Yangon 16.85 96.15")
         with patch.dict(os.environ,{"ENABLE_WESTERN_NATAL":"1",
+                                     "WESTERN_NATAL_REVIEW_APPROVED":"1",
                                      "JPL_EPHEMERIS_PATH":"/nonexistent/file.bsp"},clear=True):
             await natal_preview_command(msg)
         self.assertIn("Ephemeris",msg.answer.await_args.args[0])
@@ -56,6 +66,7 @@ class NatalCommandTests(unittest.IsolatedAsyncioTestCase):
             path.write_bytes(b"only a fake file for CI; never a real kernel")
             msg=message("/natal 2005-12-23 08:37 Asia/Yangon 16.85 96.15")
             with patch.dict(os.environ,{"ENABLE_WESTERN_NATAL":"1",
+                                     "WESTERN_NATAL_REVIEW_APPROVED":"1",
                                          "JPL_EPHEMERIS_PATH":str(path)},clear=True):
                 with patch("bot.assemble_natal",return_value=synthetic_record()) as calculation:
                     await natal_preview_command(msg)
@@ -74,6 +85,7 @@ class NatalCommandTests(unittest.IsolatedAsyncioTestCase):
             path.write_bytes(b"fixture placeholder")
             msg=message("/natal 2005-12-23 08:37 Asia/Yangon nan 96.15")
             with patch.dict(os.environ,{"ENABLE_WESTERN_NATAL":"1",
+                                     "WESTERN_NATAL_REVIEW_APPROVED":"1",
                                          "JPL_EPHEMERIS_PATH":str(path)},clear=True):
                 await natal_preview_command(msg)
         self.assertIn("မတွက်နိုင်",msg.answer.await_args.args[0])

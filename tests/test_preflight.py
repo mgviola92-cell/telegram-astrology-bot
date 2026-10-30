@@ -23,6 +23,41 @@ class PreflightTests(unittest.TestCase):
         with patch.object(preflight.importlib,"import_module",return_value=object()):
             r=preflight.inspect_environment(mode="deploy",environ={"PROFILE_DB_PATH":"/tmp/profiles.sqlite3"})
         self.assertFalse(next(x for x in r["checks"] if x["name"]=="profile_config_paired")["passed"])
+    def test_natal_release_gate_and_bad_flag_rejected(self):
+        with patch.object(preflight.importlib,"import_module",return_value=object()):
+            review=preflight.inspect_environment(mode="deploy",environ={
+                "TELEGRAM_BOT_TOKEN":"123:TEST","ENABLE_WESTERN_NATAL":"1"})
+            self.assertFalse(next(x for x in review["checks"]
+                if x["name"]=="natal_release_review_approved")["passed"])
+            malformed=preflight.inspect_environment(mode="deploy",environ={
+                "TELEGRAM_BOT_TOKEN":"123:TEST","ENABLE_WESTERN_NATAL":"true"})
+            self.assertFalse(next(x for x in malformed["checks"]
+                if x["name"]=="natal_flag_valid")["passed"])
+
+    def test_optional_tarot_manifest_and_file_id_validation(self):
+        from tempfile import TemporaryDirectory
+        from pathlib import Path
+        import json
+        with TemporaryDirectory() as folder:
+            path=Path(folder)/"tarot.json"
+            path.write_text(json.dumps({"The Star":"AAAA1234"}),encoding="utf-8")
+            env={"TELEGRAM_BOT_TOKEN":"123:TEST","TAROT_CARD_PHOTOS_JSON":str(path)}
+            with patch.object(preflight.importlib,"import_module",return_value=object()):
+                passing=preflight.inspect_environment(mode="deploy",environ=env)
+                self.assertTrue(passing["passed"])
+                stat=next(x["detail"] for x in passing["checks"]
+                    if x["name"]=="optional:tarot_photo_coverage")
+                self.assertIn("1/78",stat)
+                env["TAROT_CARD_PHOTOS_JSON"]=str(Path(folder)/"missing.json")
+                missing=preflight.inspect_environment(mode="deploy",environ=env)
+                self.assertFalse(next(x for x in missing["checks"]
+                    if x["name"]=="tarot_manifest_valid")["passed"])
+                env["TAROT_CARD_PHOTOS_JSON"]=str(path)
+                env["TAROT_SHUFFLE_FILE_ID"]="https://example.invalid/a"
+                invalid=preflight.inspect_environment(mode="deploy",environ=env)
+                self.assertFalse(next(x for x in invalid["checks"]
+                    if x["name"]=="tarot_asset_valid:TAROT_SHUFFLE_FILE_ID")["passed"])
+
     def test_optional_tarot_assets_do_not_block_deploy(self):
         from tempfile import TemporaryDirectory
         from pathlib import Path
