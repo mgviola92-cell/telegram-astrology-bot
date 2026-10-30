@@ -58,6 +58,7 @@ from public_calendar import (
     parse_day_callback, public_calendar_text,
 )
 from profile_commands import router as profile_router
+from preflight import inspect_environment
 from native_ui import (home_keyboard, home_text, section_keyboard, section_text,
                        feature_keyboard, feature_text, guide_keyboard, guide_text,
                        SECTIONS, FEATURES, COMMAND_GUIDES,
@@ -875,7 +876,8 @@ async def natal_preview_command(message: Message):
     if not private_only(message):
         await message.answer('Western မွေးဇာတာကို Private Chat မှာသာ တွက်နိုင်ပါတယ်။')
         return
-    if os.environ.get('ENABLE_WESTERN_NATAL','').strip()!='1':
+    if (os.environ.get('ENABLE_WESTERN_NATAL','').strip()!='1'
+            or os.environ.get('WESTERN_NATAL_REVIEW_APPROVED','').strip()!='1'):
         await message.answer(
             'Western Natal Chart ကို Astronomical Benchmark စစ်ဆေးနေဆဲဖြစ်လို့ မဖွင့်ရသေးပါ။ '
             'Annual Profection ကိုတော့ သီးခြား Rising Sign နဲ့တွက်နိုင်ပါတယ်။ '
@@ -1292,9 +1294,13 @@ async def private_reading_input_message(message: Message):
 
 
 async def main():
+    # Offline release preflight before any Telegram network operation.
+    # Only check identifiers are included in errors; never secrets.
+    report=inspect_environment(mode="deploy")
+    if not report["passed"]:
+        failed=[x["name"] for x in report["checks"] if not x["passed"]]
+        raise SystemExit("Startup preflight failed: "+", ".join(failed))
     token=os.environ.get('TELEGRAM_BOT_TOKEN')
-    if not token:
-        raise SystemExit('Set TELEGRAM_BOT_TOKEN in your private environment')
     logging.basicConfig(level=logging.INFO)
     async with Bot(token=token) as bot:
         await bot.delete_webhook(drop_pending_updates=False)

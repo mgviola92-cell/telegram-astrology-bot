@@ -75,10 +75,17 @@ def inspect_environment(*, mode="ci", environ=None):
                 "Group settings SQLite directory must exist and be writable")
             add("group_settings_db_not_memory",group_db!=":memory:",
                 "Group settings durable DB cannot be :memory:")
-        # Western natal is an opt-in, unpublished development preview.
-        # Its JPL kernel is mandatory only if the operator enables the feature.
+        # Independent review and explicit enablement are separate flags.
+        natal_flag=env.get("ENABLE_WESTERN_NATAL","").strip()
+        add("natal_flag_valid",natal_flag in ("","0","1"),
+            "ENABLE_WESTERN_NATAL must be unset, 0 or 1")
+        if natal_flag=="1":
+            add("natal_release_review_approved",
+                env.get("WESTERN_NATAL_REVIEW_APPROVED","").strip()=="1",
+                "Independent benchmark review and owner authorization must precede Western natal activation")
+        # A local JPL kernel alone is not an external benchmark.
         kernel=env.get("JPL_EPHEMERIS_PATH","").strip()
-        if env.get("ENABLE_WESTERN_NATAL","").strip()=="1":
+        if natal_flag=="1":
             add("jpl_kernel_present",bool(kernel and Path(kernel).is_file()),
                 "Existing local JPL BSP file required when Western natal is enabled")
             if kernel and Path(kernel).is_file():
@@ -90,10 +97,29 @@ def inspect_environment(*, mode="ci", environ=None):
         media_mode=env.get("TAROT_MEDIA_MODE","telegram").strip().lower()
         add("tarot_media_mode",media_mode in ("telegram","text"),
             "TAROT_MEDIA_MODE must be telegram or text; configured Telegram file_ids are reusable, not uploaded")
-        # Animation IDs are optional: bot.py implements a text-only fallback.
-        # Recording them as warnings avoids blocking a valid text-only bot.
+        # Tarot photo manifest is a filesystem path to a small JSON mapping.
+        # Never expose the path, keys or Telegram file_ids in diagnostics.
+        manifest=env.get("TAROT_CARD_PHOTOS_JSON","").strip()
+        if manifest:
+            try:
+                from tarot_media import load_media_registry, coverage
+                mapped=coverage(load_media_registry(manifest))["mapped"]
+                manifest_ok=True
+            except (OSError,ValueError,TypeError,UnicodeError):
+                mapped=0
+                manifest_ok=False
+            add("tarot_manifest_valid",manifest_ok,
+                "Configured TAROT_CARD_PHOTOS_JSON must point to a valid small JSON file of Telegram file IDs")
+            if manifest_ok:
+                checks.append({"name":"optional:tarot_photo_coverage","passed":True,
+                               "detail":f"Configured {mapped}/78 Tarot card IDs; unmapped cards have text/animation fallback"})
+        from tarot_delivery import valid_file_id
         for var in ("TAROT_REVEAL_FILE_ID","TAROT_SHUFFLE_FILE_ID"):
-            if not env.get(var,"").strip():
+            asset=env.get(var,"").strip()
+            if asset:
+                add("tarot_asset_valid:"+var,valid_file_id(asset),
+                    "A configured asset must be a Telegram file_id, not a URL or filesystem path")
+            else:
                 checks.append({"name":"optional:"+var,"passed":True,
                                "detail":"Not configured; native text fallback remains available"})
     return {"mode":mode,"passed":all(x["passed"] for x in checks),
