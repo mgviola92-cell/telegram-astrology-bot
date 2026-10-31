@@ -32,3 +32,32 @@ class PairRelationTests(unittest.TestCase):
         changed["pillars"]["year"]="甲子"
         with self.assertRaises(ValueError):
             classify_pairs(changed)
+
+    def test_reject_forged_relationship_records(self):
+        chart=calculate_bazi(datetime(2005,12,23,8,37),timezone_verified="Asia/Yangon")
+        genuine=classify_pairs(chart)
+        examples=[
+            {"type":"branch_union","a":"year","b":"month","symbols":"<b>","adjacent":True},
+            {"type":"stem_union","a":"year","b":"month","symbols":"甲己","adjacent":False},
+            {"type":"branch_opposite","a":"hour","b":"day","symbols":"子午","adjacent":True},
+            {"type":"stem_union","a":"year","b":"month","symbols":"甲己","adjacent":True},
+        ]
+        for forged in examples:
+            with self.subTest(forged=forged):
+                bad=deepcopy(genuine)
+                bad["records"]=[forged,forged]
+                with self.assertRaises(ValueError):
+                    format_pairs(bad)
+
+    def test_report_tampering_and_input_validation(self):
+        chart=calculate_bazi(datetime(2005,12,23,8,37),timezone_verified="Asia/Yangon")
+        good=classify_pairs(chart)
+        for field,value in (("rule_id","FAKE"),("predictive_claim",True),
+                            ("phase_transformation_assessed",True),
+                            ("natal_source_validated",False),
+                            ("records",None)):
+            with self.subTest(field=field):
+                bad=deepcopy(good)
+                bad[field]=value
+                with self.assertRaises(ValueError):
+                    format_pairs(bad)

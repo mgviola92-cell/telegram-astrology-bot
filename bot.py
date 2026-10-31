@@ -24,7 +24,7 @@ from myanmar_day_reading import calendar_marker_reading
 from bazi_core import calculate_bazi
 from branch_compatibility import compare_branches, render_branch_comparison, branch_picker, RULE_ID as BRANCH_PAIR_RULE_ID
 from bazi_element_reading import bazi_element_reading
-from bazi_pairs import classify_pairs, format_pairs
+from bazi_pairs import format_verified_pairs
 from bazi_ten_gods_reading import interpret_ten_gods, summarize_ten_gods_burmese
 from bazi_growth_stages import calculate_growth_stages
 from bazi_seasons import calculate_bazi_seasons
@@ -1048,7 +1048,7 @@ async def bazi(message: Message):
         result=calculate_bazi(normalized['wall_time'], timezone_verified=normalized['timezone'])
         reading_facts('bazi',result)
         element_reading=bazi_element_reading(result)
-        pair_section=format_pairs(classify_pairs(result))
+        pair_section=format_verified_pairs(result)
         ten_gods_reading=interpret_ten_gods(result)
         ten_gods_section=summarize_ten_gods_burmese(ten_gods_reading)
         growth_reading=calculate_growth_stages(result)
